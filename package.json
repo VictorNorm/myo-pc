@@ -17,12 +17,12 @@
     "sass": "^1.77.4",
     "web-vitals": "^4.0.1"
   },
-  "scripts": {
-    "start": "cross-env PORT=4000 react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
+"scripts": {
+  "start": "cross-env PORT=4000 REACT_APP_API_URL=http://localhost:3000 react-scripts start",
+  "build": "cross-env REACT_APP_API_URL=http://localhost:3000 REACT_APP_ANOTHER_VAR=value react-scripts build",
+  "test": "cross-env REACT_APP_API_URL=http://localhost:3000 REACT_APP_ANOTHER_VAR=value react-scripts test",
+  "eject": "react-scripts eject"
+},
   "eslintConfig": {
     "extends": [
       "react-app",

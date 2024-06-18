@@ -41,20 +41,19 @@ function Programs() {
     return <div>Loading...</div>; // You can replace this with a better loading indicator
   }
 
+  if (error) {
+    return <div>{error}</div>
+  }
+
+
   return (
     <div className='programs-container'>
       <h2>Programs</h2>
-      {loading ? (
-        'Loading...'
-      ) : error ? (
-        `Error: ${error.message}`
-      ) : (
-        programs.map((program) => (
+      {programs.map((program) => (
           <Link to={`/workouts?id=${program.id}`} key={program.id}>
-            <div>{program.name}</div>
+            <div className='programs-container__program'>{program.name}</div>
           </Link>
-        ))
-      )}
+        ))}
     </div>
   )
 }

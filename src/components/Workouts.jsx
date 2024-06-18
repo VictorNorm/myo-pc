@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -13,7 +13,6 @@ function Workouts() {
   const programId = query.get('id');
 
   useEffect(() => {
-    console.log(programId)
     const fetchWorkouts = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -48,19 +47,16 @@ function Workouts() {
     return <div>Loading...</div>; // You can replace this with a better loading indicator
   }
 
+  if (error) {
+    return <div>{error}</div>
+  }
+
   return (
-    <div>
-      {loading ? (
-        'Loading...'
-      ) : error ? (
-        `Error: ${error.message}`
-      ) : (
-        <div>
-          {/* <h2>{program.name}</h2> */}
-          {/* <p>{program.description}</p> */}
-          {/* Add more program details here */}
-        </div>
-      )}
+    <div className='workouts-container'>
+      <h2>My workouts</h2>
+      {workouts.map((workout) => {
+       return <Link to={`/training?id=${workout.id}`} key={workout.id}><div className='workouts-container__workout'>{workout.name}</div></Link>
+      })}
     </div>
   );
 }

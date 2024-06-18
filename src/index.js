@@ -13,12 +13,14 @@ import Exercises from "./components/Exercises";
 import Clients from "./components/Clients";
 import RequireAuth from "./components/RequireAuth";
 import Workouts from "./components/Workouts";
+import Training from "./components/Training";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
     errorElement: <ErrorPage />,
+    // eslint-disable-next-line
     children: [
       {
         path: "/",
@@ -31,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: "/programs",
         element: <Programs />,
+      },
+      {
+        path: "/training",
+        element: <Training />,
       },
       ,
       {

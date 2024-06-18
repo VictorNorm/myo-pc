@@ -103,4 +103,44 @@
   height: 100%;
 }
 
+.programs-container h2 {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+.programs-container a {
+  text-decoration: none;
+  color: black;
+}
+.programs-container .programs-container__program {
+  border: 1px solid black;
+  background-color: aliceblue;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  font-size: large;
+  padding: 0.5rem;
+}
+.programs-container .programs-container__program:hover {
+  background-color: rgb(221, 229, 240);
+}
+
+.workouts-container h2 {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+.workouts-container a {
+  text-decoration: none;
+  color: black;
+}
+.workouts-container .workouts-container__workout {
+  border: 1px solid black;
+  background-color: aliceblue;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  font-size: large;
+  padding: 0.5rem;
+}
+.workouts-container .workouts-container__workout:hover {
+  background-color: rgb(221, 229, 240);
+}
+
 /*# sourceMappingURL=App.css.map */
