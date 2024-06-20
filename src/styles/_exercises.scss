@@ -1,0 +1,59 @@
+.add-exercises-form {
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+
+    input, select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .add-exercises-form__input-container,
+    .add-exercises-form__select-container {
+        display: flex;
+        flex-direction: column;
+        margin-top: 1rem;
+    }
+
+    button {
+        background-color: rgb(0, 123, 255);
+        border-radius: 4px;
+        padding: 10px;
+        margin-top: 20px;
+        color: white;
+        font-size: 16px;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+    }
+}
+
+.exercise-container {
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    
+    h3 {
+        margin-top: 1rem;
+        margin-bottom: 0.25rem;
+    }
+}

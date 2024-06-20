@@ -20,7 +20,6 @@ const router = createBrowserRouter([
     path: "/",
     element: <Root />,
     errorElement: <ErrorPage />,
-    // eslint-disable-next-line
     children: [
       {
         path: "/",
@@ -32,26 +31,44 @@ const router = createBrowserRouter([
       },
       {
         path: "/programs",
-        element: <Programs />,
+        element: (
+          <RequireAuth>
+            <Programs />
+          </RequireAuth>
+        ),
       },
       {
         path: "/training",
-        element: <Training />,
+        element: (
+          <RequireAuth>
+            <Training />
+          </RequireAuth>
+        ),
       },
-      ,
       {
         path: "/workouts",
-        element: <Workouts />,
+        element: (
+          <RequireAuth>
+            <Workouts />
+          </RequireAuth>
+        ),
       },
       {
         path: "/exercises",
-        element: <Exercises />,
+        element: (
+          <RequireAuth>
+            <Exercises />
+          </RequireAuth>
+        ),
       },
       {
         path: "/clients",
-        element: <Clients />,
+        element: (
+          <RequireAuth>
+            <Clients />
+          </RequireAuth>
+        ),
       },
-      // Add other protected routes here
       {
         path: "/login",
         element: <Login />,

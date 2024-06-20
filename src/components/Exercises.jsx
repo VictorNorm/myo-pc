@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 function Exercises() {
-  const [exercises, setExercises] = useState(null);
+  const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newExercise, setNewExercise] = useState({ name: '', muscleGroup: '' });
@@ -74,6 +74,21 @@ function Exercises() {
     }
   };
 
+  const groupedExercises = exercises.reduce((groups, exercise) => {
+    const group = exercise.muscle_group;
+    if (!groups[group]) {
+      groups[group] = [];
+    }
+    groups[group].push(exercise);
+    return groups;
+  }, {});
+
+  Object.keys(groupedExercises).forEach(group => {
+    groupedExercises[group].sort((a, b) => a.name.localeCompare(b.name));
+  });
+
+  const sortedMuscleGroups = Object.keys(groupedExercises).sort();
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -84,9 +99,9 @@ function Exercises() {
 
   return (
     <div>
-      <h2>Add New Exercise</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form className='add-exercises-form' onSubmit={handleSubmit}>
+        <h2>Add New Exercise</h2>
+        <div className='add-exercises-form__input-container'>
           <label htmlFor="name">Exercise Name:</label>
           <input
             type="text"
@@ -96,7 +111,7 @@ function Exercises() {
             onChange={handleInputChange}
           />
         </div>
-        <div>
+        <div className='add-exercises-form__select-container'>
           <label htmlFor="muscleGroup">Muscle Group:</label>
           <select
             id="muscleGroup"
@@ -113,12 +128,20 @@ function Exercises() {
         {formError && <div style={{ color: 'red' }}>{formError}</div>}
         <button type="submit">Add Exercise</button>
       </form>
+      <div className='exercise-container'>
       <h2>Exercises</h2>
-      <ul>
-        {exercises.map((exercise, index) => (
-          <li key={index}>{exercise.name}</li>
-        ))}
-      </ul>
+
+      {sortedMuscleGroups.map((group, index) => (
+        <div key={index}>
+          <h3>{group}</h3>
+          <ul>
+            {groupedExercises[group].map((exercise, index) => (
+              <li key={index}>{exercise.name}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      </div>
     </div>
   );
 }

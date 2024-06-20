@@ -67,10 +67,30 @@
 }
 
 .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
   width: 100%;
   background-color: black;
   color: white;
   height: 250px;
+}
+
+.logout-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.logout-button:hover {
+  background-color: #ff1a1a;
 }
 
 .nav {
@@ -141,6 +161,149 @@
 }
 .workouts-container .workouts-container__workout:hover {
   background-color: rgb(221, 229, 240);
+}
+
+.create-program-container {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  max-width: 500px;
+  margin: 20px auto;
+}
+.create-program-container h2 {
+  margin-bottom: 20px;
+}
+.create-program-container .create-program-container__name {
+  margin-bottom: 15px;
+}
+.create-program-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.create-program-container input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.create-program-container button {
+  background-color: rgb(0, 123, 255);
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 20px;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.create-program-container select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.programs-container {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.programs-container h2 {
+  margin-bottom: 20px;
+}
+
+.programs-container__program {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.programs-container__program:hover {
+  background-color: #f0f0f0;
+}
+
+.programs-container__program a {
+  text-decoration: none;
+  color: #333;
+}
+
+.programs-container__program a:hover {
+  text-decoration: underline;
+}
+
+.add-exercises-form {
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+.add-exercises-form input, .add-exercises-form select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.add-exercises-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.add-exercises-form .add-exercises-form__input-container,
+.add-exercises-form .add-exercises-form__select-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+}
+.add-exercises-form button {
+  background-color: rgb(0, 123, 255);
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 20px;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.exercise-container {
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+.exercise-container h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
 }
 
 /*# sourceMappingURL=App.css.map */
