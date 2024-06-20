@@ -12,14 +12,18 @@ function Header() {
   };
 
   return (
-    <div className='header'>
-      Myo
-      {isAuthenticated && (
-        <button onClick={handleLogout} className="logout-button">
-          Logout
-        </button>
-      )}
-    </div>
+    <>
+      <div className='header-top'>
+          {isAuthenticated && (
+            <button onClick={handleLogout} className="logout-button">
+              Logout
+            </button>
+          )}
+      </div>
+        <div className='header'>
+          <p id='logoName'>Myo</p>
+        </div>
+    </>
   );
 }
 

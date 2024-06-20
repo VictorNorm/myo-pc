@@ -1,6 +1,6 @@
 .header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: 10px 20px;
     background-color: #f8f8f8;
@@ -9,6 +9,11 @@
     background-color: black;
     color: white;
     height: 250px;
+    font-family: "Audiowide", sans-serif !important;
+    #logoName {
+      font-size: 60px;
+      background-color: black;
+    }
   }
   
   .logout-button {
@@ -23,4 +28,14 @@
   
   .logout-button:hover {
     background-color: #ff1a1a;
+  }
+
+  .header-top {
+    background-color: black;
+    display: flex;
+    justify-content: flex-end;
+    .logout-button {
+      width: 80px;
+      margin: 10px 10px 0px 0px;
+    }
   }

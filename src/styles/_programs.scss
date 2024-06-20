@@ -1,9 +1,11 @@
+@import "./colors";
+
 .create-program-container {
     margin: 20px;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    background-color: #f9f9f9;
+    // background-color: $secondary-bg;
     max-width: 500px;
     margin: 20px auto;
     
@@ -26,6 +28,7 @@
      padding: 8px;
      border: 1px solid #ccc;
      border-radius: 4px;
+     background-color: $secondary-bg;
    }
    
    button {
@@ -41,6 +44,10 @@
     width: 100%;
    }
 
+   button:hover {
+    background-color: rgb(43, 145, 255);
+   }
+
   }
   
   .create-program-container select {
@@ -48,6 +55,7 @@
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    background-color: $secondary-bg;
   }
   
   .programs-container {

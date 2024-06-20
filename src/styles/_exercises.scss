@@ -1,3 +1,5 @@
+@import "./colors";
+
 .add-exercises-form {
     max-width: 500px;
     display: flex;
@@ -6,13 +8,14 @@
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    background-color: #f9f9f9;
+    background-color: $primary-bg;
 
     input, select {
         width: 100%;
         padding: 8px;
         border: 1px solid #ccc;
         border-radius: 4px;
+        background-color: $secondary-bg;
     }
 
     label {
@@ -50,7 +53,7 @@
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    background-color: #f9f9f9;
+    background-color: $primary-bg;
     
     h3 {
         margin-top: 1rem;

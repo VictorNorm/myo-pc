@@ -2,40 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 function Programs() {
-  const [programs, setPrograms] = useState([]);
   const [users, setUsers] = useState([]);
-  const [loadingPrograms, setLoadingPrograms] = useState(true);
   const [loadingUsers, setLoadingUsers] = useState(true);
-  const [errorPrograms, setErrorPrograms] = useState(null);
+  // const [errorPrograms, setErrorPrograms] = useState(null);
   const [errorUsers, setErrorUsers] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
   const programNameRef = useRef(null);
   const userSelectRef = useRef(null);
-
-  useEffect(() => {
-    const fetchPrograms = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:3000/programs`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setPrograms(data.programs);
-        setLoadingPrograms(false);
-      } catch (error) {
-        setErrorPrograms(error);
-        setLoadingPrograms(false);
-      }
-    };
-
-    fetchPrograms();
-  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -72,7 +46,7 @@ function Programs() {
       return;
     }
 
-    setErrorMessage(''); // Clear any previous error message
+    setErrorMessage('');
 
     const token = localStorage.getItem("token");
     const response = await fetch('http://localhost:3000/programs', {
@@ -86,17 +60,15 @@ function Programs() {
 
     if (response.ok) {
       console.log("Program created successfully");
+      alert("Program created successfully")
     } else {
       console.error("Failed to create program");
+      alert("Failed to create program")
     }
   }
 
-  if (loadingPrograms || loadingUsers) {
+  if (loadingUsers) {
     return <div>Loading...</div>; // You can replace this with a better loading indicator
-  }
-
-  if (errorPrograms) {
-    return <div>Error loading programs: {errorPrograms.message}</div>
   }
 
   if (errorUsers) {
@@ -125,14 +97,6 @@ function Programs() {
           </div>
           <button type="submit">Create program</button>
         </form>
-      </div>
-      <div className='programs-container'>
-        <h2>My programs</h2>
-        {programs.map((program) => (
-          <Link to={`/workouts?id=${program.id}`} key={program.id}>
-            <div className='programs-container__program'>{program.name}</div>
-          </Link>
-        ))}
       </div>
     </>
   )
