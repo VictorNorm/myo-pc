@@ -24,7 +24,7 @@ function Nav() {
             }>My programs</NavLink>
             <NavLink to="/clientprograms" style={({ isActive }) => 
               isActive ? activeStyle : undefined
-            }>Client programs</NavLink>
+            }>Add workouts</NavLink>
           </div>
         </li>
         <li className="dropdown">

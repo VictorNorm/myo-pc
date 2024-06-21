@@ -77,6 +77,7 @@ function Programs() {
 
   return (
     <>
+    <h1>Create program</h1>
       <div className='create-program-container'>
         <h2>Create a new program</h2>
         <form onSubmit={handleCreateProgram}>

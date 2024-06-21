@@ -63,7 +63,7 @@
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    background-color: #f9f9f9;
+    background-color: $primary-bg;
     max-width: 500px;
     margin: 20px auto;
 
@@ -81,14 +81,15 @@
   .programs-container__program {
     margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid #ddd;
+    // border: 1px solid #ddd;
     border-radius: 4px;
-    background-color: #fff;
+    // background-color: #fff;
     transition: background-color 0.3s ease;
+    background-color: $secondary-bg;
   }
   
   .programs-container__program:hover {
-    background-color: #f0f0f0;
+    background-color: $input-bg;
   }
   
   .programs-container__program a {

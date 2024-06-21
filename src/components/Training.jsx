@@ -109,45 +109,45 @@ function Training() {
       };
 
       const renderItem = (item) => (
-        <div key={item.exercise_id} style={styles.itemContainer}>
-          <h3 style={styles.exerciseHeading}>{item.exercises.name}</h3>
-          <div style={styles.inputContainer}>
-            <span style={styles.itemText}>Sets:</span>
+        <div key={item.exercise_id} className={"itemContainer"}>
+          <h3 className={"exerciseHeading"}>{item.exercises.name}</h3>
+          <div className={"inputContainer"}>
+            <span className={"itemText"}>Sets:</span>
             <input
-              style={styles.input}
+              className={"input"}
               value={item.sets}
               type="number"
               readOnly
             />
-            <div style={styles.buttonContainer}>
-              <button style={styles.button} onClick={() => handleDecrement(item.exercise_id, 'sets')}>-</button>
-              <button style={styles.button} onClick={() => handleIncrement(item.exercise_id, 'sets')}>+</button>
+            <div className={"buttonContainer"}>
+              <button className={"button"} onClick={() => handleDecrement(item.exercise_id, 'sets')}>-</button>
+              <button className={"button"} onClick={() => handleIncrement(item.exercise_id, 'sets')}>+</button>
             </div>
           </div>
-          <div style={styles.inputContainer}>
-            <span style={styles.itemText}>Reps:</span>
+          <div className={"inputContainer"}>
+            <span className={"itemText"}>Reps:</span>
             <input
-              style={styles.input}
+              className={"input"}
               value={item.reps}
               type="number"
               readOnly
             />
-            <div style={styles.buttonContainer}>
-              <button style={styles.button} onClick={() => handleDecrement(item.exercise_id, 'reps')}>-</button>
-              <button style={styles.button} onClick={() => handleIncrement(item.exercise_id, 'reps')}>+</button>
+            <div className={"buttonContainer"}>
+              <button className={"button"} onClick={() => handleDecrement(item.exercise_id, 'reps')}>-</button>
+              <button className={"button"} onClick={() => handleIncrement(item.exercise_id, 'reps')}>+</button>
             </div>
           </div>
-          <div style={styles.inputContainer}>
-            <span style={styles.itemText}>Weight (kg):</span>
+          <div className={"inputContainer"}>
+            <span className={"itemText"}>Weight (kg):</span>
             <input
-              style={styles.input}
+              className={"input"}
               value={item.weight}
               type="number"
               readOnly
             />
-            <div style={styles.buttonContainer}>
-              <button style={styles.button} onClick={() => handleDecrement(item.exercise_id, 'weight')}>-</button>
-              <button style={styles.button} onClick={() => handleIncrement(item.exercise_id, 'weight')}>+</button>
+            <div className={"buttonContainer"}>
+              <button className={"button"} onClick={() => handleDecrement(item.exercise_id, 'weight')}>-</button>
+              <button className={"button"} onClick={() => handleIncrement(item.exercise_id, 'weight')}>+</button>
             </div>
           </div>
         </div>
@@ -163,89 +163,13 @@ function Training() {
 
 
     return (
-        <div style={styles.container}>
-          <div>
+        <div className={"training-container"}>
+   
             {exercises.map(renderItem)}
-          </div>
-          <button style={styles.finishButton} onClick={handleFinishWorkout}>Finish Workout</button>
+
+          <button className={"finishButton"} onClick={handleFinishWorkout}>Finish Workout</button>
         </div>
       );
 }
-
-const styles = {
-    exerciseHeading: {
-      fontSize: '20px',
-      marginBottom: '10px',
-      marginLeft: '0',
-    },
-    container: {
-      backgroundColor: '#fff',
-      display: "flex",
-      flexDirection: "column",
-    },
-    itemContainer: {
-      flexDirection: 'column',
-      marginBottom: '20px',
-      padding: '16px',
-      borderWidth: '1px',
-      borderColor: '#ddd',
-      borderRadius: '8px',
-      backgroundColor: 'white',
-    },
-    itemText: {
-      fontSize: '16px',
-      fontWeight: 'bold',
-      flex: 1,
-      marginLeft: '10px',
-    },
-    inputContainer: {
-      paddingTop: '2px',
-      paddingBottom: '2px',
-      display: 'flex',
-      alignItems: 'center',
-      backgroundColor: '#f9f9f9',
-      marginBottom: '5px',
-    },
-    input: {
-      width: '40px',
-      height: '40px',
-      borderColor: '#f9f9f9',
-      borderWidth: '1px',
-      marginRight: '8px',
-      textAlign: 'center',
-      backgroundColor: 'white',
-      color: 'black',
-    },
-    buttonContainer: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      margin: '0 auto',
-    },
-    button: {
-      backgroundColor: '#007BFF',
-      borderRadius: '4px',
-      padding: '8px',
-      marginVertical: '2px',
-      width: '35px',
-      marginLeft: '2px',
-      color: 'white',
-      fontSize: '16px',
-      textAlign: 'center',
-      border: 'none',
-      cursor: 'pointer',
-    },
-    finishButton: {
-      backgroundColor: '#007BFF',
-      borderRadius: '4px',
-      padding: '10px',
-      marginTop: '20px',
-      marginBottom: "40px",
-      color: 'white',
-      fontSize: '16px',
-      textAlign: 'center',
-      border: 'none',
-      cursor: 'pointer'
-    }
-  };
 
 export default Training

@@ -1,0 +1,32 @@
+@import "./colors";
+
+.add-workout-container {
+    display: flex;
+    flex-direction: column;
+
+    h1 {
+        margin-bottom: 1.5rem;
+    }
+
+    .add-workout-container__select-container {
+        display: flex;
+        justify-content: space-evenly;
+
+        .add-workout-container__select-container__user,
+        .add-workout-container__select-container__program {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: $secondary-bg;
+            flex: 1;
+        }
+    }
+}

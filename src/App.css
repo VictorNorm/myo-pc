@@ -176,17 +176,6 @@
   text-decoration: none;
   color: black;
 }
-.programs-container .programs-container__program {
-  border: 1px solid black;
-  background-color: aliceblue;
-  margin-bottom: 1rem;
-  text-decoration: none;
-  font-size: large;
-  padding: 0.5rem;
-}
-.programs-container .programs-container__program:hover {
-  background-color: rgb(221, 229, 240);
-}
 
 .workouts-container h2 {
   margin-top: 1rem;
@@ -263,7 +252,7 @@
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: #171717;
   max-width: 500px;
   margin: 20px auto;
 }
@@ -281,14 +270,13 @@
 .programs-container__program {
   margin-bottom: 10px;
   padding: 10px;
-  border: 1px solid #ddd;
   border-radius: 4px;
-  background-color: #fff;
   transition: background-color 0.3s ease;
+  background-color: #2E2E2E;
 }
 
 .programs-container__program:hover {
-  background-color: #f0f0f0;
+  background-color: #373737;
 }
 
 .programs-container__program a {
@@ -354,6 +342,107 @@
 .exercise-container h3 {
   margin-top: 1rem;
   margin-bottom: 0.25rem;
+}
+
+.add-workout-container {
+  display: flex;
+  flex-direction: column;
+}
+.add-workout-container h1 {
+  margin-bottom: 1.5rem;
+}
+.add-workout-container .add-workout-container__select-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+.add-workout-container .add-workout-container__select-container .add-workout-container__select-container__user,
+.add-workout-container .add-workout-container__select-container .add-workout-container__select-container__program {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-width: 400px;
+}
+.add-workout-container .add-workout-container__select-container select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #2E2E2E;
+  flex: 1;
+}
+
+.training-container .container {
+  background-color: #171717;
+  display: flex;
+  flex-direction: column;
+}
+.training-container .exerciseHeading {
+  font-size: 20px;
+  margin-bottom: 10px;
+  margin-left: 0;
+}
+.training-container .itemContainer {
+  border: 1px solid white;
+  margin-bottom: 20px;
+  padding: 16px;
+  border-width: 1px;
+  border-color: #ddd;
+  border-radius: 8px;
+  background-color: #171717;
+}
+.training-container .itemText {
+  font-size: 16px;
+  font-weight: bold;
+  flex: 1;
+  margin-left: 10px;
+  background-color: #2E2E2E;
+}
+.training-container .inputContainer {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  display: flex;
+  align-items: center;
+  background-color: #2E2E2E;
+  margin-bottom: 5px;
+}
+.training-container .input {
+  width: 40px;
+  height: 40px;
+  border-color: #FFFFFF;
+  border-width: 1px;
+  margin-right: 8px;
+  text-align: center;
+  background-color: #373737;
+  color: #FFFFFF;
+}
+.training-container .buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+}
+.training-container .button {
+  background-color: #007bff;
+  border-radius: 4px;
+  padding: 8px;
+  width: 35px;
+  margin-left: 2px;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+}
+.training-container .finishButton {
+  background-color: #007bff;
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
 }
 
 /*# sourceMappingURL=App.css.map */

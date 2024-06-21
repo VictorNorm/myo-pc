@@ -15,7 +15,7 @@ import RequireAuth from "./components/RequireAuth";
 import Workouts from "./components/Workouts";
 import Training from "./components/Training";
 import MyPrograms from "./components/MyPrograms";
-import ClientPrograms from "./components/ClientPrograms";
+import AddWorkouts from "./components/AddWorkouts";
 
 const router = createBrowserRouter([
   {
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
         path: "/clientprograms",
         element: (
           <RequireAuth>
-            <ClientPrograms />
+            <AddWorkouts />
           </RequireAuth>
         ),
       },
