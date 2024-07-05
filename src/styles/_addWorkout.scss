@@ -29,4 +29,40 @@
             flex: 1;
         }
     }
+
+    .workouts-list {
+        margin-top: 2rem;
+    }
+}
+
+.add-workout-container__input-container {
+    max-width: 400px;
+
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: $secondary-bg;
+        flex: 1;
+    }
+
+    button {
+        margin-top: 1rem;
+        background-color: #007bff;
+        border-radius: 4px;
+        padding: 8px;
+        margin-left: 2px;
+        color: white;
+        font-size: 16px;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+    }
+
 }

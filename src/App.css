@@ -9,6 +9,7 @@
   background-color: #171717;
   color: #FFFFFF;
   font-family: "Rajdhani", sans-serif;
+  font-weight: 700;
 }
 
 .loginForm {
@@ -369,6 +370,37 @@
   border-radius: 4px;
   background-color: #2E2E2E;
   flex: 1;
+}
+.add-workout-container .workouts-list {
+  margin-top: 2rem;
+}
+
+.add-workout-container__input-container {
+  max-width: 400px;
+}
+.add-workout-container__input-container form {
+  display: flex;
+  flex-direction: column;
+}
+.add-workout-container__input-container input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #2E2E2E;
+  flex: 1;
+}
+.add-workout-container__input-container button {
+  margin-top: 1rem;
+  background-color: #007bff;
+  border-radius: 4px;
+  padding: 8px;
+  margin-left: 2px;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
 }
 
 .training-container .container {

@@ -13,6 +13,7 @@ function AddWorkouts() {
   const [workouts, setWorkouts] = useState([]);
   const [loadingWorkouts, setLoadingWorkouts] = useState(false);
   const [errorWorkouts, setErrorWorkouts] = useState(null);
+  const [errorAddWorkouts, setErrorAddWorkouts] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -27,7 +28,6 @@ function AddWorkouts() {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log(data);
         setUsers(data);
         setLoadingUsers(false);
       } catch (error) {
@@ -52,7 +52,6 @@ function AddWorkouts() {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log(data);
         setPrograms(data.programs);
         setLoadingPrograms(false);
       } catch (error) {
@@ -79,7 +78,6 @@ function AddWorkouts() {
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
-          console.log(data);
           setWorkouts(data);
           setLoadingWorkouts(false);
         } catch (error) {
@@ -114,6 +112,17 @@ function AddWorkouts() {
     setSelectedProgramId(e.target.value);
   };
 
+  const handleAddWorkout = (event) => {
+    event.preventDefault()
+
+    try {
+      setErrorAddWorkouts(false);
+      console.log("bajs");
+    } catch (error) {
+      
+    }
+  };
+
   const filteredPrograms = selectedUserId
     ? programs.filter(program => program.userId === parseInt(selectedUserId))
     : [];
@@ -144,6 +153,14 @@ function AddWorkouts() {
             ))}
           </select>
         </div>
+      </div>
+      <div className='add-workout-container__input-container'>
+        <form action="post" onSubmit={handleAddWorkout}>
+          <label htmlFor="workoutName"><h2>Name</h2></label>
+          <input type="text" name="workoutName" id="workoutName" />
+          {errorAddWorkouts && <p className='error-message'>Please enter a workout name</p>}
+          <button type="submit">Add workout</button>
+        </form>
       </div>
       <div className='workouts-list'>
         {loadingWorkouts && <div>Loading workouts...</div>}

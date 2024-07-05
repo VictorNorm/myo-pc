@@ -16,6 +16,7 @@ import Workouts from "./components/Workouts";
 import Training from "./components/Training";
 import MyPrograms from "./components/MyPrograms";
 import AddWorkouts from "./components/AddWorkouts";
+import Signup from "./components/Signup";
 
 const router = createBrowserRouter([
   {
@@ -90,6 +91,10 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <Login />,
+      },
+      {
+        path: "/signup",
+        element: <Signup />,
       },
     ],
   },
