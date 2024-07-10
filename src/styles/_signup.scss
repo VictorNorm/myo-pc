@@ -1,0 +1,22 @@
+.signup {
+
+    
+    
+    form {
+        margin: 0 auto;
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        max-width: 400px;
+
+        div {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+        }
+    }
+
+    .recaptcha {
+        margin: 0 auto;
+    }
+}

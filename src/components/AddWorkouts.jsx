@@ -14,12 +14,13 @@ function AddWorkouts() {
   const [loadingWorkouts, setLoadingWorkouts] = useState(false);
   const [errorWorkouts, setErrorWorkouts] = useState(null);
   const [errorAddWorkouts, setErrorAddWorkouts] = useState(false);
+  const [workoutName, setWorkoutName] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:3000/users`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -43,7 +44,7 @@ function AddWorkouts() {
     const fetchPrograms = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:3000/allprograms`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/allprograms`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -69,7 +70,7 @@ function AddWorkouts() {
         setLoadingWorkouts(true);
         try {
           const token = localStorage.getItem("token");
-          const response = await fetch(`http://localhost:3000/programs/${selectedProgramId}/workouts`, {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/programs/${selectedProgramId}/workouts`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -112,14 +113,47 @@ function AddWorkouts() {
     setSelectedProgramId(e.target.value);
   };
 
-  const handleAddWorkout = (event) => {
+  const handleWorkoutNameChange = (e) => {
+    setWorkoutName(e.target.value);
+  };
+
+  const handleAddWorkout = async (event) => {
+    const token = localStorage.getItem("token");
     event.preventDefault()
+
+    if (!workoutName || !selectedUserId || !selectedProgramId) {
+      setErrorAddWorkouts(true);
+      return;
+    }
 
     try {
       setErrorAddWorkouts(false);
-      console.log("bajs");
+
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/workouts/addworkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: workoutName,
+          userId: selectedUserId,
+          programId: selectedProgramId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setWorkouts([...workouts, data]);
+      setWorkoutName(''); // Reset workout name input
+
+      console.log(response);
     } catch (error) {
-      
+      setErrorAddWorkouts(true);
+      console.log(error);
     }
   };
 
@@ -127,57 +161,63 @@ function AddWorkouts() {
     ? programs.filter(program => program.userId === parseInt(selectedUserId))
     : [];
 
-  return (
-    <div className='add-workout-container'>
-      <h1>Add workout</h1>
-      <div className='add-workout-container__select-container'>
-        <div className='add-workout-container__select-container__user'>
-          <h2>Select User</h2>
-          <select onChange={handleUserChange} value={selectedUserId || ''}>
-            <option value="" disabled>Select a user</option>
-            {users.map(user => (
-              <option key={user.id} value={user.id}>
-                {user.firstName} {user.lastName} ({user.username})
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className='add-workout-container__select-container__program'>
-          <h2>Select Program</h2>
-          <select onChange={handleProgramChange} value={selectedProgramId} disabled={!selectedUserId}>
-            <option value="" disabled>Select a program</option>
-            {filteredPrograms.map(program => (
-              <option key={program.id} value={program.id}>
-                {program.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className='add-workout-container__input-container'>
-        <form action="post" onSubmit={handleAddWorkout}>
-          <label htmlFor="workoutName"><h2>Name</h2></label>
-          <input type="text" name="workoutName" id="workoutName" />
-          {errorAddWorkouts && <p className='error-message'>Please enter a workout name</p>}
-          <button type="submit">Add workout</button>
-        </form>
-      </div>
-      <div className='workouts-list'>
-        {loadingWorkouts && <div>Loading workouts...</div>}
-        {errorWorkouts && <div>Error loading workouts: {errorWorkouts.message}</div>}
-        {!loadingWorkouts && !errorWorkouts && (
-          <div>
-            <h2>Workouts</h2>
-            {workouts.map((workout) => {
-              return <Link to={`/training?id=${workout.id}`} key={workout.id}>
-                      <div className='workouts-container__workout'>{workout.name}</div>
-                    </Link>
-              })}
+    return (
+      <div className='add-workout-container'>
+        <h1>Add workout</h1>
+        <div className='add-workout-container__select-container'>
+          <div className='add-workout-container__select-container__user'>
+            <h2>Select User</h2>
+            <select onChange={handleUserChange} value={selectedUserId || ''}>
+              <option value="" disabled>Select a user</option>
+              {users.map(user => (
+                <option key={user.id} value={user.id}>
+                  {user.firstName} {user.lastName} ({user.username})
+                </option>
+              ))}
+            </select>
           </div>
-        )}
+          <div className='add-workout-container__select-container__program'>
+            <h2>Select Program</h2>
+            <select onChange={handleProgramChange} value={selectedProgramId} disabled={!selectedUserId}>
+              <option value="" disabled>Select a program</option>
+              {filteredPrograms.map(program => (
+                <option key={program.id} value={program.id}>
+                  {program.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className='add-workout-container__input-container'>
+          <form action="post" onSubmit={handleAddWorkout}>
+            <label htmlFor="workoutName"><h2>Name</h2></label>
+            <input
+              type="text"
+              name="workoutName"
+              id="workoutName"
+              value={workoutName}
+              onChange={handleWorkoutNameChange}
+            />
+            {errorAddWorkouts && <p className='error-message'>Please fill out all fields</p>}
+            <button type="submit">Add workout</button>
+          </form>
+        </div>
+        <div className='workouts-list'>
+          {loadingWorkouts && <div>Loading workouts...</div>}
+          {errorWorkouts && <div>Error loading workouts: {errorWorkouts.message}</div>}
+          {!loadingWorkouts && !errorWorkouts && (
+            <div>
+              <h2>Workouts</h2>
+              {workouts.map((workout) => (
+                <Link to={`/training?id=${workout.id}`} key={workout.id}>
+                  <div className='workouts-container__workout'>{workout.name}</div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
 }
 
 export default AddWorkouts;

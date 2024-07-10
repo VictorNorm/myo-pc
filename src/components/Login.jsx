@@ -1,4 +1,3 @@
-// src/components/Login.jsx
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +12,7 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
   
-    const response = await fetch('http://localhost:3000/login', {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

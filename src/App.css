@@ -12,6 +12,59 @@
   font-weight: 700;
 }
 
+.input-primary {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #2E2E2E;
+}
+
+.cta-1 {
+  background-color: #007bff;
+  border-radius: 4px;
+  padding: 8px;
+  width: 100%;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+}
+
+.cta-1:hover {
+  background-color: #3395ff;
+}
+
+.cta-1:active {
+  transform: scale(0.98);
+  background-color: #0062cc;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: #2E2E2E;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+.modal h3 {
+  background-color: inherit;
+  margin-bottom: 1rem;
+}
+
 .loginForm {
   width: 300px;
   margin: 50px auto;
@@ -475,6 +528,32 @@
   text-align: center;
   border: none;
   cursor: pointer;
+}
+
+.signup form {
+  margin: 0 auto;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+}
+.signup form div {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+.signup .recaptcha {
+  margin: 0 auto;
+}
+
+.clients-container .user {
+  border: 1px solid #ccc;
+  margin-bottom: 2rem;
+  max-width: 350px;
+  padding: 0.5rem;
+}
+.clients-container .clients-container__button-container {
+  margin: 0.25rem;
 }
 
 /*# sourceMappingURL=App.css.map */

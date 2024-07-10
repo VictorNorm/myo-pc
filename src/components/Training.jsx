@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-const API_URL = process.env.REACT_APP_API_URL
-
 function useQuery() {
     return new URLSearchParams(useLocation().search);
   }
@@ -20,7 +18,7 @@ function Training() {
         const fetchWorkout = async () => {
           try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:3000/workouts/${workoutId}/exercises`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/workouts/${workoutId}/exercises`, {
               headers: {
                 'Authorization': `Bearer ${token}`
               }
@@ -85,7 +83,7 @@ function Training() {
 
             console.log("exerciseData:", exerciseData)
     
-            const response = await fetch(`${API_URL}/workouts/completeWorkout`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/workouts/completeWorkout`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
