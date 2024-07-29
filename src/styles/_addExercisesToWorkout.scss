@@ -1,0 +1,72 @@
+@import "./colors";
+
+
+
+.addExercisesToWorkout-container {
+    display: flex;
+    flex-direction: column;
+
+    h1 {
+        margin-bottom: 1.5rem;
+    }
+
+    .add-workout-container__select-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-self: flex-end;
+        width: 400px;
+        
+
+        .add-workout-container__select-container__user,
+        .add-workout-container__select-container__program {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            max-width: 400px;
+            margin-bottom: 2rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: $secondary-bg;
+            flex: 1;
+        }
+    }
+
+}
+
+.add-workout-container__input-container {
+    max-width: 400px;
+
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: $secondary-bg;
+        flex: 1;
+    }
+
+    button {
+        margin-top: 1rem;
+        background-color: #007bff;
+        border-radius: 4px;
+        padding: 8px;
+        margin-left: 2px;
+        color: white;
+        font-size: 16px;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+    }
+
+}

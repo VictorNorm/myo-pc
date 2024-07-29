@@ -5,7 +5,7 @@ import Header from "./Header";
 export default function Root() {
 
     const location = useLocation();
-    const hideNavPaths = ['/login', "/signup"];
+    const hideNavPaths = ['/login', "/signup", "/verify-email"];
 
     return (
         <>

@@ -17,7 +17,7 @@
   margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 16px;
   background-color: #2E2E2E;
 }
 
@@ -554,6 +554,65 @@
 }
 .clients-container .clients-container__button-container {
   margin: 0.25rem;
+}
+
+.addExercisesToWorkout-container {
+  display: flex;
+  flex-direction: column;
+}
+.addExercisesToWorkout-container h1 {
+  margin-bottom: 1.5rem;
+}
+.addExercisesToWorkout-container .add-workout-container__select-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-self: flex-end;
+  width: 400px;
+}
+.addExercisesToWorkout-container .add-workout-container__select-container .add-workout-container__select-container__user,
+.addExercisesToWorkout-container .add-workout-container__select-container .add-workout-container__select-container__program {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-width: 400px;
+  margin-bottom: 2rem;
+}
+.addExercisesToWorkout-container .add-workout-container__select-container select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #2E2E2E;
+  flex: 1;
+}
+
+.add-workout-container__input-container {
+  max-width: 400px;
+}
+.add-workout-container__input-container form {
+  display: flex;
+  flex-direction: column;
+}
+.add-workout-container__input-container input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #2E2E2E;
+  flex: 1;
+}
+.add-workout-container__input-container button {
+  margin-top: 1rem;
+  background-color: #007bff;
+  border-radius: 4px;
+  padding: 8px;
+  margin-left: 2px;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
 }
 
 /*# sourceMappingURL=App.css.map */

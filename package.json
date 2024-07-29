@@ -43,6 +43,7 @@
     ]
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "cross-env": "^7.0.3"
   }

@@ -5,14 +5,18 @@ function AddWorkouts() {
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [errorUsers, setErrorUsers] = useState(null);
+
   const [programs, setPrograms] = useState([]);
   const [loadingPrograms, setLoadingPrograms] = useState(true);
   const [errorPrograms, setErrorPrograms] = useState(null);
+
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedProgramId, setSelectedProgramId] = useState('');
+
   const [workouts, setWorkouts] = useState([]);
   const [loadingWorkouts, setLoadingWorkouts] = useState(false);
   const [errorWorkouts, setErrorWorkouts] = useState(null);
+
   const [errorAddWorkouts, setErrorAddWorkouts] = useState(false);
   const [workoutName, setWorkoutName] = useState('');
 
@@ -92,7 +96,7 @@ function AddWorkouts() {
   }, [selectedProgramId]);
 
   if (loadingUsers || loadingPrograms) {
-    return <div>Loading...</div>; // You can replace this with a better loading indicator
+    return <div>Loading...</div>;
   }
 
   if (errorUsers) {
@@ -118,8 +122,8 @@ function AddWorkouts() {
   };
 
   const handleAddWorkout = async (event) => {
-    const token = localStorage.getItem("token");
     event.preventDefault()
+    const token = localStorage.getItem("token");
 
     if (!workoutName || !selectedUserId || !selectedProgramId) {
       setErrorAddWorkouts(true);

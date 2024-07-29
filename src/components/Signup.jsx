@@ -46,7 +46,7 @@ const Signup = () => {
         </div>
         <div>
           <label htmlFor="password">Password</label>
-          <input type="password" name="password" required minlength="4" className='input-primary'/>
+          <input type="password" name="password" required minLength="4" className='input-primary'/>
         </div>
         <ReCAPTCHA
           sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}

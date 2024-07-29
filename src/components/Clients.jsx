@@ -9,7 +9,6 @@ function Clients() {
   const [usersError, setUsersError] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  
   useEffect(() => {
     const fetchUsers = async () =>{
       try {
@@ -46,7 +45,7 @@ function Clients() {
           'Content-type': 'application/json',
         },
         body: JSON.stringify({
-          userId: parseInt(event.target.value)
+          userId: Number.parseInt(event.target.value, 10)
         })
       })
 

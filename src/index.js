@@ -17,6 +17,8 @@ import Training from "./components/Training";
 import MyPrograms from "./components/MyPrograms";
 import AddWorkouts from "./components/AddWorkouts";
 import Signup from "./components/Signup";
+import VerifyEmail from "./components/VerifyEmail";
+import AddExercisesToWorkout from "./components/AddExercisesToWorkout";
 
 const router = createBrowserRouter([
   {
@@ -81,6 +83,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/addExercisesToWorkout",
+        element: (
+          <RequireAuth>
+            <AddExercisesToWorkout />
+          </RequireAuth>
+        ),
+      },
+      {
         path: "/clients",
         element: (
           <RequireAuth>
@@ -95,6 +105,10 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <Signup />,
+      },
+      {
+        path: "/verify-email",
+        element: <VerifyEmail />,
       },
     ],
   },

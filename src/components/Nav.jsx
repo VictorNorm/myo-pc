@@ -35,9 +35,9 @@ function Nav() {
             <NavLink to="/exercises" style={({ isActive }) => 
               isActive ? activeStyle : undefined
             }>Exercises</NavLink>
-            <NavLink to="/spaceholder1" style={({ isActive }) => 
+            <NavLink to="/addExercisesToWorkout" style={({ isActive }) => 
               isActive ? activeStyle : undefined
-            }>Spaceholder</NavLink>
+            }>Add exercises to workout</NavLink>
             <NavLink to="/spaceholder2" style={({ isActive }) => 
               isActive ? activeStyle : undefined
             }>Spaceholder</NavLink>
