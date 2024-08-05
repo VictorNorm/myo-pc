@@ -1,0 +1,25 @@
+@import "./colors";
+
+.sidebar {
+    width: 250px;
+    background-color: $primary-bg;
+    padding: 20px;
+    border-right: 1px solid $border;
+    
+        * {
+            background-color: $primary-bg;
+        }
+
+        li, ul {
+            list-style: none;
+        }
+
+        ul {
+            padding: 0;
+        }
+
+        h3 {
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+  }

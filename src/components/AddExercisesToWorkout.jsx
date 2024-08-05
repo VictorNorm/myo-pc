@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 
 function AddExercisesToWorkout() {
+  const { workoutExercises } = useOutletContext();
+
+  const isEmpty = Object.keys(workoutExercises).length === 0;
+  const sortedMuscleGroups = isEmpty ? [] : Object.keys(workoutExercises).sort();
+
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [errorUsers, setErrorUsers] = useState(null);
@@ -19,6 +25,10 @@ function AddExercisesToWorkout() {
   const [exercises, setExercises] = useState([]);
   const [loadingExercises, setLoadingExercises] = useState(false);
   const [errorExercises, setErrorExercises] = useState(null);
+
+  const [exerciseList, setExerciseList] = useState([]);
+  const [loadingExerciseList, setLoadingExerciseList] = useState(false);
+  const [errorExerciseList, setErrorExerciseList] = useState(null);
 
   const [selectedWorkoutId, setSelectedWorkoutId] = useState('');
 
@@ -69,6 +79,31 @@ function AddExercisesToWorkout() {
     };
 
     fetchPrograms();
+  }, []);
+
+  useEffect(() => {
+    const fetchExerciseList = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/exercises`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log(data)
+        setErrorExerciseList(data.programs);
+        setLoadingExerciseList(false);
+      } catch (error) {
+        setErrorExerciseList(error);
+        setLoadingExerciseList(false);
+      }
+    };
+
+    fetchExerciseList();
   }, []);
 
   const fetchWorkouts = async (programId) => {
@@ -142,6 +177,20 @@ function AddExercisesToWorkout() {
   return (
     <div>
       <div className="addExercisesToWorkout-container">
+      {isEmpty ? (
+          <p>No exercises added yet. Drag exercises here to add them to your workout.</p>
+        ) : (
+          sortedMuscleGroups.map((group, index) => (
+            <div key={index}>
+              <h3>{group}</h3>
+              <ul>
+                {workoutExercises[group].map((exercise, exerciseIndex) => (
+                  <li key={exerciseIndex}>{exercise.name}</li>
+                ))}
+              </ul>
+            </div>
+          ))
+        )}
         <div className="add-workout-container__select-container">
           <div className="add-workout-container__select-container__user">
             <h2>Select User</h2>

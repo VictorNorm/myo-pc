@@ -1,8 +1,25 @@
 @import "./colors";
 
 #root {
-    max-width: 1000px;
-    margin: 0 auto;
+
+}
+
+.app-container {
+    display: flex;
+    min-height: 100vh;
+  }
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    // max-width: 1100px;
+    // margin-left: 2rem;
+}
+
+.App {
+    flex: 1;
+    padding: 20px;
 }
 
 * {
