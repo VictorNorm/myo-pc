@@ -73,12 +73,12 @@ function Training() {
     
             const exerciseData = exercises.map(exercise => ({
               userId: userId,
-              workoutId: parseInt(workoutId),
+              workoutId: Number.parseInt(workoutId),
               exerciseId: exercise.exercise_id,
               name: exercise.exercises.name,
-              sets: parseInt(exercise.sets),
-              reps: parseInt(exercise.reps),
-              weight: parseFloat(exercise.weight)
+              sets: Number.parseInt(exercise.sets),
+              reps: Number.parseInt(exercise.reps),
+              weight: Number.parseFloat(exercise.weight)
             }));
 
             console.log("exerciseData:", exerciseData)

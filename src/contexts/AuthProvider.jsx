@@ -12,8 +12,12 @@ const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     if (token) {
       const decodedUser = jwtDecode(token);
-      setUser(decodedUser);
-      setIsAuthenticated(true);
+      if (decodedUser.exp * 1000 > Date.now()) {
+        setUser(decodedUser);
+        setIsAuthenticated(true);
+      } else {
+        clearAuth(); // Token is expired, clear it
+      }
     }
     setLoading(false);
   }, []);

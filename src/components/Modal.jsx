@@ -9,6 +9,7 @@ const Modal = ({ show, handleClose, children }) => {
     <div className="modal-backdrop">
       <div className="modal">
         {children}
+        {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
         <button onClick={handleClose} className='cta-1'>OK</button>
       </div>
     </div>

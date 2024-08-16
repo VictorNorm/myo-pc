@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-function Sidebar({ onDragStart }) {
+function Sidebar({ onExerciseClick }) {
   const [exerciseList, setExerciseList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -73,9 +73,8 @@ function Sidebar({ onDragStart }) {
             {category.exercises.map((exercise) => (
               <li 
                 key={exercise.id}
-                draggable
-                onDragStart={(e) => onDragStart(e, exercise)}
-                data={exercise.id}
+                onClick={() => onExerciseClick(exercise)}
+                style={{ cursor: 'pointer' }}
               >
                 {exercise.name}
               </li>

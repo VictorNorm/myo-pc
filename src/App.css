@@ -569,24 +569,102 @@
 
 .addExercisesToWorkout-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 .addExercisesToWorkout-container h1 {
   margin-bottom: 1.5rem;
 }
-.addExercisesToWorkout-container .add-workout-container__select-container {
+.addExercisesToWorkout-container .addExercisesToWorkout-container__exercises {
+  flex: 1;
+  margin-right: 1rem;
+}
+.addExercisesToWorkout-container .addExercisesToWorkout-container__left {
+  flex: 1;
+}
+.addExercisesToWorkout-container .container {
+  background-color: #171717;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  align-self: flex-end;
-  width: 400px;
+}
+.addExercisesToWorkout-container .exerciseHeading {
+  font-size: 20px;
+  margin-bottom: 10px;
+  margin-left: 0;
+}
+.addExercisesToWorkout-container .itemContainer {
+  border: 1px solid white;
+  margin-bottom: 20px;
+  padding: 16px;
+  border-width: 1px;
+  border-color: #ddd;
+  border-radius: 8px;
+  background-color: #171717;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+}
+.addExercisesToWorkout-container .itemContainer .itemContainer__button {
+  width: 25px;
+  height: 23px;
+  background-color: #f81f1f;
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  border: none;
+  cursor: pointer;
+}
+.addExercisesToWorkout-container .itemText {
+  font-size: 16px;
+  font-weight: bold;
+  flex: 1;
+  margin-left: 10px;
+  background-color: #2E2E2E;
+}
+.addExercisesToWorkout-container .inputContainer {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  display: flex;
+  align-items: center;
+  background-color: #2E2E2E;
+  margin-bottom: 5px;
+}
+.addExercisesToWorkout-container .input {
+  width: 40px;
+  height: 40px;
+  border-color: #FFFFFF;
+  border-width: 1px;
+  margin-right: 8px;
+  text-align: center;
+  background-color: #373737;
+  color: #FFFFFF;
+}
+.addExercisesToWorkout-container .buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+}
+.addExercisesToWorkout-container .button {
+  background-color: #007bff;
+  border-radius: 4px;
+  padding: 8px;
+  width: 35px;
+  margin-left: 2px;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+}
+.addExercisesToWorkout-container .add-workout-container__select-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 .addExercisesToWorkout-container .add-workout-container__select-container .add-workout-container__select-container__user,
 .addExercisesToWorkout-container .add-workout-container__select-container .add-workout-container__select-container__program {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  max-width: 400px;
   margin-bottom: 2rem;
 }
 .addExercisesToWorkout-container .add-workout-container__select-container select {
