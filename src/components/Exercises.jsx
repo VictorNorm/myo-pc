@@ -4,12 +4,21 @@ function Exercises() {
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [newExercise, setNewExercise] = useState({ name: '', muscleGroup: '' });
+  const [newExercise, setNewExercise] = useState({ name: '', muscleGroupId: '' });
   const [formError, setFormError] = useState(null);
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
 
-  const muscleGroups = [
-    'Arms', 'Shoulders', 'Chest', 'Back', 'Abdominal', 'Glutes', 'Legs', 'Calves'
-  ];
+  const MUSCLE_GROUPS = {
+    ABDOMINALS: { id: 1, name: 'Abdominals' },
+    ARMS: { id: 2, name: 'Arms' },
+    BACK: { id: 3, name: 'Back' },
+    CALVES: { id: 4, name: 'Calves' },
+    CHEST: { id: 5, name: 'Chest' },
+    GLUTES: { id: 6, name: 'Glutes' },
+    LEGS: { id: 7, name: 'Legs' },
+    SHOULDERS: { id: 8, name: 'Shoulders' },
+    COMPOUND: { id: 9, name: 'Compound' },
+  };
 
   useEffect(() => {
     const fetchExercises = async () => {
@@ -35,19 +44,19 @@ function Exercises() {
     };
 
     fetchExercises();
-  }, []);
+  }, [refetchTrigger]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewExercise({
-      ...newExercise,
-      [name]: value
-    });
+    setNewExercise(prevState => ({
+      ...prevState,
+      [name]: name === 'muscleGroupId' ? Number.parseInt(value, 10) : value
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newExercise.name || !newExercise.muscleGroup) {
+    if (!newExercise.name || !newExercise.muscleGroupId) {
       setFormError('Please provide both exercise name and muscle group.');
       return;
     }
@@ -59,23 +68,38 @@ function Exercises() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(newExercise)
+        body: JSON.stringify({
+          name: newExercise.name,
+          muscleGroupId: newExercise.muscleGroupId
+        })
       });
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to add exercise');
       }
       const addedExercise = await response.json();
-      setExercises([...exercises, addedExercise]);
-      setNewExercise({ name: '', muscleGroup: '' });
+      setExercises(prevExercises => [...prevExercises, addedExercise]);
+      setNewExercise({ name: '', muscleGroupId: '' });
       setFormError(null);
+      setRefetchTrigger(prev => prev + 1);
     } catch (error) {
       console.error('Failed to add exercise:', error);
       setFormError('Failed to add exercise. Please try again later.');
     }
   };
 
+  const getMuscleGroupName = (exercise) => {
+    if (exercise.muscle_groups?.[0]?.muscle_groups) {
+      return exercise.muscle_groups[0].muscle_groups.name;
+    }
+    if (exercise.muscle_groups?.[0]) {
+      return exercise.muscle_groups[0].name;
+    }
+    return Object.values(MUSCLE_GROUPS).find(group => group.id === exercise.muscleGroupId)?.name || 'Unknown';
+  };
+
   const groupedExercises = exercises.reduce((groups, exercise) => {
-    const group = exercise.muscle_group;
+    const group = getMuscleGroupName(exercise);
     if (!groups[group]) {
       groups[group] = [];
     }
@@ -114,14 +138,16 @@ function Exercises() {
         <div className='add-exercises-form__select-container'>
           <label htmlFor="muscleGroup">Muscle Group:</label>
           <select
-            id="muscleGroup"
-            name="muscleGroup"
-            value={newExercise.muscleGroup}
+            id="muscleGroupId"
+            name="muscleGroupId"
+            value={newExercise.muscleGroupId}
             onChange={handleInputChange}
           >
             <option value="">Select a muscle group</option>
-            {muscleGroups.map((group, index) => (
-              <option key={index} value={group}>{group}</option>
+            {Object.values(MUSCLE_GROUPS)
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map((group) => (
+                <option key={group.id} value={group.id}>{group.name}</option>
             ))}
           </select>
         </div>

@@ -36,23 +36,33 @@ function Sidebar({ onExerciseClick }) {
   const categorizeAndSortData = (data) => {
     // Group exercises by muscle group
     const groupedData = data.reduce((acc, exercise) => {
-      const { muscle_group } = exercise;
-      if (!acc[muscle_group]) {
-        acc[muscle_group] = [];
+      const muscleGroup = exercise.muscle_groups[0]?.muscle_groups?.name || 'Uncategorized';
+      if (!acc[muscleGroup]) {
+        acc[muscleGroup] = [];
       }
-      acc[muscle_group].push(exercise);
+      acc[muscleGroup].push(exercise);
       return acc;
     }, {});
 
     // Sort muscle groups and exercises within each group
-    const sortedData = Object.keys(groupedData).sort().map(group => {
-      return {
+    const sortedData = Object.entries(groupedData)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([group, exercises]) => ({
         muscle_group: group,
-        exercises: groupedData[group].sort((a, b) => a.name.localeCompare(b.name))
-      };
-    });
+        exercises: exercises.sort((a, b) => a.name.localeCompare(b.name))
+      }));
 
     return sortedData;
+  };
+
+  const handleExerciseInteraction = (exercise) => {
+    onExerciseClick(exercise);
+  };
+
+  const handleKeyDown = (event, exercise) => {
+    if (event.keyCode === 13) {
+      handleExerciseInteraction(exercise);
+    }
   };
 
   if (loading) {
@@ -73,7 +83,8 @@ function Sidebar({ onExerciseClick }) {
             {category.exercises.map((exercise) => (
               <li 
                 key={exercise.id}
-                onClick={() => onExerciseClick(exercise)}
+                onClick={() => handleExerciseInteraction(exercise)}
+                onKeyDown={(e) => handleKeyDown(e, exercise)}
                 style={{ cursor: 'pointer' }}
               >
                 {exercise.name}

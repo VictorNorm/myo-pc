@@ -93,6 +93,7 @@ function AddExercisesToWorkout() {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
+        console.log(data)
         setExerciseList(data);
         setLoadingExerciseList(false);
       } catch (error) {
@@ -289,12 +290,85 @@ function AddExercisesToWorkout() {
       </Droppable>
     ));
 
-    // FORTSÄTT HÄR, loopa igenom children för att hämta ut data och skicka till en route.
-
-    const saveWorkout = (event) => {
+    const saveWorkout = async (event) => {
       event.preventDefault();
-      console.log("dick");
-      console.log(targetExercisesRef.current.children[0].children)
+      const htmlCollection = targetExercisesRef.current.children[0].children;
+
+      const collectedExerciseData = [];
+
+      for(const element of htmlCollection) {
+        const draggableId = element.dataset.rfdDraggableId;
+
+        const collection = element.children;
+        const result = {
+          id: Number.parseInt(draggableId),
+          name: null,
+          sets:  null,
+          reps: null,
+          weight: null,
+        };
+
+        for (let i = 0; i < collection.length; i++) {
+          const element = collection[i];
+          
+          if (i === 0) {
+          } else if (i === 1) {
+              result.name = element.innerHTML;
+          } else if (i >= 2 && i <= 4) {
+              if (element.children.length > 1) {
+                  const value = element.children[1].value.trim();
+                 
+                  switch(i) {
+                      case 2:
+                          result.sets = Number.parseInt(value);
+                          break;
+                      case 3:
+                          result.reps = Number.parseInt(value);
+                          break;
+                      case 4:
+                          result.weight = Number.parseInt(value);
+                          break;
+                          default:
+                            console.warn(`Unexpected index ${i} in inner loop`);
+                            break;
+                  }
+              }
+          }
+      }
+
+      collectedExerciseData.push(result);
+      
+    }
+    
+      console.log(collectedExerciseData);
+      console.log(selectedWorkoutId)
+
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/addExercisesToWorkout`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            workoutId: selectedWorkoutId,
+            exercises: collectedExerciseData
+          })
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to add exercises to workout');
+        }
+    
+        const result = await response.json();
+        console.log(result.message);
+        // Handle success (e.g., show a success message, update UI, etc.)
+      } catch (error) {
+        console.error('Error saving workout:', error);
+        // Handle error (e.g., show error message to user)
+      }
+
     }
 
     return (

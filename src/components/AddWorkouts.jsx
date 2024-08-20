@@ -162,7 +162,7 @@ function AddWorkouts() {
   };
 
   const filteredPrograms = selectedUserId
-    ? programs.filter(program => program.userId === parseInt(selectedUserId))
+    ? programs.filter(program => program.userId === Number.parseInt(selectedUserId))
     : [];
 
     return (
@@ -193,18 +193,20 @@ function AddWorkouts() {
           </div>
         </div>
         <div className='add-workout-container__input-container'>
-          <form action="post" onSubmit={handleAddWorkout}>
-            <label htmlFor="workoutName"><h2>Name</h2></label>
-            <input
-              type="text"
-              name="workoutName"
-              id="workoutName"
-              value={workoutName}
-              onChange={handleWorkoutNameChange}
-            />
-            {errorAddWorkouts && <p className='error-message'>Please fill out all fields</p>}
-            <button type="submit">Add workout</button>
-          </form>
+          <div className='add-workout-container__input-container__add-workout'>
+            <form action="post" onSubmit={handleAddWorkout}>
+              <label htmlFor="workoutName"><h2>Name</h2></label>
+              <input
+                type="text"
+                name="workoutName"
+                id="workoutName"
+                value={workoutName}
+                onChange={handleWorkoutNameChange}
+              />
+              {errorAddWorkouts && <p className='error-message'>Please fill out all fields</p>}
+              <button type="submit">Add workout</button>
+            </form>
+          </div>
         </div>
         <div className='workouts-list'>
           {loadingWorkouts && <div>Loading workouts...</div>}

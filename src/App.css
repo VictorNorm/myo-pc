@@ -381,6 +381,9 @@
   flex-direction: column;
   margin-top: 1rem;
 }
+.add-exercises-form .add-exercises-form__select-container {
+  margin-bottom: 1rem;
+}
 .add-exercises-form button {
   background-color: rgb(0, 123, 255);
   border-radius: 4px;
@@ -418,7 +421,6 @@
 }
 .add-workout-container .add-workout-container__select-container {
   display: flex;
-  justify-content: space-evenly;
 }
 .add-workout-container .add-workout-container__select-container .add-workout-container__select-container__user,
 .add-workout-container .add-workout-container__select-container .add-workout-container__select-container__program {
@@ -426,6 +428,9 @@
   flex-direction: column;
   flex: 1;
   max-width: 400px;
+}
+.add-workout-container .add-workout-container__select-container .add-workout-container__select-container__user {
+  margin-right: 2rem;
 }
 .add-workout-container .add-workout-container__select-container select {
   width: 100%;
@@ -440,13 +445,18 @@
 }
 
 .add-workout-container__input-container {
+  display: flex;
+}
+
+.add-workout-container__input-container__add-workout {
+  flex: 1;
   max-width: 400px;
 }
-.add-workout-container__input-container form {
+.add-workout-container__input-container__add-workout form {
   display: flex;
   flex-direction: column;
 }
-.add-workout-container__input-container input {
+.add-workout-container__input-container__add-workout input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
@@ -454,7 +464,7 @@
   background-color: #2E2E2E;
   flex: 1;
 }
-.add-workout-container__input-container button {
+.add-workout-container__input-container__add-workout button {
   margin-top: 1rem;
   background-color: #007bff;
   border-radius: 4px;
@@ -675,15 +685,14 @@
   background-color: #2E2E2E;
   flex: 1;
 }
-
-.add-workout-container__input-container {
+.addExercisesToWorkout-container .add-workout-container__input-container {
   max-width: 400px;
 }
-.add-workout-container__input-container form {
+.addExercisesToWorkout-container .add-workout-container__input-container form {
   display: flex;
   flex-direction: column;
 }
-.add-workout-container__input-container input {
+.addExercisesToWorkout-container .add-workout-container__input-container input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
@@ -691,7 +700,7 @@
   background-color: #2E2E2E;
   flex: 1;
 }
-.add-workout-container__input-container button {
+.addExercisesToWorkout-container .add-workout-container__input-container button {
   margin-top: 1rem;
   background-color: #007bff;
   border-radius: 4px;
