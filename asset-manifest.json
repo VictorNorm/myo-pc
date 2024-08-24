@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/static/css/main.56e12397.css",
-    "main.js": "/static/js/main.2f3a8544.js",
-    "index.html": "/index.html",
-    "main.56e12397.css.map": "/static/css/main.56e12397.css.map",
-    "main.2f3a8544.js.map": "/static/js/main.2f3a8544.js.map"
+    "main.css": "/myo-pc/static/css/main.56e12397.css",
+    "main.js": "/myo-pc/static/js/main.f1e764db.js",
+    "index.html": "/myo-pc/index.html",
+    "main.56e12397.css.map": "/myo-pc/static/css/main.56e12397.css.map",
+    "main.f1e764db.js.map": "/myo-pc/static/js/main.f1e764db.js.map"
   },
   "entrypoints": [
     "static/css/main.56e12397.css",
-    "static/js/main.2f3a8544.js"
+    "static/js/main.f1e764db.js"
   ]
 }
