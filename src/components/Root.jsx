@@ -10,26 +10,6 @@ export default function Root() {
     const [workoutExercises, setWorkoutExercises] = useState({});
     const [targetExercises, setTargetExercises] = useState([]);
 
-    const handleDragStart = (e, exercise) => {
-      e.dataTransfer.setData('application/json', JSON.stringify(exercise));
-    };
-
-    const handleDragOver = (e) => {
-      e.preventDefault();
-    };
-
-    const handleDrop = (e) => {
-      e.preventDefault();
-      const droppedExercise = JSON.parse(e.dataTransfer.getData('application/json'));
-      setWorkoutExercises((prevExercises) => {
-        const group = droppedExercise.muscle_group;
-        return {
-          ...prevExercises,
-          [group]: [...(prevExercises[group] || []), droppedExercise]
-        };
-      });
-    };
-
     const handleExerciseClick = (exercise) => {
       setTargetExercises(prevExercises => [
         ...prevExercises,
@@ -48,8 +28,7 @@ export default function Root() {
       <>
         <div className="app-container">
           {location.pathname === '/addExercisesToWorkout' && (
-            <Sidebar 
-              onDragStart={handleDragStart} 
+            <Sidebar
               onExerciseClick={handleExerciseClick}
             />
           )}
@@ -58,8 +37,6 @@ export default function Root() {
             {!hideNavPaths.includes(location.pathname) && <Nav />}
             <div 
               className="App"
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
             >
               <Outlet context={{ workoutExercises, targetExercises, setTargetExercises }} />
             </div>
