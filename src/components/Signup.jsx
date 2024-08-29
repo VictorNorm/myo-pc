@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import ReCAPTCHA from 'react-google-recaptcha';
+// import ReCAPTCHA from 'react-google-recaptcha';
 
 const Signup = () => {
-  const [recaptchaToken, setRecaptchaToken] = useState(null);
+  // const [recaptchaToken, setRecaptchaToken] = useState(null);
 
 //   console.log(process.env.REACT_APP_RECAPTCHA_SITE_KEY)
 
@@ -21,7 +21,7 @@ const Signup = () => {
         lastName: data.get('lastName'),
         email: data.get('email'),
         password: data.get('password'),
-        recaptchaToken
+        // recaptchaToken
       })
     });
 
@@ -48,11 +48,11 @@ const Signup = () => {
           <label htmlFor="password">Password</label>
           <input type="password" name="password" required minLength="4" className='input-primary'/>
         </div>
-        <ReCAPTCHA
+        {/* <ReCAPTCHA
           sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
           onChange={(token) => setRecaptchaToken(token)}
           className='recaptcha'
-        />
+        /> */}
         <button type="submit" className='cta-1'>Sign Up</button>
       </form>
     </div>
