@@ -15,7 +15,7 @@ function Programs() {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`${process.env.REACT_APP_API_URL}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/programs`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
