@@ -15,7 +15,7 @@ function Header() {
     <>
       <div className='header-top'>
           {isAuthenticated && (
-            <button onClick={handleLogout} className="logout-button">
+            <button onClick={handleLogout} className="logout-button" type='button'>
               Logout
             </button>
           )}
