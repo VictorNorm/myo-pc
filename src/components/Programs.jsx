@@ -4,7 +4,12 @@ import { Link } from 'react-router-dom';
 function Programs() {
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
-  // const [errorPrograms, setErrorPrograms] = useState(null);
+
+  const [programs, setPrograms] = useState([]);
+  const [loadingPrograms, setLoadingPrograms] = useState(true);
+  const [errorPrograms, setErrorPrograms] = useState(null);
+
+
   const [errorUsers, setErrorUsers] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -15,7 +20,7 @@ function Programs() {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/programs`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -24,7 +29,7 @@ function Programs() {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log(data)
+        // console.log(data)
         setUsers(data);
         setLoadingUsers(false);
       } catch (error) {
@@ -35,6 +40,34 @@ function Programs() {
 
     fetchUsers();
   }, []);
+
+  const fetchPrograms = async (userId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/programs/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+      const data = await response.json();
+      setPrograms(data.userPrograms || []);
+      console.log("PROGRAMS:", data.userPrograms);
+      setLoadingPrograms(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    console.log(programs)
+  })
+
+  const handleUserChange = (event) => {
+    const selectedUserId = event.target.value;
+    if (selectedUserId) {
+      fetchPrograms(selectedUserId);
+    }
+  }
 
   const handleCreateProgram = async (event) => {
     event.preventDefault();
@@ -77,7 +110,19 @@ function Programs() {
 
   return (
     <>
-    <h1>Create program</h1>
+      <h1>Create program</h1>
+      <div className='program-list-container'>
+          {errorPrograms && <div>Error loading programs: {errorPrograms}</div>}
+           {programs.length > 0 && (
+            <div>
+              <ul>
+                {programs.map(program => (
+                  <li key={program.id}>{program.name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+      </div>
       <div className='create-program-container'>
         <h2>Create a new program</h2>
         <form onSubmit={handleCreateProgram}>
@@ -88,7 +133,7 @@ function Programs() {
           {errorMessage && <div className='error-message'>{errorMessage}</div>}
           <div className='select-container'>
             <label htmlFor="user">User</label>
-            <select name="user" id="user" ref={userSelectRef}>
+            <select name="user" id="user" ref={userSelectRef} onChange={handleUserChange}>
               {users.map(user => (
                 <option key={user.id} value={user.id}>
                   Name: {user.firstName} {user.lastName}, Username: {user.username}
