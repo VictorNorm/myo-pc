@@ -16,7 +16,7 @@ function Workouts() {
     const fetchWorkouts = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:3000/programs/${programId}/workouts`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/programs/${programId}/workouts`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
