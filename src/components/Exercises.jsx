@@ -14,10 +14,10 @@ function Exercises() {
     BACK: { id: 3, name: 'Back' },
     CALVES: { id: 4, name: 'Calves' },
     CHEST: { id: 5, name: 'Chest' },
-    GLUTES: { id: 6, name: 'Glutes' },
-    LEGS: { id: 7, name: 'Legs' },
-    SHOULDERS: { id: 8, name: 'Shoulders' },
-    COMPOUND: { id: 9, name: 'Compound' },
+    COMPOUND: { id: 6, name: 'Compound' },
+    GLUTES: { id: 7, name: 'Glutes' },
+    LEGS: { id: 8, name: 'Legs' },
+    SHOULDERS: { id: 9, name: 'Shoulders' },
   };
 
   useEffect(() => {
