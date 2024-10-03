@@ -166,63 +166,68 @@ function AddWorkouts() {
     : [];
 
     return (
-      <div className='add-workout-container'>
+      <>
         <h1>Add workout</h1>
-        <div className='add-workout-container__select-container'>
-          <div className='add-workout-container__select-container__user'>
-            <h2>Select User</h2>
-            <select onChange={handleUserChange} value={selectedUserId || ''}>
-              <option value="" disabled>Select a user</option>
-              {users.map(user => (
-                <option key={user.id} value={user.id}>
-                  {user.firstName} {user.lastName} ({user.username})
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className='add-workout-container__select-container__program'>
-            <h2>Select Program</h2>
-            <select onChange={handleProgramChange} value={selectedProgramId} disabled={!selectedUserId}>
-              <option value="" disabled>Select a program</option>
-              {filteredPrograms.map(program => (
-                <option key={program.id} value={program.id}>
-                  {program.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className='add-workout-container__input-container'>
-          <div className='add-workout-container__input-container__add-workout'>
-            <form action="post" onSubmit={handleAddWorkout}>
-              <label htmlFor="workoutName"><h2>Name</h2></label>
-              <input
-                type="text"
-                name="workoutName"
-                id="workoutName"
-                value={workoutName}
-                onChange={handleWorkoutNameChange}
-              />
-              {errorAddWorkouts && <p className='error-message'>Please fill out all fields</p>}
-              <button type="submit">Add workout</button>
-            </form>
-          </div>
-        </div>
-        <div className='workouts-list'>
-          {loadingWorkouts && <div>Loading workouts...</div>}
-          {errorWorkouts && <div>Error loading workouts: {errorWorkouts.message}</div>}
-          {!loadingWorkouts && !errorWorkouts && (
-            <div>
-              <h2>Workouts</h2>
-              {workouts.map((workout) => (
-                <Link to={`/training?id=${workout.id}`} key={workout.id}>
-                  <div className='workouts-container__workout'>{workout.name}</div>
-                </Link>
-              ))}
+        <div className='add-workout-container'>
+          <div className='add-workout-container__select-container left-center'>
+            <div className='add-workout-container__select-container__user'>
+              <h2>Select User</h2>
+              <select onChange={handleUserChange} value={selectedUserId || ''}>
+                <option value="" disabled>Select a user</option>
+                {users.map(user => (
+                  <option key={user.id} value={user.id}>
+                    {user.firstName} {user.lastName} ({user.username})
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
+            <div className='add-workout-container__select-container__program'>
+              <h2>Select Program</h2>
+              <select onChange={handleProgramChange} value={selectedProgramId} disabled={!selectedUserId}>
+                <option value="" disabled>Select a program</option>
+                {filteredPrograms.map(program => (
+                  <option key={program.id} value={program.id}>
+                    {program.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className='add-workout-container__input-container right-center'>
+            <div className='add-workout-container__input-container__add-workout'>
+              <form action="post" onSubmit={handleAddWorkout}>
+                <div>
+                <label htmlFor="workoutName" className='form-content'><h2>Name</h2></label>
+                <input
+                  type="text"
+                  name="workoutName"
+                  id="workoutName"
+                  value={workoutName}
+                  onChange={handleWorkoutNameChange}
+                  className='form-content'
+                />
+                {errorAddWorkouts && <p className='error-message'>Please fill out all fields</p>}
+                </div>
+                <button type="submit">Add workout</button>
+              </form>
+            </div>
+          </div>
+          <div className='workouts-list left-center'>
+            {loadingWorkouts && <div>Loading workouts...</div>}
+            {errorWorkouts && <div>Error loading workouts: {errorWorkouts.message}</div>}
+            {!loadingWorkouts && !errorWorkouts && (
+              <div>
+                <h2>Workouts</h2>
+                {workouts.map((workout) => (
+                  <Link to={`/training?id=${workout.id}`} key={workout.id}>
+                    <div className='workouts-container__workout'>{workout.name}</div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </>
     );
 }
 

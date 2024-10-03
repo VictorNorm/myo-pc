@@ -2,111 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import './App.css';
-import ErrorPage from './components/ErrorPage';
-import Root from './components/Root';
-import Login from './components/Login';
-import HomePage from './components/HomePage';
 import { AuthProvider } from './contexts/AuthProvider';
-import { HashRouter, Routes, Route } from 'react-router-dom';
-import Programs from './components/Programs';
-import Exercises from './components/Exercises';
-import Clients from './components/Clients';
-import RequireAuth from './components/RequireAuth';
-import Workouts from './components/Workouts';
-import Training from './components/Training';
-import MyPrograms from './components/MyPrograms';
-import AddWorkouts from './components/AddWorkouts';
-import Signup from './components/Signup';
-import VerifyEmail from './components/VerifyEmail';
-import AddExercisesToWorkout from './components/AddExercisesToWorkout';
+import { HashRouter } from 'react-router-dom';
+import App from './App'; // Move your routes to a separate App component
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <AuthProvider>
             <HashRouter>
-                <Routes>
-                    <Route
-                        path='/'
-                        element={<Root />}
-                        errorElement={<ErrorPage />}
-                    >
-                        <Route
-                            index
-                            element={
-                                <RequireAuth>
-                                    <HomePage />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route
-                            path='programs'
-                            element={
-                                <RequireAuth>
-                                    <Programs />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route
-                            path='myprograms'
-                            element={
-                                <RequireAuth>
-                                    <MyPrograms />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route
-                            path='clientprograms'
-                            element={
-                                <RequireAuth>
-                                    <AddWorkouts />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route
-                            path='training'
-                            element={
-                                <RequireAuth>
-                                    <Training />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route
-                            path='workouts'
-                            element={
-                                <RequireAuth>
-                                    <Workouts />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route
-                            path='exercises'
-                            element={
-                                <RequireAuth>
-                                    <Exercises />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route
-                            path='addExercisesToWorkout'
-                            element={
-                                <RequireAuth>
-                                    <AddExercisesToWorkout />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route
-                            path='clients'
-                            element={
-                                <RequireAuth>
-                                    <Clients />
-                                </RequireAuth>
-                            }
-                        />
-                        <Route path='login' element={<Login />} />
-                        <Route path='signup' element={<Signup />} />
-                        <Route path='verify-email' element={<VerifyEmail />} />
-                    </Route>
-                </Routes>
+                <App />
             </HashRouter>
         </AuthProvider>
     </React.StrictMode>,

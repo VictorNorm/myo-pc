@@ -1,26 +1,38 @@
 @import "./colors";
 
 .add-workout-container {
-    display: flex;
-    flex-direction: column;
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr 200px;
+    grid-template-rows: 1fr 1fr;
+    place-items: center;
+
+
+    .left-center {
+        width: 100%;
+        grid-column: 2 / 3; /* Spans from the second to the third column */
+    }
+    .right-center {
+        grid-column: 3 / 4;
+    }
+
 
     h1 {
         margin-bottom: 1.5rem;
     }
 
     .add-workout-container__select-container {
-        display: flex;
+        // display: flex;
 
+        .add-workout-container__select-container__user {
+            margin-bottom: 1rem;
+        }
         .add-workout-container__select-container__user,
         .add-workout-container__select-container__program {
             display: flex;
             flex-direction: column;
             flex: 1;
-            max-width: 400px;
-        }
-
-        .add-workout-container__select-container__user {
-            margin-right: 2rem;
+            // max-width: 400px;
         }
 
         select {
@@ -40,7 +52,7 @@
 
 .add-workout-container__input-container {
     display: flex;
-
+    width: 100%;
 }
 
 .add-workout-container__input-container__add-workout {
@@ -49,8 +61,14 @@
     max-width: 400px;
 
     form {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-rows: auto;
+        position: relative;
+        min-height: 100%; /* Ensure the container takes full height */
+    }
+    .form-content {
+        grid-row: 1 / 2;
+        /* Add any additional styling for your form content */
     }
 
     input {
@@ -63,16 +81,18 @@
     }
 
     button {
-        margin-top: 1rem;
+        grid-row: 3 / 4;
+        // margin-top: 3.1rem;
         background-color: #007bff;
         border-radius: 4px;
         padding: 8px;
-        margin-left: 2px;
         color: white;
         font-size: 16px;
         text-align: center;
         border: none;
         cursor: pointer;
+        width: 100%;
     }
 
 }
+
