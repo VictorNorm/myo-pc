@@ -6,7 +6,7 @@ import Sidebar from "./Sidebar";
 
 export default function Root() {
     const location = useLocation();
-    const hideNavPaths = ['/login', "/signup", "/verify-email"];
+    const hideNavPaths = ['/login', "/signup", "/verify-email", "/reset-password"];
     const [workoutExercises, setWorkoutExercises] = useState({});
     const [targetExercises, setTargetExercises] = useState([]);
 

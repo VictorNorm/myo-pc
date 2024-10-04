@@ -23,18 +23,23 @@ function ResetPassword() {
       return;
     }
 
+    if(password.length < 4) {
+      setMessage('Password must be at least 4 characters.')
+      return;
+    }
+
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/reset-password`, { token, newPassword: password });
       setMessage(response.data.message);
       // Optionally, redirect to login page after successful reset
-      // window.location.href = '/login';
+      window.location.href = '/login';
     } catch (error) {
       setMessage(error.response?.data?.error || 'An error occurred');
     }
   };
 
   return (
-    <div>
+    <div className='reset-password-form'>
       <h2>Reset Password</h2>
       <form onSubmit={handleSubmit}>
         <div>

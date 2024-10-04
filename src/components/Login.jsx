@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthProvider';
 function Login() {
   const [username, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
   const {login} = useAuth();
 
@@ -25,6 +26,8 @@ function Login() {
       login(data.token);
       navigate('/');
     } else {
+      // setErrorMessage();
+      setErrorMessage('Authentication failed.')
       console.error('Login failed');
     }
   };
@@ -54,6 +57,7 @@ function Login() {
           />
         </div>
         <button type="submit">Login</button>
+        { errorMessage && (<p>{errorMessage}</p>)}
       </form>
     </div>
   );
