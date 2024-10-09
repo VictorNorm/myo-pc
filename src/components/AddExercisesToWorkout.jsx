@@ -345,7 +345,7 @@ function AddExercisesToWorkout() {
 
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/addExercisesToWorkout`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/upsertExercisesToWorkout`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
