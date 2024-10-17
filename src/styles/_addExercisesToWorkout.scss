@@ -161,5 +161,42 @@
   
   }
 
+  .itemContainer.superset {
+    border: 2px solid blue;
+  }
+  
+  .itemContainer.selecting {
+    border: 2px dashed green;
+  }
+  
+  .supersetButton {
+    margin-top: 10px;
+  }
+  
+  .supersetButton.active {
+    background-color: blue;
+    color: white;
+  }
+  
+  .supersetButton.selecting {
+    background-color: green;
+    color: white;
+  }
+
+  .supersetButton.active {
+    background-color: blue;
+    color: white;
+  }
+  
+  .supersetButton.selecting {
+    background-color: green;
+    color: white;
+  }
+  
+  .supersetButton.pairing {
+    background-color: orange;
+    color: white;
+  }
+
 }
 

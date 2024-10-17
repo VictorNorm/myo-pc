@@ -729,6 +729,35 @@
   border: none;
   cursor: pointer;
 }
+.addExercisesToWorkout-container .itemContainer.superset {
+  border: 2px solid blue;
+}
+.addExercisesToWorkout-container .itemContainer.selecting {
+  border: 2px dashed green;
+}
+.addExercisesToWorkout-container .supersetButton {
+  margin-top: 10px;
+}
+.addExercisesToWorkout-container .supersetButton.active {
+  background-color: blue;
+  color: white;
+}
+.addExercisesToWorkout-container .supersetButton.selecting {
+  background-color: green;
+  color: white;
+}
+.addExercisesToWorkout-container .supersetButton.active {
+  background-color: blue;
+  color: white;
+}
+.addExercisesToWorkout-container .supersetButton.selecting {
+  background-color: green;
+  color: white;
+}
+.addExercisesToWorkout-container .supersetButton.pairing {
+  background-color: orange;
+  color: white;
+}
 
 .sidebar {
   width: 250px;
