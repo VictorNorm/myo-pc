@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo, useRef } from 'react';
+import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
@@ -142,16 +142,15 @@ function AddExercisesToWorkout() {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      const updatedExercises = data.map(exercise => {
-        return {
-          ...exercise,
-          exercise_id: exercise.id || exercise.exercise_id || Date.now().toString(),
-          name: exercise.name || (exercise.exercises?.name) || 'Unknown Exercise',
-          sets: exercise.sets || 0,
-          reps: exercise.reps || 0,
-          weight: exercise.weight || 0
-        };
-      });
+      const updatedExercises = data.map(exercise => ({
+        ...exercise,
+        exercise_id: exercise.id || exercise.exercise_id || Date.now().toString(),
+        name: exercise.name || (exercise.exercises?.name) || 'Unknown Exercise',
+        sets: exercise.sets || 0,
+        reps: exercise.reps || 0,
+        weight: exercise.weight || 0,
+        superset_with: exercise.superset_with
+      }));
       const newSupersets = {};
       updatedExercises.forEach(exercise => {
         if (exercise.superset_with) {
@@ -210,38 +209,131 @@ function AddExercisesToWorkout() {
     );
   };
 
-  const handleSuperset = (exerciseId) => {
-    if (supersets[exerciseId]) {
-      // Remove the superset
-      const pairedExerciseId = supersets[exerciseId];
-      setSupersets(prev => {
-        const newSupersets = { ...prev };
-        delete newSupersets[exerciseId];
-        delete newSupersets[pairedExerciseId];
-        return newSupersets;
-      });
+  // const handleSuperset = useCallback((exerciseId) => {
+  //   setTargetExercises(prevExercises => {
+  //     const updatedExercises = [...prevExercises];
+  //     const exerciseIndex = updatedExercises.findIndex(e => e.exercise_id.toString() === exerciseId);
+      
+  //     if (exerciseIndex === -1) {
+  //       console.error(`Exercise with id ${exerciseId} not found`);
+  //       return prevExercises; // Return the previous state unchanged
+  //     }
+  
+  //     const exercise = updatedExercises[exerciseIndex];
+  
+  //     if (exercise.superset_with) {
+  //       // Remove the superset
+  //       const pairedExerciseIndex = updatedExercises.findIndex(e => e.exercise_id.toString() === exercise.superset_with);
+  //       if (pairedExerciseIndex !== -1) {
+  //         updatedExercises[pairedExerciseIndex] = { ...updatedExercises[pairedExerciseIndex], superset_with: null };
+  //       }
+  //       updatedExercises[exerciseIndex] = { ...exercise, superset_with: null };
+  //     } else if (selectingSuperset === exerciseId) {
+  //       // Cancel selection
+  //       // Do nothing here, we'll update selectingSuperset outside of this function
+  //     } else if (selectingSuperset) {
+  //       // Create new superset
+  //       const selectingIndex = updatedExercises.findIndex(e => e.exercise_id.toString() === selectingSuperset);
+  //       if (selectingIndex !== -1) {
+  //         updatedExercises[selectingIndex] = { ...updatedExercises[selectingIndex], superset_with: exerciseId };
+  //         updatedExercises[exerciseIndex] = { ...exercise, superset_with: selectingSuperset };
+  //       } else {
+  //         console.error(`Exercise with id ${selectingSuperset} not found`);
+  //       }
+  //     }
+  
+  //     return updatedExercises;
+  //   });
+  
+  //   setSupersets(prevSupersets => {
+  //     const newSupersets = { ...prevSupersets };
+  //     if (newSupersets[exerciseId]) {
+  //       delete newSupersets[exerciseId];
+  //     } else if (selectingSuperset) {
+  //       newSupersets[selectingSuperset] = exerciseId;
+  //       newSupersets[exerciseId] = selectingSuperset;
+  //     }
+  //     return newSupersets;
+  //   });
+  
+  //   setSelectingSuperset(prev => {
+  //     if (prev === exerciseId) {
+  //       return null; // Cancel selection
+  //     } else if (!prev) {
+  //       return exerciseId; // Start selecting
+  //     } else {
+  //       return null; // Finish selecting (create superset)
+  //     }
+  //   });
+  // }, [selectingSuperset, setTargetExercises, setSupersets, setSelectingSuperset]);
+
+  const handleAddToSuperset = (exerciseId) => {
+    setSelectingSuperset(exerciseId);
+  };
+  
+  const handleRemoveFromSuperset = (exerciseId) => {
+    setTargetExercises(prevExercises => {
+      const updatedExercises = [...prevExercises];
+      const exercise = updatedExercises.find(e => e.exercise_id.toString() === exerciseId);
+      
+      if (!exercise) return prevExercises;
+      
+      const partnerId = exercise.superset_with;
+      const partner = updatedExercises.find(e => e.exercise_id.toString() === partnerId);
+      
+      if (partner) {
+        partner.superset_with = null;
+      }
+      exercise.superset_with = null;
+      
+      return updatedExercises;
+    });
+  
+    setSupersets(prev => {
+      const next = { ...prev };
+      const partnerId = next[exerciseId];
+      delete next[exerciseId];
+      delete next[partnerId];
+      return next;
+    });
+  };
+  
+  const handleCompleteSuperset = (exerciseId) => {
+    if (!selectingSuperset || selectingSuperset === exerciseId) {
       setSelectingSuperset(null);
-    } else if (selectingSuperset === exerciseId) {
-      // Cancel selection
-      setSelectingSuperset(null);
-    } else if (selectingSuperset) {
-      // Create new superset
-      setSupersets(prev => ({
-        ...prev,
-        [selectingSuperset]: exerciseId,
-        [exerciseId]: selectingSuperset
-      }));
-      setSelectingSuperset(null);
-    } else {
-      // Start selecting
-      setSelectingSuperset(exerciseId);
+      return;
     }
+  
+    setTargetExercises(prevExercises => {
+      const updatedExercises = [...prevExercises];
+      const firstExercise = updatedExercises.find(e => e.exercise_id.toString() === selectingSuperset);
+      const secondExercise = updatedExercises.find(e => e.exercise_id.toString() === exerciseId);
+      
+      if (firstExercise && secondExercise) {
+        firstExercise.superset_with = exerciseId;
+        secondExercise.superset_with = selectingSuperset;
+      }
+      
+      return updatedExercises;
+    });
+  
+    setSupersets(prev => ({
+      ...prev,
+      [exerciseId]: selectingSuperset,
+      [selectingSuperset]: exerciseId
+    }));
+  
+    setSelectingSuperset(null);
   };
 
 
   const findExercise = (id) => {
     if (!id) return null;
-    const foundExercise = targetExercises.find((exercise) => exercise.exercise_id === id);
+    // Convert the incoming id to string for comparison
+    const stringId = id.toString();
+    const foundExercise = targetExercises.find((exercise) => 
+      exercise.exercise_id.toString() === stringId
+    );
     if (!foundExercise) {
       return null;
     }
@@ -249,25 +341,85 @@ function AddExercisesToWorkout() {
   };
 
   const renderItem = (item, index) => {
+    // Validation check
     if (!item || typeof item.exercise_id === 'undefined') {
       console.error("Invalid exercise item:", item);
       return null;
     }
-
-    // console.log("ITEM: ", item)
-
   
-    // const exerciseName = item.name || (item.exercises?.name) || 'Unknown Exercise';
+    // Extract item properties
     const exerciseId = item.exercise_id.toString();
-    const isInSuperset = supersets[exerciseId];
+    const exerciseName = item.exercises ? item.exercises.name : item.name || 'Unknown Exercise';
+    const isInSuperset = Boolean(item.superset_with);
     const isSelectingThis = selectingSuperset === exerciseId;
     const isSelectingOther = selectingSuperset && selectingSuperset !== exerciseId;
-
-    let supersetButtonText = 'Add to Superset';
-    if (isInSuperset) supersetButtonText = 'Remove from Superset';
-    else if (isSelectingThis) supersetButtonText = 'Cancel Selection';
-    else if (isSelectingOther) supersetButtonText = 'Pair with Selected';
-
+  
+    // Render the exercise input controls
+    const renderInputControl = (field, label) => (
+      <div className="inputContainer">
+        <span className="itemText">{label}:</span>
+        <input
+          className="input"
+          value={item[field] || 0}
+          type="number"
+          readOnly
+        />
+        <div className="buttonContainer">
+          <button 
+            className="button" 
+            type="button" 
+            onClick={() => handleDecrement(item.exercise_id, field)}
+          >
+            -
+          </button>
+          <button 
+            className="button" 
+            type="button" 
+            onClick={() => handleIncrement(item.exercise_id, field)}
+          >
+            +
+          </button>
+        </div>
+      </div>
+    );
+  
+    // Render the appropriate superset button
+    const renderSupersetButton = () => {
+      if (isInSuperset) {
+        return (
+          <button
+            onClick={() => handleRemoveFromSuperset(exerciseId)}
+            className="supersetButton active"
+            type="button"
+          >
+            Remove from Superset
+          </button>
+        );
+      }
+  
+      if (selectingSuperset) {
+        return (
+          <button
+            onClick={() => handleCompleteSuperset(exerciseId)}
+            className={`supersetButton ${isSelectingThis ? 'selecting' : 'pairing'}`}
+            type="button"
+          >
+            {isSelectingThis ? 'Cancel Selection' : 'Pair with Selected'}
+          </button>
+        );
+      }
+  
+      return (
+        <button
+          onClick={() => handleAddToSuperset(exerciseId)}
+          className="supersetButton"
+          type="button"
+        >
+          Add to Superset
+        </button>
+      );
+    };
+  
     return (
       <Draggable key={exerciseId} draggableId={exerciseId} index={index}>
         {(provided) => (
@@ -277,62 +429,30 @@ function AddExercisesToWorkout() {
             {...provided.dragHandleProps}
             className={`itemContainer ${isInSuperset ? 'superset' : ''} ${isSelectingThis ? 'selecting' : ''}`}
           >
+            {/* Remove exercise button */}
             <button
               onClick={() => handleRemoveExercise(item.exercise_id)}
               className="itemContainer__button"
-            type="button">
+              type="button"
+            >
               X
             </button>
-            <h3 className={"exerciseHeading"}>{item.exercises ? item.exercises.name : item.name || 'Unknown Exercise'}</h3>
-            {isInSuperset && (
-            <p>Supersetted with: {findExercise(item.superset_with)}</p>
+  
+            {/* Exercise name */}
+            <h3 className="exerciseHeading">{exerciseName}</h3>
+  
+            {/* Show superset partner if in a superset */}
+            {isInSuperset && item.superset_with && (
+              <p>Supersetted with: {findExercise(item.superset_with)}</p>
             )}
-            <div className={"inputContainer"}>
-              <span className={"itemText"}>Sets:</span>
-              <input
-                className={"input"}
-                value={item.sets || 0}
-                type="number"
-                readOnly
-              />
-              <div className={"buttonContainer"}>
-                <button className={"button"} type="button" onClick={() => handleDecrement(item.exercise_id, 'sets')}>-</button>
-                <button className={"button"} type="button" onClick={() => handleIncrement(item.exercise_id, 'sets')}>+</button>
-              </div>
-            </div>
-            <div className={"inputContainer"}>
-              <span className={"itemText"}>Reps:</span>
-              <input
-                className={"input"}
-                value={item.reps || 0}
-                type="number"
-                readOnly
-              />
-              <div className={"buttonContainer"}>
-                <button className={"button"} type="button" onClick={() => handleDecrement(item.exercise_id, 'reps')}>-</button>
-                <button className={"button"} type="button" onClick={() => handleIncrement(item.exercise_id, 'reps')}>+</button>
-              </div>
-            </div>
-            <div className={"inputContainer"}>
-              <span className={"itemText"}>Weight (kg):</span>
-              <input
-                className={"input"}
-                value={item.weight || 0}
-                type="number"
-                readOnly
-              />
-              <div className={"buttonContainer"}>
-                <button className={"button"} type="button" onClick={() => handleDecrement(item.exercise_id, 'weight')}>-</button>
-                <button className={"button"} type="button" onClick={() => handleIncrement(item.exercise_id, 'weight')}>+</button>
-              </div>
-            </div>
-            <button
-            onClick={() => handleSuperset(exerciseId)}
-            className={`supersetButton ${isInSuperset ? 'active' : ''} ${isSelectingThis ? 'selecting' : ''} ${isSelectingOther ? 'pairing' : ''}`}
-            type="button"
-          >
-            {supersetButtonText}
-          </button>
+  
+            {/* Exercise controls */}
+            {renderInputControl('sets', 'Sets')}
+            {renderInputControl('reps', 'Reps')}
+            {renderInputControl('weight', 'Weight (kg)')}
+  
+            {/* Superset controls */}
+            {renderSupersetButton()}
           </div>
         )}
       </Draggable>
@@ -419,8 +539,8 @@ function AddExercisesToWorkout() {
       
     }
     
-      console.log(collectedExerciseData);
-      console.log(collectedSupersets);
+      console.log("collected exerciseData:",collectedExerciseData);
+      console.log("collected supersets:", collectedSupersets);
       console.log(selectedWorkoutId);
 
       try {
