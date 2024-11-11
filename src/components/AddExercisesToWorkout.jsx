@@ -96,7 +96,7 @@ function AddExercisesToWorkout() {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log(data)
+        // console.log(data)
         setExerciseList(data);
         setLoadingExerciseList(false);
       } catch (error) {
@@ -131,40 +131,65 @@ function AddExercisesToWorkout() {
 
   const fetchExercises = async (workoutId) => {
     setLoadingExercises(true);
+
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/workouts/${workoutId}/exercises`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      // Add timestamp to URL to prevent caching
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/workouts/${workoutId}/exercises`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
         }
-      });
+      );
+      
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+      
       const data = await response.json();
-      const updatedExercises = data.map(exercise => ({
-        ...exercise,
-        exercise_id: exercise.id || exercise.exercise_id || Date.now().toString(),
-        name: exercise.name || (exercise.exercises?.name) || 'Unknown Exercise',
-        sets: exercise.sets || 0,
-        reps: exercise.reps || 0,
-        weight: exercise.weight || 0,
-        superset_with: exercise.superset_with
-      }));
+      
+      if (!Array.isArray(data)) {
+        console.log('No exercises found for this workout');
+        setTargetExercises([]);
+        setSupersets({});
+        setLoadingExercises(false);
+        return;
+      }
+  
+      const updatedExercises = data.map(exercise => {
+        
+        const transformedExercise = {
+          ...exercise,
+          exercise_id: exercise.exercise_id || exercise.id,
+          name: exercise.exercises?.name || exercise.name || 'Unknown Exercise',
+          sets: exercise.sets,
+          reps: exercise.reps,
+          weight: exercise.weight,
+          superset_with: exercise.superset_with
+        };
+        
+        return transformedExercise;
+      });
+  
+      // Create supersets mapping
       const newSupersets = {};
       updatedExercises.forEach(exercise => {
         if (exercise.superset_with) {
           newSupersets[exercise.exercise_id] = exercise.superset_with;
         }
       });
+  
       setSupersets(newSupersets);
       setTargetExercises(updatedExercises);
-      setLoadingExercises(false);
-      console.log(data);
-      console.log(updatedExercises);
     } catch (error) {
       console.error("Error fetching exercises:", error);
       setErrorExercises(error);
+    } finally {
       setLoadingExercises(false);
     }
   };
@@ -208,64 +233,6 @@ function AddExercisesToWorkout() {
       prevExercises.filter(exercise => exercise.exercise_id !== exerciseId)
     );
   };
-
-  // const handleSuperset = useCallback((exerciseId) => {
-  //   setTargetExercises(prevExercises => {
-  //     const updatedExercises = [...prevExercises];
-  //     const exerciseIndex = updatedExercises.findIndex(e => e.exercise_id.toString() === exerciseId);
-      
-  //     if (exerciseIndex === -1) {
-  //       console.error(`Exercise with id ${exerciseId} not found`);
-  //       return prevExercises; // Return the previous state unchanged
-  //     }
-  
-  //     const exercise = updatedExercises[exerciseIndex];
-  
-  //     if (exercise.superset_with) {
-  //       // Remove the superset
-  //       const pairedExerciseIndex = updatedExercises.findIndex(e => e.exercise_id.toString() === exercise.superset_with);
-  //       if (pairedExerciseIndex !== -1) {
-  //         updatedExercises[pairedExerciseIndex] = { ...updatedExercises[pairedExerciseIndex], superset_with: null };
-  //       }
-  //       updatedExercises[exerciseIndex] = { ...exercise, superset_with: null };
-  //     } else if (selectingSuperset === exerciseId) {
-  //       // Cancel selection
-  //       // Do nothing here, we'll update selectingSuperset outside of this function
-  //     } else if (selectingSuperset) {
-  //       // Create new superset
-  //       const selectingIndex = updatedExercises.findIndex(e => e.exercise_id.toString() === selectingSuperset);
-  //       if (selectingIndex !== -1) {
-  //         updatedExercises[selectingIndex] = { ...updatedExercises[selectingIndex], superset_with: exerciseId };
-  //         updatedExercises[exerciseIndex] = { ...exercise, superset_with: selectingSuperset };
-  //       } else {
-  //         console.error(`Exercise with id ${selectingSuperset} not found`);
-  //       }
-  //     }
-  
-  //     return updatedExercises;
-  //   });
-  
-  //   setSupersets(prevSupersets => {
-  //     const newSupersets = { ...prevSupersets };
-  //     if (newSupersets[exerciseId]) {
-  //       delete newSupersets[exerciseId];
-  //     } else if (selectingSuperset) {
-  //       newSupersets[selectingSuperset] = exerciseId;
-  //       newSupersets[exerciseId] = selectingSuperset;
-  //     }
-  //     return newSupersets;
-  //   });
-  
-  //   setSelectingSuperset(prev => {
-  //     if (prev === exerciseId) {
-  //       return null; // Cancel selection
-  //     } else if (!prev) {
-  //       return exerciseId; // Start selecting
-  //     } else {
-  //       return null; // Finish selecting (create superset)
-  //     }
-  //   });
-  // }, [selectingSuperset, setTargetExercises, setSupersets, setSelectingSuperset]);
 
   const handleAddToSuperset = (exerciseId) => {
     setSelectingSuperset(exerciseId);
@@ -483,66 +450,41 @@ function AddExercisesToWorkout() {
 
     const saveWorkout = async (event) => {
       event.preventDefault();
-      const htmlCollection = targetExercisesRef.current.children[0].children;
-
-      const collectedExerciseData = [];
-      const collectedSupersets = [];
-
-      for(const element of htmlCollection) {
-        const draggableId = element.dataset.rfdDraggableId;
-
-        const collection = element.children;
-        const result = {
-          id: Number.parseInt(draggableId),
-          name: null,
-          sets:  null,
-          reps: null,
-          weight: null,
-        };
-
-        for (let i = 0; i < collection.length; i++) {
-          const element = collection[i];
-          
-          if (i === 0) {
-          } else if (i === 1) {
-              result.name = element.innerHTML;
-          } else if (i >= 2 && i <= 4) {
-              if (element.children.length > 1) {
-                  const value = element.children[1].value.trim();
-                 
-                  switch(i) {
-                      case 2:
-                          result.sets = Number.parseInt(value);
-                          break;
-                      case 3:
-                          result.reps = Number.parseInt(value);
-                          break;
-                      case 4:
-                          result.weight = Number.parseInt(value);
-                          break;
-                          default:
-                            console.warn(`Unexpected index ${i} in inner loop`);
-                            break;
-                  }
-              }
-          }
-      }
-
-      collectedExerciseData.push(result);
-
-      if (supersets[draggableId]) {
-        collectedSupersets.push({
-          first_exercise_id: Number.parseInt(draggableId),
-          second_exercise_id: Number.parseInt(supersets[draggableId])
-        });
-      }
       
-    }
+      // Instead of reading from DOM, use the state directly
+      const collectedExerciseData = targetExercises.map(exercise => ({
+        id: Number(exercise.exercise_id),
+        sets: Number(exercise.sets) || 0,
+        reps: Number(exercise.reps) || 0,
+        weight: Number(exercise.weight) || 0
+      }));
     
-      console.log("collected exerciseData:",collectedExerciseData);
-      console.log("collected supersets:", collectedSupersets);
-      console.log(selectedWorkoutId);
-
+      // Collect supersets from the state
+      const collectedSupersets = [];
+      targetExercises.forEach(exercise => {
+        if (exercise.superset_with) {
+          const existingSuperset = collectedSupersets.find(
+            s => (s.first_exercise_id === Number(exercise.exercise_id) && s.second_exercise_id === Number(exercise.superset_with)) ||
+                 (s.first_exercise_id === Number(exercise.superset_with) && s.second_exercise_id === Number(exercise.exercise_id))
+          );
+          
+          if (!existingSuperset) {
+            collectedSupersets.push({
+              first_exercise_id: Number(exercise.exercise_id),
+              second_exercise_id: Number(exercise.superset_with)
+            });
+          }
+        }
+      });
+    
+      const payload = {
+        workoutId: Number(selectedWorkoutId),
+        exercises: collectedExerciseData,
+        supersets: collectedSupersets
+      };
+    
+  
+    
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(`${process.env.REACT_APP_API_URL}/upsertExercisesToWorkout`, {
@@ -551,26 +493,24 @@ function AddExercisesToWorkout() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({
-            workoutId: selectedWorkoutId,
-            exercises: collectedExerciseData,
-            supersets: collectedSupersets
-          })
+          body: JSON.stringify(payload)
         });
     
+        const rawResponse = await response.text();
+        
         if (!response.ok) {
-          throw new Error('Failed to add exercises to workout');
+          throw new Error(`Failed to add exercises to workout: ${rawResponse}`);
         }
-    
-        const result = await response.json();
-        console.log(result.message);
-        // Handle success (e.g., show a success message, update UI, etc.)
+
+        
+        // Single fetch with a small delay to ensure the database has completed its updates
+        await new Promise(resolve => setTimeout(resolve, 100));
+        await fetchExercises(selectedWorkoutId);
+        
       } catch (error) {
         console.error('Error saving workout:', error);
-        // Handle error (e.g., show error message to user)
       }
-
-    }
+    };
 
     return (
       <div className="addExercisesToWorkout-container">
