@@ -1,115 +1,426 @@
-@import "./variables";
-
+// Base container
 .program-editor {
-  display: flex;
-  gap: map-get($spacing, xl);
-  height: calc(100vh - #{map-get($spacing, xxl) * 3});
-  padding: map-get($spacing, lg);
-
-  &__sidebar {
-    @include card;
-    width: 300px;
-    padding: map-get($spacing, lg);
-    
-    &__search {
-      position: relative;
-      margin-bottom: map-get($spacing, lg);
-
-      input {
-        @include input-field;
-        padding-left: map-get($spacing, xl) * 1.5;
-      }
-
-      .search-icon {
-        position: absolute;
-        left: map-get($spacing, md);
-        top: 50%;
-        transform: translateY(-50%);
-        color: map-get(map-get($colors, text), secondary);
-      }
-    }
-
-    &__list {
-      overflow-y: auto;
-      max-height: calc(100vh - 200px);
-
-      button {
-        width: 100%;
-        text-align: left;
-        padding: map-get($spacing, md);
-        margin-bottom: map-get($spacing, sm);
-        border-radius: map-get($border-radius, md);
-        border: 1px solid transparent;
-        background-color: transparent;
-        transition: all 0.2s ease;
-
-        &:hover {
-          background-color: map-get(map-get($colors, background), tertiary);
-        }
-
-        &.selected {
-          background-color: map-get(map-get($colors, accent), primary);
-          color: map-get(map-get($colors, text), primary);
-
-          p {
-            color: rgba(map-get(map-get($colors, text), primary), 0.8);
-          }
-        }
-
-        h3 {
-          font-size: map-get(map-get($typography, sizes), md);
-          font-weight: map-get(map-get($typography, weights), semibold);
-          margin-bottom: map-get($spacing, xs);
-        }
-
-        p {
-          font-size: map-get(map-get($typography, sizes), sm);
-          color: map-get(map-get($colors, text), secondary);
-        }
-      }
-    }
+    display: flex;
+    height: calc(100vh - #{map-get($spacing, xxl) * 3});
+    gap: map-get($spacing, xl);
+    padding: map-get($spacing, xl);
+    background-color: map-get(map-get($colors, background), primary);
   }
-
-  &__content {
+  
+  // Sidebar
+  .program-editor__sidebar {
+    width: 300px;
+    @include card;
+    padding: map-get($spacing, lg);
+    border-radius: map-get($border-radius, lg);
+  }
+  
+  .program-editor__sidebar__search {
+    position: relative;
+    margin-bottom: map-get($spacing, lg);
+  }
+  
+  .program-editor__sidebar__search input {
+    @include input-field;
+    padding-left: map-get($spacing, xl) * 1.5;
+    background-color: map-get(map-get($colors, background), primary);
+  }
+  
+  .program-editor__sidebar__search input:focus {
+    border-color: map-get(map-get($colors, accent), primary);
+  }
+  
+  .program-editor__sidebar__search .search-icon {
+    position: absolute;
+    left: map-get($spacing, md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: map-get(map-get($colors, text), secondary);
+  }
+  
+  .program-editor__sidebar__list {
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+  }
+  
+  .program-editor__sidebar__list button {
+    width: 100%;
+    text-align: left;
+    padding: map-get($spacing, lg);
+    margin-bottom: map-get($spacing, sm);
+    border-radius: map-get($border-radius, lg);
+    border: none;
+    background-color: transparent;
+    color: map-get(map-get($colors, text), primary);
+    transition: all 0.2s ease;
+  }
+  
+  .program-editor__sidebar__list button:hover {
+    background-color: map-get(map-get($colors, background), primary);
+  }
+  
+  .program-editor__sidebar__list button.selected {
+    background-color: map-get(map-get($colors, accent), primary);
+  }
+  
+  .program-editor__sidebar__list button.selected p {
+    color: rgba(map-get(map-get($colors, text), primary), 0.8);
+  }
+  
+  .program-editor__sidebar__list button h3 {
+    font-weight: map-get(map-get($typography, weights), semibold);
+    font-size: map-get(map-get($typography, sizes), md);
+    margin-bottom: map-get($spacing, xs);
+  }
+  
+  .program-editor__sidebar__list button p {
+    font-size: map-get(map-get($typography, sizes), sm);
+    color: map-get(map-get($colors, text), secondary);
+  }
+  
+  // Main content
+  .program-editor__content {
     @include card;
     flex: 1;
     padding: map-get($spacing, xl);
-    
-    &__empty {
-      text-align: center;
-      padding: map-get($spacing, xxl);
-      color: map-get(map-get($colors, text), secondary);
-
-      h2 {
-        font-size: map-get(map-get($typography, sizes), xl);
-        margin-bottom: map-get($spacing, md);
-      }
+    border-radius: map-get($border-radius, lg);
+  }
+  
+  .program-editor__content__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: map-get($spacing, xl);
+  }
+  
+  .program-editor__content__header__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: map-get($spacing, sm);
+    color: map-get(map-get($colors, text), secondary);
+    font-size: map-get(map-get($typography, sizes), md);
+  
+    span {
+      opacity: 0.8;
     }
+  
+    .chevron {
+      opacity: 0.6;
+    }
+  }
+  
+  .program-editor__content__header__actions button {
+    @include button-primary;
+    display: flex;
+    align-items: center;
+    gap: map-get($spacing, sm);
+  }
+  
+  // Programs grid
+  .program-editor__content__programs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: map-get($spacing, lg);
+  }
+  
+  .program-card {
+    background-color: map-get(map-get($colors, background), primary);
+    padding: map-get($spacing, lg);
+    border-radius: map-get($border-radius, lg);
+    transition: background-color 0.2s ease;
+    color: map-get(map-get($colors, text), primary);
+  }
+  
+  .program-card h3 {
+    font-size: map-get(map-get($typography, sizes), lg);
+    font-weight: map-get(map-get($typography, weights), semibold);
+    margin-bottom: map-get($spacing, md);
+    color: map-get(map-get($colors, text), primary);
+    opacity: 0.9;
+  }
+  
+  // Workout list
+  .workout-list {
+    display: flex;
+    flex-direction: column;
+    gap: map-get($spacing, sm);
+  }
+  
+  .workout-button {
+    width: 100%;
+    text-align: left;
+    padding: map-get($spacing, md);
+    background-color: map-get(map-get($colors, background), secondary);
+    border: 1px solid map-get(map-get($colors, background), tertiary);
+    border-radius: map-get($border-radius, md);
+    color: map-get(map-get($colors, text), secondary);
+    transition: all 0.2s ease;
+    cursor: pointer;
+  
+    &:hover {
+      background-color: map-get(map-get($colors, background), tertiary);
+      color: map-get(map-get($colors, text), primary);
+    }
+  }
+  
+  .workout-item {
+    width: 100%;
+    text-align: left;
+    padding: map-get($spacing, md);
+    background-color: map-get(map-get($colors, background), primary);
+    border: none;
+    border-radius: map-get($border-radius, md);
+    color: map-get(map-get($colors, text), primary);
+    transition: background-color 0.2s ease;
+  }
+  
+  .workout-item:hover {
+    background-color: map-get(map-get($colors, background), tertiary);
+  }
 
+  // Back button
+  .program-editor__content__back-button {
+    display: flex;
+    align-items: center;
+    gap: map-get($spacing, sm);
+    color: map-get(map-get($colors, text), secondary);
+    padding: map-get($spacing, sm);
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    font-size: map-get(map-get($typography, sizes), sm);
+  
+    &:hover {
+      color: map-get(map-get($colors, text), primary);
+    }
+  }
+  
+  // Program view
+  .program-view {
+    display: flex;
+    flex-direction: column;
+    gap: map-get($spacing, md);
+  }
+  
+  .program-view__title {
+    font-size: map-get(map-get($typography, sizes), xl);
+    font-weight: map-get(map-get($typography, weights), semibold);
+    color: map-get(map-get($colors, text), primary);
+    opacity: 0.9;
+    margin-bottom: map-get($spacing, lg);
+  }
+  
+  .program-view__workout {
+    width: 100%;
+    text-align: left;
+    padding: map-get($spacing, lg);
+    background-color: map-get(map-get($colors, background), secondary);
+    border: 1px solid map-get(map-get($colors, background), tertiary);
+    border-radius: map-get($border-radius, md);
+    color: map-get(map-get($colors, text), primary);
+    transition: all 0.2s ease;
+    cursor: pointer;
+  
+    h3 {
+      font-size: map-get(map-get($typography, sizes), md);
+      font-weight: map-get(map-get($typography, weights), medium);
+      opacity: 0.9;
+    }
+  
+    &:hover {
+      background-color: map-get(map-get($colors, background), tertiary);
+      border-color: map-get(map-get($colors, accent), primary);
+    }
+  }
+
+  .view-workouts-button {
+    width: 100%;
+    text-align: center;
+    padding: map-get($spacing, md);
+    background-color: map-get(map-get($colors, background), secondary);
+    border: 1px solid map-get(map-get($colors, background), tertiary);
+    border-radius: map-get($border-radius, md);
+    color: map-get(map-get($colors, text), secondary);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    margin-top: map-get($spacing, md);
+  
+    &:hover {
+      background-color: map-get(map-get($colors, background), tertiary);
+      color: map-get(map-get($colors, text), primary);
+      border-color: map-get(map-get($colors, accent), primary);
+    }
+  }
+
+  .program-view__workouts {
+    display: flex;
+    flex-direction: column;
+    gap: map-get($spacing, md);
+  }
+
+  .program-view__workout {
+    width: 100%;
+    text-align: left;
+    padding: map-get($spacing, lg);
+    background-color: map-get(map-get($colors, background), tertiary); // Darker background for more contrast
+    border: 1px solid rgba(map-get(map-get($colors, text), primary), 0.1);
+    border-radius: map-get($border-radius, md);
+    color: map-get(map-get($colors, text), primary);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    margin-bottom: map-get($spacing, md); // Added margin bottom
+  
+    h3 {
+      font-size: map-get(map-get($typography, sizes), md);
+      font-weight: map-get(map-get($typography, weights), medium);
+      opacity: 0.9;
+    }
+  
+    &:hover {
+      background-color: lighten(map-get(map-get($colors, background), tertiary), 5%);
+      border-color: map-get(map-get($colors, accent), primary);
+    }
+  
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+//   Program view ----------------------------------------------------------------------------------------------------------------------------
+
+.program-view__exercises {
+    display: flex;
+    flex-direction: column;
+    gap: map-get($spacing, lg);
+  }
+  
+  .exercise-item {
+    background-color: map-get(map-get($colors, background), tertiary);
+    padding: map-get($spacing, lg);
+    border-radius: map-get($border-radius, md);
+    border: 1px solid rgba(map-get(map-get($colors, text), primary), 0.1);
+  
     &__header {
-      margin-bottom: map-get($spacing, xl);
-      
-      h2 {
-        font-size: map-get(map-get($typography, sizes), xxl);
-        font-weight: map-get(map-get($typography, weights), bold);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: map-get($spacing, md);
+  
+      h4 {
+        font-size: map-get(map-get($typography, sizes), md);
+        font-weight: map-get(map-get($typography, weights), semibold);
+        color: map-get(map-get($colors, text), primary);
+      }
+  
+      button {
+        color: map-get(map-get($colors, text), secondary);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: map-get($spacing, xs);
+        border-radius: map-get($border-radius, sm);
+        transition: all 0.2s ease;
+  
+        &:hover {
+          color: map-get(map-get($colors, text), primary);
+          background-color: rgba(map-get(map-get($colors, text), primary), 0.1);
+        }
       }
     }
-
-    &__programs {
+  
+    &__controls {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: map-get($spacing, lg);
-
-      .program-card {
-        @include card;
-        padding: map-get($spacing, lg);
-        
-        h3 {
-          font-size: map-get(map-get($typography, sizes), lg);
-          font-weight: map-get(map-get($typography, weights), semibold);
-          margin-bottom: map-get($spacing, md);
+      grid-template-columns: repeat(3, 1fr);
+      gap: map-get($spacing, md);
+      margin-bottom: map-get($spacing, md);
+  
+      .control-group {
+        label {
+          display: block;
+          font-size: map-get(map-get($typography, sizes), sm);
+          color: map-get(map-get($colors, text), secondary);
+          margin-bottom: map-get($spacing, xs);
+        }
+  
+        .control-input {
+          display: flex;
+          align-items: center;
+          background-color: map-get(map-get($colors, background), secondary);
+          border-radius: map-get($border-radius, sm);
+          overflow: hidden;
+  
+          button {
+            padding: map-get($spacing, sm) map-get($spacing, md);
+            color: map-get(map-get($colors, text), secondary);
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+  
+            &:hover {
+              color: map-get(map-get($colors, text), primary);
+              background-color: rgba(map-get(map-get($colors, text), primary), 0.1);
+            }
+          }
+  
+          span {
+            flex: 1;
+            text-align: center;
+            padding: map-get($spacing, xs) 0;
+            color: map-get(map-get($colors, text), primary);
+          }
+        }
+      }
+    }
+  
+    &__superset {
+      button {
+        width: 100%;
+        padding: map-get($spacing, sm);
+        background-color: map-get(map-get($colors, background), secondary);
+        border: none;
+        border-radius: map-get($border-radius, sm);
+        color: map-get(map-get($colors, text), secondary);
+        transition: all 0.2s ease;
+        cursor: pointer;
+  
+        &:hover {
+          background-color: rgba(map-get(map-get($colors, text), primary), 0.1);
+          color: map-get(map-get($colors, text), primary);
+        }
+  
+        &.active {
+          background-color: map-get(map-get($colors, accent), primary);
+          color: map-get(map-get($colors, text), primary);
         }
       }
     }
   }
-}
+
+  .view-workouts-button {
+    width: 100%;
+    text-align: center;
+    padding: map-get($spacing, md);
+    background-color: map-get(map-get($colors, background), secondary);
+    border: 1px solid map-get(map-get($colors, background), tertiary);
+    border-radius: map-get($border-radius, md);
+    color: map-get(map-get($colors, text), secondary);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    margin-top: map-get($spacing, md);
+  
+    &:hover {
+      background-color: map-get(map-get($colors, background), tertiary);
+      color: map-get(map-get($colors, text), primary);
+      border-color: map-get(map-get($colors, accent), primary);
+    }
+  }
+  
+  .program-card {
+    cursor: pointer;
+    
+    &:hover {
+      border-color: map-get(map-get($colors, accent), primary);
+    }
+  }
