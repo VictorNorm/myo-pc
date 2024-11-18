@@ -1,69 +1,53 @@
-@import "./colors";
+// _loginForm.scss
+@import 'variables';
 
 .loginForm {
-    width: 300px;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: $primary-bg;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    color: $primary-text;
+  @include card;
+  width: 100%;
+  max-width: 400px;
+  margin: 60px auto;
+  padding: map-get($spacing, xxl);
 
-    p {
-      margin-top: 1rem;
-      color: red;
-    }
-  }
-  
-  .loginForm h2 {
+  h2 {
+    color: map-get(map-get($colors, text), primary);
+    font-size: map-get(map-get($typography, sizes), xxl);
+    font-weight: map-get(map-get($typography, weights), bold);
     text-align: center;
-    margin-bottom: 20px;
-    // color: #333;
+    margin-bottom: map-get($spacing, xl);
   }
-  
-  .loginForm form {
+
+  form {
     display: flex;
     flex-direction: column;
-  }
-  
-  .loginForm label {
-    margin-bottom: 8px;
-    font-weight: bold;
-  }
-  
-  .loginForm input {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    background-color: $secondary-bg;
-  }
-  
-  .loginForm button {
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .loginForm button:hover {
-    background-color: #0056b3;
+    gap: map-get($spacing, lg);
   }
 
-  .loginForm {
-
-    .loginForm__usernameContainer {
-        display: flex;
-        flex-direction: column;
-    }
-    .loginForm__passwordContainer {
-        display: flex;
-        flex-direction: column;
-    }
+  &__usernameContainer,
+  &__passwordContainer {
+    display: flex;
+    flex-direction: column;
+    gap: map-get($spacing, xs);
   }
-  
+
+  label {
+    color: map-get(map-get($colors, text), secondary);
+    font-size: map-get(map-get($typography, sizes), sm);
+    font-weight: map-get(map-get($typography, weights), medium);
+  }
+
+  input {
+    @include input-field;
+  }
+
+  button {
+    @include button-primary;
+    margin-top: map-get($spacing, md);
+  }
+
+  p {
+    color: map-get(map-get($colors, status), error);
+    font-size: map-get(map-get($typography, sizes), sm);
+    margin-top: map-get($spacing, md);
+    text-align: center;
+  }
+}

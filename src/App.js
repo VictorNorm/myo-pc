@@ -11,11 +11,12 @@ import RequireAuth from './components/RequireAuth';
 import Workouts from './components/Workouts';
 import Training from './components/Training';
 import MyPrograms from './components/MyPrograms';
-import AddWorkouts from './components/AddWorkouts';
+import EditProgram from './components/EditProgram';
 import Signup from './components/Signup';
 import VerifyEmail from './components/VerifyEmail';
 import AddExercisesToWorkout from './components/AddExercisesToWorkout';
 import ResetPassword from './components/ResetPassword';
+import CreateProgramWithWorkouts from './components/CreateProgramWithWorkouts';
 
 const App = () => (
     <Routes>
@@ -37,6 +38,14 @@ const App = () => (
                 }
             />
             <Route
+                path='createProgramWithWorkouts'
+                element={
+                    <RequireAuth>
+                        <CreateProgramWithWorkouts />
+                    </RequireAuth>
+                }
+            />
+            <Route
                 path='myprograms'
                 element={
                     <RequireAuth>
@@ -45,10 +54,10 @@ const App = () => (
                 }
             />
             <Route
-                path='clientprograms'
+                path='editProgram'
                 element={
                     <RequireAuth>
-                        <AddWorkouts />
+                        <EditProgram />
                     </RequireAuth>
                 }
             />

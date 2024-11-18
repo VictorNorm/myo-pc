@@ -1,0 +1,115 @@
+@import "./variables";
+
+.program-editor {
+  display: flex;
+  gap: map-get($spacing, xl);
+  height: calc(100vh - #{map-get($spacing, xxl) * 3});
+  padding: map-get($spacing, lg);
+
+  &__sidebar {
+    @include card;
+    width: 300px;
+    padding: map-get($spacing, lg);
+    
+    &__search {
+      position: relative;
+      margin-bottom: map-get($spacing, lg);
+
+      input {
+        @include input-field;
+        padding-left: map-get($spacing, xl) * 1.5;
+      }
+
+      .search-icon {
+        position: absolute;
+        left: map-get($spacing, md);
+        top: 50%;
+        transform: translateY(-50%);
+        color: map-get(map-get($colors, text), secondary);
+      }
+    }
+
+    &__list {
+      overflow-y: auto;
+      max-height: calc(100vh - 200px);
+
+      button {
+        width: 100%;
+        text-align: left;
+        padding: map-get($spacing, md);
+        margin-bottom: map-get($spacing, sm);
+        border-radius: map-get($border-radius, md);
+        border: 1px solid transparent;
+        background-color: transparent;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: map-get(map-get($colors, background), tertiary);
+        }
+
+        &.selected {
+          background-color: map-get(map-get($colors, accent), primary);
+          color: map-get(map-get($colors, text), primary);
+
+          p {
+            color: rgba(map-get(map-get($colors, text), primary), 0.8);
+          }
+        }
+
+        h3 {
+          font-size: map-get(map-get($typography, sizes), md);
+          font-weight: map-get(map-get($typography, weights), semibold);
+          margin-bottom: map-get($spacing, xs);
+        }
+
+        p {
+          font-size: map-get(map-get($typography, sizes), sm);
+          color: map-get(map-get($colors, text), secondary);
+        }
+      }
+    }
+  }
+
+  &__content {
+    @include card;
+    flex: 1;
+    padding: map-get($spacing, xl);
+    
+    &__empty {
+      text-align: center;
+      padding: map-get($spacing, xxl);
+      color: map-get(map-get($colors, text), secondary);
+
+      h2 {
+        font-size: map-get(map-get($typography, sizes), xl);
+        margin-bottom: map-get($spacing, md);
+      }
+    }
+
+    &__header {
+      margin-bottom: map-get($spacing, xl);
+      
+      h2 {
+        font-size: map-get(map-get($typography, sizes), xxl);
+        font-weight: map-get(map-get($typography, weights), bold);
+      }
+    }
+
+    &__programs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: map-get($spacing, lg);
+
+      .program-card {
+        @include card;
+        padding: map-get($spacing, lg);
+        
+        h3 {
+          font-size: map-get(map-get($typography, sizes), lg);
+          font-weight: map-get(map-get($typography, weights), semibold);
+          margin-bottom: map-get($spacing, md);
+        }
+      }
+    }
+  }
+}

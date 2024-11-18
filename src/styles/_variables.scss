@@ -1,0 +1,118 @@
+// _variables.scss
+// Colors
+$colors: (
+  background: (
+    primary: #111827,
+    secondary: #1f2937,
+    tertiary: #374151
+  ),
+  text: (
+    primary: #f3f4f6,
+    secondary: #9ca3af
+  ),
+  accent: (
+    primary: #6366f1,
+    primary-hover: #4f46e5
+  ),
+  status: (
+    error: #FF5252,
+    success: #4CAF50,
+    warning: #FFC107,
+    error-light: rgba(255, 82, 82, 0.3),
+    success-light: rgba(76, 175, 80, 0.3),
+    warning-light: rgba(255, 193, 7, 0.3)
+  ),
+  navigation: (
+    background: #1f2937,
+    border: #374151,
+    active: #6366f1,
+    inactive: #9ca3af,
+    tab-bar: #111827
+  )
+);
+
+// Spacing
+$spacing: (
+  xs: 4px,
+  sm: 8px,
+  md: 12px,
+  lg: 16px,
+  xl: 20px,
+  xxl: 24px
+);
+
+// Typography
+$typography: (
+  sizes: (
+    xs: 12px,
+    sm: 14px,
+    md: 16px,
+    lg: 18px,
+    xl: 20px,
+    xxl: 24px
+  ),
+  weights: (
+    normal: 400,
+    medium: 500,
+    semibold: 600,
+    bold: 700
+  )
+);
+
+// Shadows
+$shadows: (
+  sm: 0 1px 2px rgba(0, 0, 0, 0.18),
+  md: 0 2px 4px rgba(0, 0, 0, 0.25),
+  lg: 0 4px 6px rgba(0, 0, 0, 0.3)
+);
+
+// Border radius
+$border-radius: (
+  sm: 4px,
+  md: 8px,
+  lg: 12px
+);
+
+// Mixins for common patterns
+@mixin card {
+  background-color: map-get(map-get($colors, background), secondary);
+  border: 1px solid map-get(map-get($colors, background), tertiary);
+  border-radius: map-get($border-radius, lg);
+  box-shadow: map-get($shadows, md);
+}
+
+@mixin input-field {
+  background-color: map-get(map-get($colors, background), secondary);
+  border: 1px solid map-get(map-get($colors, background), tertiary);
+  border-radius: map-get($border-radius, md);
+  color: map-get(map-get($colors, text), primary);
+  padding: map-get($spacing, md);
+  font-size: map-get(map-get($typography, sizes), md);
+  width: 100%;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: map-get(map-get($colors, accent), primary);
+  }
+}
+
+@mixin button-primary {
+  background-color: map-get(map-get($colors, accent), primary);
+  color: map-get(map-get($colors, text), primary);
+  border: none;
+  border-radius: map-get($border-radius, md);
+  padding: map-get($spacing, md) map-get($spacing, lg);
+  font-size: map-get(map-get($typography, sizes), md);
+  font-weight: map-get(map-get($typography, weights), semibold);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+
+  &:hover {
+    background-color: map-get(map-get($colors, accent), primary-hover);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}

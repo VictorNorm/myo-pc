@@ -1,67 +1,185 @@
-@import "./colors";
+// _nav.scss
+@import 'variables';
 
 .nav {
-    width: 100%;
-    height: 50px;
+  width: 100%;
+  height: 60px;
+  background-color: map-get(map-get($colors, navigation), background);
+  margin-bottom: map-get($spacing, xl);
+  border-bottom: 1px solid map-get(map-get($colors, navigation), border);
+  position: relative;
+  
+  // Logo styles
+  .nav-logo {
+    position: absolute;
+    left: map-get($spacing, xl);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: map-get(map-get($typography, sizes), xl);
+    font-weight: map-get(map-get($typography, weights), bold);
+    color: map-get(map-get($colors, text), primary);
+  }
+
+  // Right-side actions container
+  .nav-actions {
+    position: absolute;
+    right: map-get($spacing, xl);
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
+    gap: map-get($spacing, md);
+
+    .nav-logout {
+      padding: map-get($spacing, sm) map-get($spacing, md);
+      background-color: transparent;
+      border: 1px solid map-get(map-get($colors, status), error);
+      color: map-get(map-get($colors, status), error);
+      border-radius: map-get($border-radius, sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: map-get(map-get($colors, status), error);
+        color: white;
+      }
+    }
+  }
+
+  // Link styles
+  a {
+    text-decoration: none;
+    color: map-get(map-get($colors, text), secondary);
+    background-color: transparent;
+    transition: color 0.2s ease;
+    font-weight: map-get(map-get($typography, weights), medium);
+    font-size: map-get(map-get($typography, sizes), md);
+
+    &:hover {
+      color: map-get(map-get($colors, text), primary);
+    }
+
+    &.active {
+      color: map-get(map-get($colors, accent), primary);
+      font-weight: map-get(map-get($typography, weights), semibold);
+    }
+  }
+
+  // Main navigation list
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    gap: map-get($spacing, xxl) * 2;
+    background-color: transparent;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  // Dropdown container
+  .dropdown {
     position: relative;
-    margin-bottom: 2rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 map-get($spacing, xl);
+    background-color: transparent;
+    min-width: 120px;
+    justify-content: center;
+
+    // Main dropdown link
+    > a {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      white-space: nowrap;
+      
+      // Dropdown arrow
+      &::after {
+        content: '▼';
+        font-size: 8px;
+        margin-left: map-get($spacing, xs);
+        opacity: 0.5;
+        position: relative;
+        top: 1px;
+      }
+
+      &.active::after {
+        opacity: 1;
+      }
+    }
+
+    &:hover > a {
+      color: map-get(map-get($colors, text), primary);
+    }
+  }
+
+  // Dropdown content
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 200px;
+    background-color: map-get(map-get($colors, navigation), background);
+    border: 1px solid map-get(map-get($colors, navigation), border);
+    border-radius: map-get($border-radius, md);
+    box-shadow: map-get($shadows, lg);
+    overflow: hidden;
+    z-index: 1000;
 
     a {
-        text-decoration: none;
-        flex:1 ;
-        background-color: $secondary-bg;
-    }
- 
-    ul {
-        list-style-type: none;
-        width: 100%;
-        padding: 0;
-        display: flex;
-        justify-content: space-evenly;
+      padding: map-get($spacing, md) map-get($spacing, lg);
+      display: block;
+      background-color: transparent;
+      text-align: left;
+      
+      &:hover {
+        background-color: map-get(map-get($colors, background), tertiary);
+      }
 
-        .dropdown {
-            flex: 1;
-            text-align: center;
-            height: 100%;
-            display: inline-block;
-            a {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100%;
-            }
-        }
+      &.active {
+        background-color: rgba(map-get(map-get($colors, accent), primary), 0.1);
       }
-      
-      li {
-        position: relative;
-        display: inline-block;
-      }
-      
-      li .dropdown-content {
-        display: none;
-        position: absolute;
-        width: 100%;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
-      }
-      
-      li .dropdown-content a {
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-      }
-      
-      li .dropdown-content a:hover {
-        background-color: $input-bg;
-      }
-      
-      li:hover .dropdown-content {
-        display: block;
-      }
-      
-      li a:hover {
-        background-color: $input-bg;
-      }
+    }
+  }
+
+  // Show dropdown on hover
+  li:hover .dropdown-content {
+    display: block;
+    animation: fadeIn 0.2s ease;
+  }
+}
+
+// Dropdown animation
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+// Optional gradient overlay
+.nav::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(
+    to bottom,
+    rgba(map-get(map-get($colors, background), secondary), 0.5),
+    rgba(map-get(map-get($colors, background), primary), 0.5)
+  );
+  pointer-events: none;
 }
