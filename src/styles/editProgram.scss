@@ -5,6 +5,7 @@
     gap: map-get($spacing, xl);
     padding: map-get($spacing, xl);
     background-color: map-get(map-get($colors, background), primary);
+    overflow: hidden; // Prevent outer overflow
   }
   
   // Sidebar
@@ -84,6 +85,9 @@
     flex: 1;
     padding: map-get($spacing, xl);
     border-radius: map-get($border-radius, lg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // Contain the overflow
   }
   
   .program-editor__content__header {
@@ -114,13 +118,13 @@
     display: flex;
     align-items: center;
     gap: map-get($spacing, sm);
+    margin-top: 0.25rem;
   }
   
   // Programs grid
   .program-editor__content__programs {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: map-get($spacing, lg);
+    height: 100%;
+    width: 100%;
   }
   
   .program-card {
@@ -182,9 +186,10 @@
   .program-editor__content__back-button {
     display: flex;
     align-items: center;
-    gap: map-get($spacing, sm);
+    gap: map-get($spacing, xs);
     color: map-get(map-get($colors, text), secondary);
-    padding: map-get($spacing, sm);
+    padding: map-get($spacing, xs) 0;
+    margin-bottom: 0.5rem;
     border: none;
     background: none;
     cursor: pointer;
@@ -200,15 +205,25 @@
   .program-view {
     display: flex;
     flex-direction: column;
-    gap: map-get($spacing, md);
+    height: 100%;
+    overflow: hidden;
+  
+    .program-view__exercises {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 map-get($spacing, md);
+      margin: 0 -#{map-get($spacing, md)}; // Compensate for padding
+      display: flex;
+      flex-direction: column;
+      gap: map-get($spacing, md);
+    }
   }
   
   .program-view__title {
     font-size: map-get(map-get($typography, sizes), xl);
     font-weight: map-get(map-get($typography, weights), semibold);
     color: map-get(map-get($colors, text), primary);
-    opacity: 0.9;
-    margin-bottom: map-get($spacing, lg);
+    margin: map-get($spacing, md) 0;
   }
   
   .program-view__workout {
@@ -216,21 +231,23 @@
     text-align: left;
     padding: map-get($spacing, lg);
     background-color: map-get(map-get($colors, background), secondary);
-    border: 1px solid map-get(map-get($colors, background), tertiary);
+    border: 1px solid rgba(map-get(map-get($colors, text), primary), 0.1);
     border-radius: map-get($border-radius, md);
     color: map-get(map-get($colors, text), primary);
     transition: all 0.2s ease;
     cursor: pointer;
-  
-    h3 {
-      font-size: map-get(map-get($typography, sizes), md);
-      font-weight: map-get(map-get($typography, weights), medium);
-      opacity: 0.9;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   
     &:hover {
       background-color: map-get(map-get($colors, background), tertiary);
-      border-color: map-get(map-get($colors, accent), primary);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  
+    &:active {
+      transform: translateY(0);
     }
   }
 
@@ -238,18 +255,16 @@
     width: 100%;
     text-align: center;
     padding: map-get($spacing, md);
-    background-color: map-get(map-get($colors, background), secondary);
-    border: 1px solid map-get(map-get($colors, background), tertiary);
+    background-color: map-get(map-get($colors, background), tertiary);
+    border: none;
     border-radius: map-get($border-radius, md);
-    color: map-get(map-get($colors, text), secondary);
+    color: map-get(map-get($colors, text), primary);
     transition: all 0.2s ease;
     cursor: pointer;
-    margin-top: map-get($spacing, md);
-  
+    
     &:hover {
-      background-color: map-get(map-get($colors, background), tertiary);
-      color: map-get(map-get($colors, text), primary);
-      border-color: map-get(map-get($colors, accent), primary);
+      background-color: map-get(map-get($colors, accent), primary);
+      color: white;
     }
   }
 
@@ -296,35 +311,64 @@
   }
   
   .exercise-item {
-    background-color: map-get(map-get($colors, background), tertiary);
+    background-color: #1e2635;
     padding: map-get($spacing, lg);
     border-radius: map-get($border-radius, md);
-    border: 1px solid rgba(map-get(map-get($colors, text), primary), 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: map-get($spacing, sm);
   
     &__header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: map-get($spacing, md);
+      position: relative; // For X button positioning
+
+      &__content {
+        display: flex;
+        flex-direction: column;
+        gap: map-get($spacing, xs);
+  
+        h4 {
+          margin: 0;
+          font-size: map-get(map-get($typography, sizes), md);
+          font-weight: map-get(map-get($typography, weights), semibold);
+          color: white;
+        }
+  
+        .superset-info {
+          margin: 0;
+          font-size: map-get(map-get($typography, sizes), md);
+          color: rgba(255, 255, 255, 0.6);
+        }
+      }
   
       h4 {
-        font-size: map-get(map-get($typography, sizes), md);
+        font-size: map-get(map-get($typography, sizes), lg);
         font-weight: map-get(map-get($typography, weights), semibold);
-        color: map-get(map-get($colors, text), primary);
+        color: white;
+        margin: 0;
       }
   
       button {
-        color: map-get(map-get($colors, text), secondary);
+        color: map-get(map-get($colors, status), error) !important; 
         background: none;
         border: none;
         cursor: pointer;
         padding: map-get($spacing, xs);
         border-radius: map-get($border-radius, sm);
         transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        position: absolute;
+        right: -#{map-get($spacing, md)}; // Move slightly outside the header
+        top: -#{map-get($spacing, xs)};
   
         &:hover {
-          color: map-get(map-get($colors, text), primary);
-          background-color: rgba(map-get(map-get($colors, text), primary), 0.1);
+          background-color: rgba(255, 82, 82, 0.1);
         }
       }
     }
@@ -339,62 +383,159 @@
         label {
           display: block;
           font-size: map-get(map-get($typography, sizes), sm);
-          color: map-get(map-get($colors, text), secondary);
+          color: rgba(255, 255, 255, 0.6);
           margin-bottom: map-get($spacing, xs);
+          text-transform: capitalize;
         }
   
         .control-input {
-          display: flex;
+          display: grid;
+          grid-template-columns: auto 1fr auto;
           align-items: center;
-          background-color: map-get(map-get($colors, background), secondary);
-          border-radius: map-get($border-radius, sm);
-          overflow: hidden;
+          background-color: rgba(13, 17, 23, 0.8);
+          border-radius: map-get($border-radius, md);
+          padding: 2px;
   
           button {
-            padding: map-get($spacing, sm) map-get($spacing, md);
-            color: map-get(map-get($colors, text), secondary);
+            padding: map-get($spacing, xs) map-get($spacing, sm);
+            color: white;
             border: none;
-            background: none;
+            background-color: #2a3545;
             cursor: pointer;
             transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            border-radius: map-get($border-radius, sm);
+            margin: 2px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   
             &:hover {
-              color: map-get(map-get($colors, text), primary);
-              background-color: rgba(map-get(map-get($colors, text), primary), 0.1);
+              background-color: #343f52;
+              transform: translateY(-1px);
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+  
+            &:active {
+              transform: translateY(0);
+              background-color: #2a3545;
+              box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            }
+  
+            // Make plus buttons purple
+            &:last-child {
+              background-color: map-get(map-get($colors, accent), primary);
+              
+              &:hover {
+                background-color: map-get(map-get($colors, accent), primary-hover);
+              }
             }
           }
   
           span {
-            flex: 1;
             text-align: center;
-            padding: map-get($spacing, xs) 0;
-            color: map-get(map-get($colors, text), primary);
+            padding: map-get($spacing, xs) map-get($spacing, sm);
+            color: white;
+            font-size: map-get(map-get($typography, sizes), md);
+            font-weight: map-get(map-get($typography, weights), medium);
+            min-width: 48px;
           }
         }
       }
     }
   
     &__superset {
+      margin-top: map-get($spacing, md);
+      // padding: 0 map-get($spacing, md);
+  
       button {
         width: 100%;
-        padding: map-get($spacing, sm);
-        background-color: map-get(map-get($colors, background), secondary);
+        padding: map-get($spacing, md);
+        background-color: #2a3545;
         border: none;
-        border-radius: map-get($border-radius, sm);
-        color: map-get(map-get($colors, text), secondary);
+        border-radius: map-get($border-radius, md);
+        color: white;
+        font-size: map-get(map-get($typography, sizes), md);
         transition: all 0.2s ease;
-        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   
         &:hover {
-          background-color: rgba(map-get(map-get($colors, text), primary), 0.1);
-          color: map-get(map-get($colors, text), primary);
+          background-color: #343f52;
+          // transform: translateY(-1px);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+  
+        &:active {
+          transform: translateY(0);
+          background-color: #2a3545;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
   
         &.active {
           background-color: map-get(map-get($colors, accent), primary);
-          color: map-get(map-get($colors, text), primary);
+          box-shadow: 0 2px 4px rgba(113, 97, 239, 0.3);
+  
+          &:hover {
+            background-color: map-get(map-get($colors, accent), primary-hover);
+          }
         }
       }
+    }
+
+    &.supersetted {
+      border: 1px solid map-get(map-get($colors, accent), primary);
+      position: relative;
+      
+      // Add margin for the connector line
+      &:not(:last-child) {
+        margin-bottom: map-get($spacing, xl);
+      }
+  
+      // Connector line
+      &:after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: -#{map-get($spacing, xl)};
+        transform: translateX(-50%);
+        width: 2px;
+        height: map-get($spacing, lg);
+        background-color: map-get(map-get($colors, accent), primary);
+        z-index: 1;
+      }
+  
+      // Hide connector for last item in superset
+      &:last-child:after {
+        display: none;
+      }
+  
+      // Special styling for superset info text
+      .superset-info {
+        color: map-get(map-get($colors, accent), primary);
+        opacity: 0.8;
+      }
+    }
+  }
+
+  .exercise-item__header button {
+    color: rgba(255, 255, 255, 0.6);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: map-get($spacing, xs);
+    border-radius: map-get($border-radius, sm);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+  
+    &:hover {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.1);
     }
   }
 
@@ -418,9 +559,87 @@
   }
   
   .program-card {
+    background-color: map-get(map-get($colors, background), primary);
+    padding: map-get($spacing, lg);
+    border-radius: map-get($border-radius, md);
+    border: 1px solid rgba(map-get(map-get($colors, text), primary), 0.1);
+    transition: all 0.2s ease;
+    margin-bottom: 1rem;
+    
+    h3 {
+      font-size: map-get(map-get($typography, sizes), lg);
+      font-weight: map-get(map-get($typography, weights), semibold);
+      margin-bottom: map-get($spacing, md);
+      color: map-get(map-get($colors, text), primary);
+    }
+  
+    &:hover {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // Add these new styles to your existing SCSS file
+
+  .workouts-header {
+    display: flex;
+    flex-direction: column;
+    // align-items: center;
+    gap: map-get($spacing, md);
+    margin-bottom: map-get($spacing, xl);
+    padding: map-get($spacing, md) 0;
+    border-bottom: 1px solid rgba(map-get(map-get($colors, text), primary), 0.1);
+  
+    h2 {
+      font-size: map-get(map-get($typography, sizes), xl);
+      font-weight: map-get(map-get($typography, weights), semibold);
+      color: map-get(map-get($colors, text), primary);
+      margin: 0;
+    }
+  }
+
+  .back-to-programs-button {
+    display: flex;
+    align-items: center;
+    gap: map-get($spacing, sm);
+    margin: 0.5rem 0rem;
+    background: none;
+    border: none;
+    color: map-get(map-get($colors, text), secondary);
     cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: map-get(map-get($typography, sizes), sm);
+  
+    &:hover {
+      color: map-get(map-get($colors, text), primary);
+    }
+  }
+
+  .workouts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: map-get($spacing, md);
+    max-width: 800px; // Limit the width for better readability
+    margin: 0 auto;
+  }
+
+  .exercise-item__superset button {
+    background-color: #2a3545;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     
     &:hover {
-      border-color: map-get(map-get($colors, accent), primary);
+      background-color: #343f52;
+      // transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+  
+    &:active {
+      transform: translateY(0);
+      background-color: #2a3545;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+  
+    &.active {
+      background-color: #7161EF;
+      box-shadow: 0 2px 4px rgba(113, 97, 239, 0.3);
     }
   }

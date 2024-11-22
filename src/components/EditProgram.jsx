@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, memo, useRef } from 'react';
 import { Search, ChevronRight, Save, X, Plus, Minus, ArrowLeft } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -13,6 +14,7 @@ const EditProgram = () => {
   const [activeView, setActiveView] = useState('programs');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewMode, setViewMode] = useState('programs');
 
   // Users states
   const [users, setUsers] = useState([]);
@@ -27,6 +29,7 @@ const EditProgram = () => {
   const [selectedProgramId, setSelectedProgramId] = useState('');
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [programWorkouts, setProgramWorkouts] = useState([]);
+  const [selectedProgramName, setSelectedProgramName] = useState('');
 
   // Exercise states
   const [exercises, setExercises] = useState([]);
@@ -44,7 +47,7 @@ const EditProgram = () => {
   const [loadingWorkouts, setLoadingWorkouts] = useState(false);
   const [errorWorkouts, setErrorWorkouts] = useState(null);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
-  const [selectedWorkoutId, setSelectedWorkoutId] = useState('');
+  const [selectedWorkoutId, setSelectedWorkoutId] = useState(null);
 
   // Superset states
   const [supersets, setSupersets] = useState({});
@@ -60,6 +63,10 @@ const EditProgram = () => {
     fetchPrograms();
     fetchExerciseList();
   }, []);
+
+  useEffect(() => {
+    console.log('Selected Workout ID changed:', selectedWorkoutId);
+  }, [selectedWorkoutId]);
 
   // Fetch functions --------------------------------------------------------------------------------------------------------------------
 
@@ -260,7 +267,10 @@ const EditProgram = () => {
 
   const handleProgramClick = async (program) => {
     setSelectedProgramId(program.id);
+    setSelectedProgramName(program.name);
     setIsLoading(true);
+    setViewMode('workouts');
+    
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${process.env.REACT_APP_API_URL}/programs/${program.id}/workouts`, {
@@ -282,6 +292,11 @@ const EditProgram = () => {
     }
   };
 
+  const handleBackToPrograms = () => {
+    setViewMode('programs');
+    setSelectedProgramId(null);
+    setProgramWorkouts([]);
+  };
 
   const handleBackClick = () => {
     setSelectedProgramId(null);
@@ -290,12 +305,41 @@ const EditProgram = () => {
 
   const handleWorkoutClick = (workout) => {
     setSelectedWorkout(workout);
+    setSelectedWorkoutId(workout.id);
     setActiveView('exercises');
     fetchExercises(workout.id);
   };
 
   const handleAddToSuperset = (exerciseId) => {
     setSelectingSuperset(exerciseId);
+  };
+
+  const handleCompleteSuperset = (exerciseId) => {
+    if (!selectingSuperset || selectingSuperset === exerciseId) {
+      setSelectingSuperset(null);
+      return;
+    }
+  
+    setTargetExercises(prevExercises => {
+      const updatedExercises = [...prevExercises];
+      const firstExercise = updatedExercises.find(e => e.exercise_id.toString() === selectingSuperset);
+      const secondExercise = updatedExercises.find(e => e.exercise_id.toString() === exerciseId);
+      
+      if (firstExercise && secondExercise) {
+        firstExercise.superset_with = exerciseId;
+        secondExercise.superset_with = selectingSuperset;
+      }
+      
+      return updatedExercises;
+    });
+  
+    setSupersets(prev => ({
+      ...prev,
+      [exerciseId]: selectingSuperset,
+      [selectingSuperset]: exerciseId
+    }));
+  
+    setSelectingSuperset(null);
   };
   
   const handleRemoveFromSuperset = (exerciseId) => {
@@ -394,6 +438,11 @@ const EditProgram = () => {
 
   const saveWorkout = async (event) => {
     event.preventDefault();
+
+    if (!selectedWorkoutId) {
+      console.error('No workout ID selected');
+      return;
+    }
     
     // Instead of reading from DOM, use the state directly
     const collectedExerciseData = targetExercises.map(exercise => ({
@@ -426,6 +475,14 @@ const EditProgram = () => {
       exercises: collectedExerciseData,
       supersets: collectedSupersets
     };
+
+    console.log('Saving workout with payload:', payload);
+    console.log('Selected Workout ID:', selectedWorkoutId); // Debug log
+
+    if (!payload.workoutId) {
+      console.error('Invalid workout ID');
+      return;
+    }
   
     try {
       const token = localStorage.getItem("token");
@@ -454,82 +511,130 @@ const EditProgram = () => {
     }
   };
 
-  // renderExerciseItem -----------------------------------------------------------------------------------------------------------------------
+  // ExerciseItem -----------------------------------------------------------------------------------------------------------------------------
 
-  const renderExerciseItem = (exercise, index) => {
+  const ExerciseItem = ({ 
+    exercise, 
+    index,
+    totalExercises,
+    findExercise,
+    handleRemoveExercise, 
+    handleIncrement, 
+    handleDecrement,
+    handleRemoveFromSuperset,
+    handleAddToSuperset,
+    handleCompleteSuperset,
+    selectingSuperset,
+    provided 
+  }) => {
+    const exerciseId = exercise.exercise_id.toString();
+    const isInSuperset = Boolean(exercise.superset_with);
+    const isSelectingThis = selectingSuperset === exerciseId;
+    const isSelectingOther = selectingSuperset && selectingSuperset !== exerciseId;
+  
     return (
-      <Draggable 
-        key={exercise.exercise_id} 
-        draggableId={exercise.exercise_id.toString()} 
-        index={index}
+      <div
+        ref={provided.innerRef}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+        className={`exercise-item ${isInSuperset ? 'supersetted' : ''}`}
       >
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            className="exercise-item"
-          >
-            <div className="exercise-item__header">
-              <h4>{exercise.exercises?.name || exercise.name}</h4>
-              <button
-                onClick={() => handleRemoveExercise(exercise.exercise_id)}
-                type="button"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <div className="exercise-item__controls">
-              {['sets', 'reps', 'weight'].map((field) => (
-                <div key={field} className="control-group">
-                  <label>{field}</label>
-                  <div className="control-input">
-                    <button 
-                      type="button"
-                      onClick={() => handleDecrement(exercise.exercise_id, field)}
-                    >
-                      <Minus size={16} />
-                    </button>
-                    <span>{exercise[field] || 0}{field === 'weight' ? 'kg' : ''}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleIncrement(exercise.exercise_id, field)}
-                    >
-                      <Plus size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="exercise-item__superset">
-              {exercise.superset_with ? (
-                <button
-                  type="button"
-                  onClick={() => handleRemoveFromSuperset(exercise.exercise_id.toString())}
-                >
-                  Supersetted with: {findExercise(exercise.superset_with)}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => handleAddToSuperset(exercise.exercise_id.toString())}
-                  className={selectingSuperset === exercise.exercise_id.toString() ? 'active' : ''}
-                >
-                  {selectingSuperset === exercise.exercise_id.toString()
-                    ? 'Cancel Selection'
-                    : selectingSuperset
-                    ? 'Pair with Selected'
-                    : 'Add to Superset'}
-                </button>
-              )}
-            </div>
+        <div className="exercise-item__header">
+          <div className="exercise-item__header__content">
+            <h4>{exercise.exercises?.name || exercise.name}</h4>
+            {isInSuperset && (
+              <p className="superset-info">
+                Supersetted with: {findExercise(exercise.superset_with)}
+              </p>
+            )}
           </div>
-        )}
-      </Draggable>
+          <button
+            onClick={() => handleRemoveExercise(exercise.exercise_id)}
+            type="button"
+          >
+            <X size={16} />
+          </button>
+        </div>
+  
+        <div className="exercise-item__controls">
+          {['sets', 'reps', 'weight'].map((field) => (
+            <div key={field} className="control-group">
+              <label>{field}</label>
+              <div className="control-input">
+                <button 
+                  type="button"
+                  onClick={() => handleDecrement(exercise.exercise_id, field)}
+                >
+                  <Minus size={16} />
+                </button>
+                <span>{exercise[field] || 0}{field === 'weight' ? 'kg' : ''}</span>
+                <button
+                  type="button"
+                  onClick={() => handleIncrement(exercise.exercise_id, field)}
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+  
+        <div className="exercise-item__superset">
+          <button
+            onClick={() => {
+              if (isSelectingThis) {
+                setSelectingSuperset(null);
+              } else if (isInSuperset) {
+                handleRemoveFromSuperset(exerciseId);
+              } else if (isSelectingOther) {
+                handleCompleteSuperset(exerciseId);
+              } else {
+                handleAddToSuperset(exerciseId);
+              }
+            }}
+            className={isSelectingThis || isInSuperset ? 'active' : ''}
+            type="button"
+          >
+            {isSelectingThis 
+              ? 'Cancel Selection'
+              : isSelectingOther
+                ? 'Pair with Selected'
+                : isInSuperset
+                  ? 'Remove Superset'
+                  : 'Add Superset'
+            }
+          </button>
+        </div>
+      </div>
     );
   };
+
+  // renderExerciseItem -----------------------------------------------------------------------------------------------------------------------
+
+  const renderExerciseItem = (exercise, index) => (
+    <Draggable 
+      key={exercise.exercise_id} 
+      draggableId={exercise.exercise_id.toString()} 
+      index={index}
+    >
+      {(provided) => (
+        <ExerciseItem
+          exercise={exercise}
+          index={index}
+          totalExercises={targetExercises.length}
+          findExercise={findExercise}
+          handleRemoveExercise={handleRemoveExercise}
+          handleIncrement={handleIncrement}
+          handleDecrement={handleDecrement}
+          handleRemoveFromSuperset={handleRemoveFromSuperset}
+          handleAddToSuperset={handleAddToSuperset}
+          handleCompleteSuperset={handleCompleteSuperset}
+          selectingSuperset={selectingSuperset}
+          provided={provided}
+        />
+      )}
+    </Draggable>
+  );
 
   // renderContent -----------------------------------------------------------------------------------------------------------------------
 
@@ -546,6 +651,7 @@ const EditProgram = () => {
     if (activeView === 'exercises') {
       return (
         <div className="program-view">
+          <h2 className="program-view__title">{selectedWorkout?.name}</h2>
           <button 
             type="button"
             onClick={() => {
@@ -559,7 +665,6 @@ const EditProgram = () => {
             Back to Workouts
           </button>
           
-          <h2 className="program-view__title">{selectedWorkout?.name}</h2>
           
           {loadingExercises ? (
             <div>Loading exercises...</div>
@@ -590,46 +695,51 @@ const EditProgram = () => {
 
     return (
       <div className="program-editor__content__programs">
-        {programs.map(program => (
-          // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-          <div 
-            type="button"
-            key={program.id} 
-            className="program-card"
-            onClick={() => handleProgramClick(program)}
-          >
-            <h3>{program.name}</h3>
-            {selectedProgramId === program.id && programWorkouts.length > 0 && (
-              <div className="workout-list">
-                {programWorkouts.map(workout => (
-                  <button
-                    type="button"
-                    key={workout.id}
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent program click
-                      handleWorkoutClick(workout);
-                    }}
-                    className="program-view__workout"
-                  >
-                    {workout.name}
-                  </button>
-                ))}
-              </div>
-            )}
-            {selectedProgramId !== program.id && (
+        {viewMode === 'programs' ? (
+          // Programs view
+          programs.map(program => (
+            <div 
+              key={program.id} 
+              className="program-card"
+            >
+              <h3>{program.name}</h3>
               <button 
                 type="button"
                 className="view-workouts-button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleProgramClick(program);
-                }}
+                onClick={() => handleProgramClick(program)}
               >
                 View Workouts
               </button>
-            )}
-          </div>
-        ))}
+            </div>
+          ))
+        ) : (
+          // Workouts view
+          <>
+            <div className="workouts-header">
+              <h2>{selectedProgramName}</h2>
+              <button 
+                type="button"
+                onClick={handleBackToPrograms}
+                className="back-to-programs-button"
+              >
+                <ArrowLeft size={18} />
+                Back to Programs
+              </button>
+            </div>
+            <div className="workouts-grid">
+              {programWorkouts.map(workout => (
+                <button
+                  type="button"
+                  key={workout.id}
+                  onClick={() => handleWorkoutClick(workout)}
+                  className="program-view__workout"
+                >
+                  {workout.name}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     );
   };
