@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 function Exercises() {
   const [exercises, setExercises] = useState([]);
+  const [muscleGroups, setMuscleGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newExercise, setNewExercise] = useState({ name: '', muscleGroupId: '' });
@@ -44,6 +45,32 @@ function Exercises() {
     };
 
     fetchExercises();
+  }, [refetchTrigger]);
+
+  useEffect(() => {
+    const fetchMuscleGroups = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/muscleGroups`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log(data);
+        setMuscleGroups(data);
+      } catch (error) {
+        console.error('Failed to fetch exercises:', error);
+        setError('Failed to load exercises. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMuscleGroups();
   }, [refetchTrigger]);
 
   const handleInputChange = (e) => {
