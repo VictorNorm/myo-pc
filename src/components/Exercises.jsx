@@ -9,18 +9,6 @@ function Exercises() {
   const [formError, setFormError] = useState(null);
   const [refetchTrigger, setRefetchTrigger] = useState(0);
 
-  const MUSCLE_GROUPS = {
-    ABDOMINALS: { id: 1, name: 'Abdominals' },
-    ARMS: { id: 2, name: 'Arms' },
-    BACK: { id: 3, name: 'Back' },
-    CALVES: { id: 4, name: 'Calves' },
-    CHEST: { id: 5, name: 'Chest' },
-    COMPOUND: { id: 6, name: 'Compound' },
-    GLUTES: { id: 7, name: 'Glutes' },
-    LEGS: { id: 8, name: 'Legs' },
-    SHOULDERS: { id: 9, name: 'Shoulders' },
-  };
-
   useEffect(() => {
     const fetchExercises = async () => {
       try {
@@ -122,7 +110,8 @@ function Exercises() {
     if (exercise.muscle_groups?.[0]) {
       return exercise.muscle_groups[0].name;
     }
-    return Object.values(MUSCLE_GROUPS).find(group => group.id === exercise.muscleGroupId)?.name || 'Unknown';
+    // Find the muscle group name from our fetched muscleGroups
+    return muscleGroups.find(group => group.id === exercise.muscleGroupId)?.name || 'Unknown';
   };
 
   const groupedExercises = exercises.reduce((groups, exercise) => {
@@ -163,7 +152,7 @@ function Exercises() {
           />
         </div>
         <div className='add-exercises-form__select-container'>
-          <label htmlFor="muscleGroup">Muscle Group:</label>
+          <label htmlFor="muscleGroupId">Muscle Group:</label>
           <select
             id="muscleGroupId"
             name="muscleGroupId"
@@ -171,32 +160,36 @@ function Exercises() {
             onChange={handleInputChange}
           >
             <option value="">Select a muscle group</option>
-            {Object.values(MUSCLE_GROUPS)
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .map((group) => (
-                <option key={group.id} value={group.id}>{group.name}</option>
+            {muscleGroups.map((group) => (
+              <option key={group.id} value={group.id}>{group.name}</option>
             ))}
+          </select>
+          <label htmlFor="categoryId">Exercise category:</label>
+          <select name="category" id="categoryId">
+            <option value="">Select a category</option>
+            <option value="COMPOUND">Compound</option>
+            <option value="ISOLATION">Isolation</option>
           </select>
         </div>
         {formError && <div style={{ color: 'red' }}>{formError}</div>}
         <button type="submit">Add Exercise</button>
       </form>
       <div className='exercise-container'>
-      <h2>Exercises</h2>
-
-      {sortedMuscleGroups.map((group, index) => (
-        <div key={index}>
-          <h3>{group}</h3>
-          <ul>
-            {groupedExercises[group].map((exercise, index) => (
-              <li key={index}>{exercise.name}</li>
-            ))}
-          </ul>
-        </div>
-      ))}
+        <h2>Exercises</h2>
+        {sortedMuscleGroups.map((group, index) => (
+          <div key={index}>
+            <h3>{group}</h3>
+            <ul>
+              {groupedExercises[group].map((exercise, index) => (
+                <li key={index}>{exercise.name}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
+
 
 export default Exercises;

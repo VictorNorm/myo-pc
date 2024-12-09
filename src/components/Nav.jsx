@@ -35,8 +35,8 @@ function Nav() {
       path: '/exercises',
       dropdownItems: [
         { title: 'Exercises', path: '/exercises' },
+        { title: 'Edit Exercises', path: '/editExercises' },
         { title: 'Add exercises to workout', path: '/addExercisesToWorkout' },
-        { title: 'Spaceholder', path: '/spaceholder2' }
       ]
     },
     {

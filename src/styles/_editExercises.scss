@@ -1,0 +1,97 @@
+.edit-exercises {
+    padding: map-get($spacing, lg);
+    height: 100%;
+  
+    h2 {
+      font-size: map-get(map-get($typography, sizes), xl);
+      font-weight: map-get(map-get($typography, weights), semibold);
+      margin-bottom: map-get($spacing, xl);
+      color: map-get(map-get($colors, text), primary);
+    }
+  
+    &__container {
+      display: flex;
+      gap: map-get($spacing, xl);
+      height: calc(100vh - 200px); // Adjust based on your layout
+    }
+  
+    &__list {
+      flex: 1;
+      @include card;
+      padding: map-get($spacing, xl);
+      overflow-y: auto;
+    }
+  
+    &__form {
+      flex: 1;
+      @include card;
+      padding: map-get($spacing, xl);
+    }
+  }
+  
+  .exercise-groups {
+    display: flex;
+    flex-direction: column;
+    gap: map-get($spacing, xl);
+  }
+  
+  .exercise-group {
+    &__title {
+      font-size: map-get(map-get($typography, sizes), lg);
+      font-weight: map-get(map-get($typography, weights), medium);
+      color: map-get(map-get($colors, text), primary);
+      margin-bottom: map-get($spacing, md);
+    }
+  
+    &__items {
+      display: flex;
+      flex-direction: column;
+      gap: map-get($spacing, sm);
+    }
+  }
+  
+  .exercise-item {
+    padding: map-get($spacing, md);
+    border-radius: map-get($border-radius, md);
+    background-color: map-get(map-get($colors, background), tertiary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  
+    &:hover {
+      background-color: map-get(map-get($colors, accent), primary);
+    }
+  
+    &--selected {
+      background-color: map-get(map-get($colors, accent), primary);
+    }
+  }
+  
+  .form-group {
+    margin-bottom: map-get($spacing, lg);
+  
+    label {
+      display: block;
+      margin-bottom: map-get($spacing, sm);
+      color: map-get(map-get($colors, text), secondary);
+      font-weight: map-get(map-get($typography, weights), medium);
+    }
+  
+    select {
+      @include input-field;
+    }
+  }
+  
+  .form-error {
+    color: map-get(map-get($colors, status), error);
+    margin-bottom: map-get($spacing, md);
+    font-size: map-get(map-get($typography, sizes), sm);
+  }
+  
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    
+    &:hover {
+      background-color: map-get(map-get($colors, accent), primary);
+    }
+  }

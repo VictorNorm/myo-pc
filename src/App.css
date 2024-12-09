@@ -512,62 +512,106 @@ body {
 }
 
 .add-exercises-form {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   max-width: 500px;
   display: flex;
   flex-direction: column;
   margin: 20px auto;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #171717;
 }
 .add-exercises-form input, .add-exercises-form select {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  color: #f3f4f6;
+  padding: 12px;
+  font-size: 16px;
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #2E2E2E;
+  transition: border-color 0.2s ease;
+  margin-bottom: 12px;
+}
+.add-exercises-form input:focus, .add-exercises-form select:focus {
+  outline: none;
+  border-color: #6366f1;
 }
 .add-exercises-form label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #f3f4f6;
 }
 .add-exercises-form .add-exercises-form__input-container,
 .add-exercises-form .add-exercises-form__select-container {
   display: flex;
   flex-direction: column;
-  margin-top: 1rem;
+  margin-top: 16px;
 }
 .add-exercises-form .add-exercises-form__select-container {
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }
 .add-exercises-form button {
-  background-color: rgb(0, 123, 255);
-  border-radius: 4px;
-  padding: 10px;
-  margin-top: 20px;
-  color: white;
-  font-size: 16px;
-  text-align: center;
+  background-color: #6366f1;
+  color: #f3f4f6;
   border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  width: 100%;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-top: 16px;
+}
+.add-exercises-form button:hover {
+  background-color: #4f46e5;
+}
+.add-exercises-form button:active {
+  transform: scale(0.98);
 }
 
 .exercise-container {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   max-width: 500px;
   display: flex;
   flex-direction: column;
   margin: 20px auto;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #171717;
+}
+.exercise-container h2 {
+  color: #f3f4f6;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 700;
 }
 .exercise-container h3 {
-  margin-top: 1rem;
-  margin-bottom: 0.25rem;
+  color: #6366f1;
+  font-size: 20px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #6366f1;
+}
+.exercise-container ul {
+  list-style: none;
+  padding: 0;
+}
+.exercise-container ul li {
+  color: #f3f4f6;
+  padding: 12px 8px;
+  font-size: 16px;
+}
+.exercise-container ul li:not(:last-child) {
+  border-bottom: 1px solid #374151;
+}
+.exercise-container ul li:hover {
+  background-color: #374151;
+  border-radius: 4px;
 }
 
 .program-editor {
@@ -1703,6 +1747,109 @@ body {
   border-radius: 8px;
   margin-top: 12px;
   text-align: center;
+}
+
+.edit-exercises {
+  padding: 16px;
+  height: 100%;
+}
+.edit-exercises h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #f3f4f6;
+}
+.edit-exercises__container {
+  display: flex;
+  gap: 20px;
+  height: calc(100vh - 200px);
+}
+.edit-exercises__list {
+  flex: 1;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  padding: 20px;
+  overflow-y: auto;
+}
+.edit-exercises__form {
+  flex: 1;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  padding: 20px;
+}
+
+.exercise-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.exercise-group__title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #f3f4f6;
+  margin-bottom: 12px;
+}
+.exercise-group__items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.exercise-item {
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.exercise-item:hover {
+  background-color: #6366f1;
+}
+.exercise-item--selected {
+  background-color: #6366f1;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+.form-group select {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  color: #f3f4f6;
+  padding: 12px;
+  font-size: 16px;
+  width: 100%;
+  transition: border-color 0.2s ease;
+}
+.form-group select:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.form-error {
+  color: #FF5252;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+button:disabled:hover {
+  background-color: #6366f1;
 }
 
 /*# sourceMappingURL=App.css.map */

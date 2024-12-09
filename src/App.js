@@ -17,6 +17,8 @@ import VerifyEmail from './components/VerifyEmail';
 import AddExercisesToWorkout from './components/AddExercisesToWorkout';
 import ResetPassword from './components/ResetPassword';
 import CreateProgramWithWorkouts from './components/CreateProgramWithWorkouts';
+import EditExercises from './components/EditExercises';
+import { Edit } from 'lucide-react';
 
 const App = () => (
     <Routes>
@@ -82,6 +84,14 @@ const App = () => (
                 element={
                     <RequireAuth>
                         <Exercises />
+                    </RequireAuth>
+                }
+            />
+            <Route
+                path='editExercises'
+                element={
+                    <RequireAuth>
+                        <EditExercises />
                     </RequireAuth>
                 }
             />
