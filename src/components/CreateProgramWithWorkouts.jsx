@@ -1,16 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Users, Save, Loader } from 'lucide-react';
+import { Plus, X, Save, Loader } from 'lucide-react';
+
+const PROGRAM_TYPES = {
+  PT_MANAGED: 'PT_MANAGED',
+  AI_ASSISTED: 'AI_ASSISTED'
+};
+
+const GOALS = {
+  HYPERTROPHY: 'HYPERTROPHY',
+  STRENGTH: 'STRENGTH'
+};
+
+const isEndDateValid = (start, end) => {
+  if (!end) return true; // End date is optional
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  return endDate >= startDate;
+};
 
 function CreateProgramWithWorkouts() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [nextId, setNextId] = useState(1);
   
   // Form state
   const [selectedUser, setSelectedUser] = useState('');
   const [programName, setProgramName] = useState('');
+  const [goal, setGoal] = useState('HYPERTROPHY');
+  const [programType, setProgramType] = useState(PROGRAM_TYPES.PT_MANAGED);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [workouts, setWorkouts] = useState([
     { id: nextId, name: '', exercises: [] }
   ]);
@@ -37,10 +57,31 @@ function CreateProgramWithWorkouts() {
     }
   };
 
+  const handleEndDateChange = (e) => {
+    const newEndDate = e.target.value;
+    if (!startDate) {
+      setError('Please select a start date first');
+      return;
+    }
+    
+    if (!isEndDateValid(startDate, newEndDate)) {
+      setError('End date cannot be before start date');
+      return;
+    }
+    
+    setError(null);
+    setEndDate(newEndDate);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!programName || !selectedUser || workouts.some(w => !w.name)) {
+    if (!programName || !selectedUser || !startDate || workouts.some(w => !w.name)) {
       setError('Please fill in all required fields');
+      return;
+    }
+
+    if (endDate && !isEndDateValid(startDate, endDate)) {
+      setError('End date cannot be before start date');
       return;
     }
   
@@ -55,9 +96,21 @@ function CreateProgramWithWorkouts() {
         body: JSON.stringify({
           programName,
           userId: selectedUser,
+          goal,
+          programType,
+          startDate,
+          endDate: endDate || null,
           workouts: workouts.map(({ name }) => ({ name }))
         })
       });
+
+      console.log(programName,
+        selectedUser,
+        goal,
+        programType,
+        startDate,
+        endDate || null,
+        workouts.map(({ name }) => ({ name })))
   
       if (!response.ok) {
         const errorData = await response.json();
@@ -69,10 +122,12 @@ function CreateProgramWithWorkouts() {
       // Reset form
       setProgramName('');
       setSelectedUser('');
+      setGoal('HYPERTROPHY');
+      setStartDate('');
+      setEndDate('');
       setWorkouts([{ id: 1, name: '', exercises: [] }]);
       setError(null);
       
-      // Show success message
       alert('Program and workouts created successfully!');
     } catch (error) {
       setError(error.message);
@@ -99,8 +154,8 @@ function CreateProgramWithWorkouts() {
   };
 
   if (loading) return (
-    <div className="flex items-center justify-center h-64">
-      <Loader className="animate-spin text-indigo-500" size={24} />
+    <div className="loading-container">
+      <Loader className="spinner" size={24} />
     </div>
   );
 
@@ -121,6 +176,7 @@ function CreateProgramWithWorkouts() {
               placeholder="Enter program name"
             />
           </div>
+
           <div className="program-details__form-group">
             <label htmlFor="user">Select User</label>
             <select
@@ -136,14 +192,82 @@ function CreateProgramWithWorkouts() {
               ))}
             </select>
           </div>
+
+          <div className="program-details__form-group">
+            <label>Goal</label>
+            <div className="goal-selector">
+              <button
+                type="button"
+                onClick={() => setGoal('HYPERTROPHY')}
+                className={`goal-button ${goal === 'HYPERTROPHY' ? 'active' : ''}`}
+              >
+                Hypertrophy
+              </button>
+              <button
+                type="button"
+                onClick={() => setGoal('STRENGTH')}
+                className={`goal-button ${goal === 'STRENGTH' ? 'active' : ''}`}
+              >
+                Strength
+              </button>
+            </div>
+            <div className="program-details__form-group">
+              <label>Program Type</label>
+              <div className="goal-selector">
+                <button
+                  type="button"
+                  onClick={() => setProgramType(PROGRAM_TYPES.PT_MANAGED)}
+                  className={`goal-button ${programType === PROGRAM_TYPES.PT_MANAGED ? 'active' : ''}`}
+                >
+                  PT Managed
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setProgramType(PROGRAM_TYPES.AI_ASSISTED)}
+                  className={`goal-button ${programType === PROGRAM_TYPES.AI_ASSISTED ? 'active' : ''}`}
+                >
+                  Automated
+                </button>
+              </div>
+          </div>
+          </div>
+
+          <div className="program-details__form-group date-inputs">
+            <div className="date-field">
+              <label htmlFor="startDate">Start Date</label>
+              <input
+                type="date"
+                id="startDate"
+                value={startDate}
+                onChange={(e) => {
+                  setStartDate(e.target.value);
+                  // Clear end date if it's now invalid
+                  if (endDate && !isEndDateValid(e.target.value, endDate)) {
+                    setEndDate('');
+                    setError('End date was cleared as it was before the new start date');
+                  }
+                }}
+              />
+            </div>
+            <div className="date-field">
+              <label htmlFor="endDate">End Date (Optional)</label>
+              <input
+                type="date"
+                id="endDate"
+                value={endDate}
+                min={startDate} // This adds HTML5 validation
+                onChange={handleEndDateChange}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="workouts">
           <div className="workouts__header">
             <h2>Workouts</h2>
             <button 
-              className="workouts__add-button" 
               type="button"
+              className="workouts__add-button"
               onClick={addWorkout}
             >
               <Plus size={16} /> Add Workout
@@ -169,8 +293,8 @@ function CreateProgramWithWorkouts() {
                     onChange={(e) => handleWorkoutNameChange(workout.id, e.target.value)}
                   />
                   <button 
-                    className="workout-item__remove"
                     type="button"
+                    className="workout-item__remove"
                     onClick={() => removeWorkout(workout.id)}
                     disabled={workouts.length === 1}
                   >

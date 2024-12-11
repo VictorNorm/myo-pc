@@ -1,0 +1,92 @@
+.modal {
+    &-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  
+    &-content {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90vw;
+      max-width: 500px;
+      background-color: map-get(map-get($colors, background), secondary);
+      padding: map-get($spacing, xl);
+      border-radius: map-get($border-radius, md);
+      box-shadow: map-get($shadows, md);
+      animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid map-get(map-get($colors, background), tertiary);
+    }
+  
+    &-title {
+      font-size: map-get(map-get($typography, sizes), xxl);
+      font-weight: map-get(map-get($typography, weights), bold);
+      color: map-get(map-get($colors, text), primary);
+      margin-bottom: map-get($spacing, md);
+    }
+  
+    &-description {
+      color: map-get(map-get($colors, text), secondary);
+      font-size: map-get(map-get($typography, sizes), md);
+      margin-bottom: map-get($spacing, xl);
+    }
+  
+    &-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: map-get($spacing, md);
+    }
+  
+    &-button {
+      padding: map-get($spacing, sm) map-get($spacing, md);
+      border-radius: map-get($border-radius, sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: map-get(map-get($typography, weights), medium);
+      font-size: map-get(map-get($typography, sizes), md);
+  
+      &--cancel {
+        background-color: map-get(map-get($colors, background), tertiary);
+        color: map-get(map-get($colors, text), primary);
+        border: 1px solid transparent;
+  
+        &:hover {
+          background-color: lighten(map-get(map-get($colors, background), tertiary), 5%);
+        }
+      }
+  
+      &--delete {
+        background-color: transparent;
+        border: 1px solid map-get(map-get($colors, status), error);
+        color: map-get(map-get($colors, status), error);
+  
+        &:hover {
+          background-color: map-get(map-get($colors, status), error);
+          color: map-get(map-get($colors, text), primary);
+        }
+      }
+    }
+  }
+  
+  @keyframes overlayShow {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes contentShow {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -48%) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }

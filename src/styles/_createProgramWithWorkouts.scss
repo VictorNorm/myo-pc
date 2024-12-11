@@ -39,6 +39,69 @@
         @include input-field;
       }
     }
+
+    .goal-selector {
+      display: flex;
+      gap: map-get($spacing, md);
+      margin-top: map-get($spacing, xs);
+  
+      .goal-button {
+        flex: 1;
+        background-color: map-get(map-get($colors, background), tertiary);
+        color: map-get(map-get($colors, text), secondary);
+        border: 1px solid map-get(map-get($colors, background), tertiary);
+        border-radius: map-get($border-radius, md);
+        padding: map-get($spacing, md);
+        font-size: map-get(map-get($typography, sizes), md);
+        cursor: pointer;
+        transition: all 0.2s ease;
+  
+        &:hover {
+          background-color: lighten(map-get(map-get($colors, background), tertiary), 5%);
+        }
+  
+        &.active {
+          background-color: map-get(map-get($colors, accent), primary);
+          color: map-get(map-get($colors, text), primary);
+          border-color: map-get(map-get($colors, accent), primary);
+  
+          &:hover {
+            background-color: map-get(map-get($colors, accent), primary-hover);
+          }
+        }
+      }
+    }
+  
+    .date-inputs {
+      display: flex;
+      gap: map-get($spacing, lg);
+  
+      .date-field {
+        flex: 1;
+      }
+    }
+  }
+  
+  // Add this if you don't have loading styles yet
+  .loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 16rem;
+  
+    .spinner {
+      color: map-get(map-get($colors, accent), primary);
+      animation: spin 1s linear infinite;
+    }
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   // Workouts Section
@@ -118,6 +181,7 @@
     @include button-primary;
     width: 100%;
     margin-top: map-get($spacing, xl);
+    margin-bottom: map-get($spacing, xxl);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -132,5 +196,14 @@
     border-radius: map-get($border-radius, md);
     margin-top: map-get($spacing, md);
     text-align: center;
+  }
+
+
+  .program-details__form-group {
+    label {
+      margin-top: map-get($spacing, md);
+      font-size: map-get(map-get($typography, sizes), md);
+      color: map-get(map-get($colors, text), primary);
+    }
   }
 }

@@ -125,14 +125,46 @@
   .program-editor__content__programs {
     height: 100%;
     width: 100%;
+
+    .delete-program-button {
+      position: absolute;  // Add this
+      top: map-get($spacing, md);  // Add this
+      right: map-get($spacing, md);  // Add this
+      padding: map-get($spacing, sm) map-get($spacing, md);
+      background-color: transparent;
+      border: 1px solid map-get(map-get($colors, status), error);
+      color: map-get(map-get($colors, status), error);
+      border-radius: map-get($border-radius, sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 1;  // Add this to ensure it stays on top
+    
+      &:hover {
+        background-color: map-get(map-get($colors, status), error);
+        color: white;
+      }
+    }
   }
   
   .program-card {
     background-color: map-get(map-get($colors, background), primary);
     padding: map-get($spacing, lg);
-    border-radius: map-get($border-radius, lg);
-    transition: background-color 0.2s ease;
-    color: map-get(map-get($colors, text), primary);
+    border-radius: map-get($border-radius, md);
+    border: 1px solid rgba(map-get(map-get($colors, text), primary), 0.1);
+    transition: all 0.2s ease;
+    margin-bottom: 1rem;
+    position: relative;  // Add this to allow absolute positioning of children
+    
+    h3 {
+      font-size: map-get(map-get($typography, sizes), lg);
+      font-weight: map-get(map-get($typography, weights), semibold);
+      margin-bottom: map-get($spacing, md);
+      color: map-get(map-get($colors, text), primary);
+    }
+  
+    &:hover {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
   }
   
   .program-card h3 {
@@ -311,11 +343,16 @@
   }
   
   .exercise-item {
-    background-color: #1e2635;
+    background-color: map-get(map-get($colors, background), secondary);
+    border: 1px solid map-get(map-get($colors, background), tertiary);
+    border-radius: map-get($border-radius, lg);
     padding: map-get($spacing, lg);
-    border-radius: map-get($border-radius, md);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    margin-bottom: map-get($spacing, sm);
+    margin-bottom: map-get($spacing, md);
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: map-get(map-get($colors, accent), primary);
+    }
   
     &__header {
       display: flex;
@@ -395,6 +432,8 @@
           background-color: rgba(13, 17, 23, 0.8);
           border-radius: map-get($border-radius, md);
           padding: 2px;
+          background-color: map-get(map-get($colors, background), primary);
+          border: 1px solid map-get(map-get($colors, background), tertiary);
   
           button {
             padding: map-get($spacing, xs) map-get($spacing, sm);
@@ -414,7 +453,7 @@
   
             &:hover {
               background-color: #343f52;
-              transform: translateY(-1px);
+              // transform: translateY(-1px);
               box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             }
   
@@ -487,6 +526,8 @@
     &.supersetted {
       border: 1px solid map-get(map-get($colors, accent), primary);
       position: relative;
+      border-color: map-get(map-get($colors, accent), primary);
+      background-color: lighten(map-get(map-get($colors, background), secondary), 5%);
       
       // Add margin for the connector line
       &:not(:last-child) {

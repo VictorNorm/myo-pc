@@ -3,6 +3,8 @@ import React, { useState, useEffect, memo, useRef } from 'react';
 import { Search, ChevronRight, Save, X, Plus, Minus, ArrowLeft } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useOutletContext } from 'react-router-dom';
+import DeleteProgramModal from './DeleteProgramModal';
+import toast, { Toaster } from 'react-hot-toast';
 
 const EditProgram = () => {
   const { workoutExercises, targetExercises, setTargetExercises } = useOutletContext();
@@ -30,6 +32,7 @@ const EditProgram = () => {
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [programWorkouts, setProgramWorkouts] = useState([]);
   const [selectedProgramName, setSelectedProgramName] = useState('');
+  const [programToDelete, setProgramToDelete] = useState(null);
 
   // Exercise states
   const [exercises, setExercises] = useState([]);
@@ -405,6 +408,33 @@ const EditProgram = () => {
     }
   };
 
+  const handleDeleteProgram = async (programId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/programs/${programId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to delete program');
+      }
+  
+      // Remove the program from the local state
+      setPrograms(prev => prev.filter(p => p.id !== programId));
+      setProgramToDelete(null);
+      
+      // Show success toast
+      toast.success('Program deleted successfully');
+    } catch (error) {
+      console.error('Error deleting program:', error);
+      // Show error toast
+      toast.error('Failed to delete program. Please try again.');
+    }
+  };
+
   // findExercise -----------------------------------------------------------------------------------------------------------------------------
 
   const findExercise = (id) => {
@@ -702,6 +732,16 @@ const EditProgram = () => {
               key={program.id} 
               className="program-card"
             >
+              <button 
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setProgramToDelete(program);
+                }}
+                className="delete-program-button"
+              >
+                Delete
+              </button>
               <h3>{program.name}</h3>
               <button 
                 type="button"
@@ -802,10 +842,52 @@ const EditProgram = () => {
 
         {renderContent()}
       </div>
+      {programToDelete && (
+        <DeleteProgramModal
+          isOpen={Boolean(programToDelete)}
+          onClose={() => setProgramToDelete(null)}
+          onConfirm={() => handleDeleteProgram(programToDelete.id)}
+          programName={programToDelete.name}
+        />
+      )}
+      <Toaster
+      position="top-right"
+      toastOptions={{
+        style: {
+          background: '#1f2937', // background.secondary
+          color: '#f3f4f6',     // text.primary
+          border: '1px solid #374151', // background.tertiary
+          borderRadius: '8px',  // border-radius.md
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.25)', // shadows.md
+          padding: '12px 16px', // spacing.md spacing.lg
+        },
+        success: {
+          duration: 3000,
+          style: {
+            background: 'rgba(76, 175, 80, 0.3)', // status.success-light
+            border: '1px solid #4CAF50', // status.success
+          },
+          iconTheme: {
+            primary: '#4CAF50', // status.success
+            secondary: '#f3f4f6', // text.primary
+          }
+        },
+        error: {
+          duration: 4000,
+          style: {
+            background: 'rgba(255, 82, 82, 0.3)', // status.error-light
+            border: '1px solid #FF5252', // status.error
+          },
+          iconTheme: {
+            primary: '#FF5252', // status.error
+            secondary: '#f3f4f6', // text.primary
+          }
+        },
+      }}
+    />
     </div>
   );
 };
 
 
 export default EditProgram;
-

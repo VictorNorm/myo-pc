@@ -767,13 +767,41 @@ body {
   height: 100%;
   width: 100%;
 }
+.program-editor__content__programs .delete-program-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 8px 12px;
+  background-color: transparent;
+  border: 1px solid #FF5252;
+  color: #FF5252;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+.program-editor__content__programs .delete-program-button:hover {
+  background-color: #FF5252;
+  color: white;
+}
 
 .program-card {
   background-color: #111827;
   padding: 16px;
-  border-radius: 12px;
-  transition: background-color 0.2s ease;
+  border-radius: 8px;
+  border: 1px solid rgba(243, 244, 246, 0.1);
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+  position: relative;
+}
+.program-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
   color: #f3f4f6;
+}
+.program-card:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .program-card h3 {
@@ -938,11 +966,15 @@ body {
 }
 
 .exercise-item {
-  background-color: #1e2635;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 12px;
   padding: 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+.exercise-item:hover {
+  border-color: #6366f1;
 }
 .exercise-item__header {
   display: flex;
@@ -1013,6 +1045,8 @@ body {
   background-color: rgba(13, 17, 23, 0.8);
   border-radius: 8px;
   padding: 2px;
+  background-color: #111827;
+  border: 1px solid #374151;
 }
 .exercise-item__controls .control-group .control-input button {
   padding: 4px 8px;
@@ -1032,7 +1066,6 @@ body {
 }
 .exercise-item__controls .control-group .control-input button:hover {
   background-color: #343f52;
-  transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 .exercise-item__controls .control-group .control-input button:active {
@@ -1087,6 +1120,8 @@ body {
 .exercise-item.supersetted {
   border: 1px solid #6366f1;
   position: relative;
+  border-color: #6366f1;
+  background-color: #283547;
 }
 .exercise-item.supersetted:not(:last-child) {
   margin-bottom: 20px;
@@ -1616,6 +1651,58 @@ body {
   outline: none;
   border-color: #6366f1;
 }
+.program-creation .program-details .goal-selector {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+.program-creation .program-details .goal-selector .goal-button {
+  flex: 1;
+  background-color: #374151;
+  color: #9ca3af;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.program-creation .program-details .goal-selector .goal-button:hover {
+  background-color: #414d60;
+}
+.program-creation .program-details .goal-selector .goal-button.active {
+  background-color: #6366f1;
+  color: #f3f4f6;
+  border-color: #6366f1;
+}
+.program-creation .program-details .goal-selector .goal-button.active:hover {
+  background-color: #4f46e5;
+}
+.program-creation .program-details .date-inputs {
+  display: flex;
+  gap: 16px;
+}
+.program-creation .program-details .date-inputs .date-field {
+  flex: 1;
+}
+.program-creation .loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 16rem;
+}
+.program-creation .loading-container .spinner {
+  color: #6366f1;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 .program-creation .workouts {
   background-color: #1f2937;
   border: 1px solid #374151;
@@ -1729,6 +1816,7 @@ body {
   transition: background-color 0.2s ease, transform 0.1s ease;
   width: 100%;
   margin-top: 20px;
+  margin-bottom: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1747,6 +1835,11 @@ body {
   border-radius: 8px;
   margin-top: 12px;
   text-align: center;
+}
+.program-creation .program-details__form-group label {
+  margin-top: 12px;
+  font-size: 16px;
+  color: #f3f4f6;
 }
 
 .edit-exercises {
@@ -1807,9 +1900,6 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.exercise-item:hover {
-  background-color: #6366f1;
-}
 .exercise-item--selected {
   background-color: #6366f1;
 }
@@ -1850,6 +1940,87 @@ button:disabled {
 }
 button:disabled:hover {
   background-color: #6366f1;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 500px;
+  background-color: #1f2937;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #374151;
+}
+.modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #f3f4f6;
+  margin-bottom: 12px;
+}
+.modal-description {
+  color: #9ca3af;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.modal-button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 16px;
+}
+.modal-button--cancel {
+  background-color: #374151;
+  color: #f3f4f6;
+  border: 1px solid transparent;
+}
+.modal-button--cancel:hover {
+  background-color: #414d60;
+}
+.modal-button--delete {
+  background-color: transparent;
+  border: 1px solid #FF5252;
+  color: #FF5252;
+}
+.modal-button--delete:hover {
+  background-color: #FF5252;
+  color: #f3f4f6;
+}
+
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 /*# sourceMappingURL=App.css.map */
