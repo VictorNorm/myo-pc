@@ -5,9 +5,14 @@ function Exercises() {
   const [muscleGroups, setMuscleGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [newExercise, setNewExercise] = useState({ name: '', muscleGroupId: '' });
   const [formError, setFormError] = useState(null);
   const [refetchTrigger, setRefetchTrigger] = useState(0);
+  const [newExercise, setNewExercise] = useState({ 
+    name: '', 
+    muscleGroupId: '',
+    category: '',
+    equipment: ''
+  });
 
   useEffect(() => {
     const fetchExercises = async () => {
@@ -71,8 +76,8 @@ function Exercises() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newExercise.name || !newExercise.muscleGroupId) {
-      setFormError('Please provide both exercise name and muscle group.');
+    if (!newExercise.name || !newExercise.muscleGroupId || !newExercise.category || !newExercise.equipment) {
+      setFormError('Please fill in all fields: exercise name, muscle group, category, and equipment.');
       return;
     }
     try {
@@ -85,7 +90,9 @@ function Exercises() {
         },
         body: JSON.stringify({
           name: newExercise.name,
-          muscleGroupId: newExercise.muscleGroupId
+          muscleGroupId: newExercise.muscleGroupId,
+          category: newExercise.category,
+          equipment: newExercise.equipment
         })
       });
       if (!response.ok) {
@@ -94,7 +101,7 @@ function Exercises() {
       }
       const addedExercise = await response.json();
       setExercises(prevExercises => [...prevExercises, addedExercise]);
-      setNewExercise({ name: '', muscleGroupId: '' });
+      setNewExercise({ name: '', muscleGroupId: '', category: '', equipment: '' });
       setFormError(null);
       setRefetchTrigger(prev => prev + 1);
     } catch (error) {
@@ -149,6 +156,7 @@ function Exercises() {
             name="name"
             value={newExercise.name}
             onChange={handleInputChange}
+            required
           />
         </div>
         <div className='add-exercises-form__select-container'>
@@ -158,22 +166,47 @@ function Exercises() {
             name="muscleGroupId"
             value={newExercise.muscleGroupId}
             onChange={handleInputChange}
+            required
           >
             <option value="">Select a muscle group</option>
             {muscleGroups.map((group) => (
               <option key={group.id} value={group.id}>{group.name}</option>
             ))}
           </select>
-          <label htmlFor="categoryId">Exercise category:</label>
-          <select name="category" id="categoryId">
+
+          <label htmlFor="category">Exercise category:</label>
+          <select 
+            name="category" 
+            id="category"
+            value={newExercise.category}
+            onChange={handleInputChange}
+            required
+          >
             <option value="">Select a category</option>
             <option value="COMPOUND">Compound</option>
             <option value="ISOLATION">Isolation</option>
+          </select>
+
+          <label htmlFor="equipment">Equipment:</label>
+          <select 
+            name="equipment" 
+            id="equipment"
+            value={newExercise.equipment}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Select equipment</option>
+            <option value="BARBELL">Barbell</option>
+            <option value="BODYWEIGHT">Bodyweight</option>
+            <option value="CABLE">Cable</option>
+            <option value="DUMBBELL">Dumbbell</option>
+            <option value="MACHINE">Machine</option>
           </select>
         </div>
         {formError && <div style={{ color: 'red' }}>{formError}</div>}
         <button type="submit">Add Exercise</button>
       </form>
+
       <div className='exercise-container'>
         <h2>Exercises</h2>
         {sortedMuscleGroups.map((group, index) => (

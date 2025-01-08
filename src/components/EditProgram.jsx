@@ -5,6 +5,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useOutletContext } from 'react-router-dom';
 import DeleteProgramModal from './DeleteProgramModal';
 import toast, { Toaster } from 'react-hot-toast';
+import LoadingSpinner from './LoadingSpinner';
 
 const EditProgram = () => {
   const { workoutExercises, targetExercises, setTargetExercises } = useOutletContext();
@@ -784,6 +785,8 @@ const EditProgram = () => {
     );
   };
 
+
+
   return (
     <div className="program-editor">
       {/* Sidebar */}
@@ -799,12 +802,17 @@ const EditProgram = () => {
         </div>
         
         <div className="program-editor__sidebar__list">
-          {users.filter(user => 
-            `${user.firstName} ${user.lastName} ${user.username}`
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
-          ).map(user => (
-            <button
+          {loadingUsers ? (
+            <div className="program-editor__sidebar__loading">
+              <LoadingSpinner size="small" />
+            </div>
+          ) : (
+            users.filter(user => 
+              `${user.firstName} ${user.lastName} ${user.username}`
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase())
+            ).map(user => (
+              <button
               type="button"
               key={user.id}
               onClick={() => handleUserSelect(user)}
@@ -813,34 +821,43 @@ const EditProgram = () => {
               <h3>{user.firstName} {user.lastName}</h3>
               <p>{user.username}</p>
             </button>
-          ))}
+            ))
+          )}
         </div>
       </div>
 
       {/* Main Content */}
       <div className="program-editor__content">
-        <div className="program-editor__content__header">
-          <div className="program-editor__content__header__breadcrumb">
-            <span>{selectedUser?.firstName} {selectedUser?.lastName}</span>
-            {activeView === 'exercises' && selectedWorkout && (
-              <>
-                <ChevronRight size={16} className="chevron" />
-                <span>{selectedWorkout.name}</span>
-              </>
-            )}
+        {loadingPrograms ? (
+          <div className="program-editor__content__loading">
+            <LoadingSpinner />
           </div>
-          
-          {activeView === 'exercises' && (
-            <div className="program-editor__content__header__actions">
-              <button onClick={saveWorkout} type="button">
-                <Save size={16} />
-                Save Changes
-              </button>
+        ) : (
+          <>
+            <div className="program-editor__content__header">
+              <div className="program-editor__content__header__breadcrumb">
+                <span>{selectedUser?.firstName} {selectedUser?.lastName}</span>
+                {activeView === 'exercises' && selectedWorkout && (
+                  <>
+                    <ChevronRight size={16} className="chevron" />
+                    <span>{selectedWorkout.name}</span>
+                  </>
+                )}
+              </div>
+              
+              {activeView === 'exercises' && (
+                <div className="program-editor__content__header__actions">
+                  <button onClick={saveWorkout} type="button">
+                    <Save size={16} />
+                    Save Changes
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        {renderContent()}
+            {renderContent()}
+          </>
+        )}
       </div>
       {programToDelete && (
         <DeleteProgramModal

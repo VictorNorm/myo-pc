@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, X, Save, Loader } from 'lucide-react';
+import LoadingSpinner from './LoadingSpinner';
 
 const PROGRAM_TYPES = {
   PT_MANAGED: 'PT_MANAGED',
@@ -153,11 +154,7 @@ function CreateProgramWithWorkouts() {
     ));
   };
 
-  if (loading) return (
-    <div className="loading-container">
-      <Loader className="spinner" size={24} />
-    </div>
-  );
+  if (loading) return <LoadingSpinner size="large" />;
 
   return (
     <div className="program-creation">
