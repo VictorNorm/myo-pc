@@ -2,24 +2,67 @@
 
 .sidebar {
     width: 250px;
-    background-color: $primary-bg;
-    padding: 20px;
-    border-right: 1px solid $border;
-    
-        * {
-            background-color: $primary-bg;
-        }
-
-        li, ul {
-            list-style: none;
-        }
-
-        ul {
-            padding: 0;
-        }
-
-        h3 {
-            margin-top: 1.25rem;
-            margin-bottom: 0.5rem;
-        }
+    background-color: map-get(map-get($colors, background), secondary);
+    padding: map-get($spacing, lg);
+    border-right: 1px solid map-get(map-get($colors, navigation), border);
+    height: 100vh;
+    overflow-y: auto;
+  
+    h2 {
+      color: map-get(map-get($colors, text), primary);
+      font-size: map-get(map-get($typography, sizes), xl);
+      font-weight: map-get(map-get($typography, weights), semibold);
+      margin-bottom: map-get($spacing, lg);
+    }
+  
+    h3 {
+      color: map-get(map-get($colors, text), secondary);
+      font-size: map-get(map-get($typography, sizes), md);
+      font-weight: map-get(map-get($typography, weights), semibold);
+      margin-top: map-get($spacing, xl);
+      margin-bottom: map-get($spacing, md);
+    }
+  
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+  
+    li {
+      color: map-get(map-get($colors, text), primary);
+      font-size: map-get(map-get($typography, sizes), sm);
+      padding: map-get($spacing, xs) map-get($spacing, sm);
+      margin-bottom: map-get($spacing, xs);
+      border-radius: map-get($border-radius, sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+  
+      &:hover {
+        background-color: map-get(map-get($colors, background), tertiary);
+        padding-left: map-get($spacing, md);
+      }
+  
+      &:active {
+        background-color: map-get(map-get($colors, accent), primary);
+        color: map-get(map-get($colors, text), primary);
+      }
+    }
+  
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+  
+    &::-webkit-scrollbar-track {
+      background: map-get(map-get($colors, background), secondary);
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background: map-get(map-get($colors, background), tertiary);
+      border-radius: map-get($border-radius, sm);
+    }
+  
+    &::-webkit-scrollbar-thumb:hover {
+      background: map-get(map-get($colors, navigation), inactive);
+    }
   }

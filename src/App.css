@@ -1357,80 +1357,102 @@ body {
 .addExercisesToWorkout-container {
   display: flex;
   flex-direction: row;
+  padding: 16px;
 }
 .addExercisesToWorkout-container h1 {
-  margin-bottom: 1.5rem;
+  margin-bottom: 20px;
+  color: #f3f4f6;
 }
 .addExercisesToWorkout-container .addExercisesToWorkout-container__exercises {
   flex: 1;
-  margin-right: 1rem;
+  margin-right: 20px;
 }
 .addExercisesToWorkout-container .addExercisesToWorkout-container__left {
   flex: 1;
 }
 .addExercisesToWorkout-container .container {
-  background-color: #171717;
+  background-color: #1f2937;
   display: flex;
   flex-direction: column;
 }
 .addExercisesToWorkout-container .exerciseHeading {
   font-size: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   margin-left: 0;
+  color: #f3f4f6;
+  font-weight: 600;
 }
 .addExercisesToWorkout-container .itemContainer {
-  border: 1px solid white;
-  margin-bottom: 20px;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  margin-bottom: 16px;
   padding: 16px;
-  border-width: 1px;
-  border-color: #ddd;
-  border-radius: 8px;
-  background-color: #171717;
   display: flex;
   flex-direction: column;
   flex: 1;
   position: relative;
 }
 .addExercisesToWorkout-container .itemContainer.superset {
-  border: 2px solid blue;
+  border: 2px solid #6366f1;
 }
 .addExercisesToWorkout-container .itemContainer.selecting {
-  border: 2px dashed green;
+  border: 2px dashed #6366f1;
 }
 .addExercisesToWorkout-container .itemContainer .itemContainer__button {
-  width: 25px;
-  height: 23px;
-  background-color: #f81f1f;
+  width: 20px;
+  height: 20px;
+  background-color: #FF5252;
   position: absolute;
-  top: 9px;
-  right: 9px;
+  top: 12px;
+  right: 12px;
   border: none;
   cursor: pointer;
+  border-radius: 4px;
+  color: #f3f4f6;
+}
+.addExercisesToWorkout-container .itemContainer .itemContainer__button:hover {
+  background-color: #ff1f1f;
 }
 .addExercisesToWorkout-container .itemText {
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
   flex: 1;
-  margin-left: 10px;
-  background-color: #2E2E2E;
+  margin-left: 12px;
+  color: #f3f4f6;
 }
 .addExercisesToWorkout-container .inputContainer {
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding: 8px;
   display: flex;
   align-items: center;
-  background-color: #2E2E2E;
-  margin-bottom: 5px;
+  background-color: #374151;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  border: 1px solid #374151;
 }
 .addExercisesToWorkout-container .input {
-  width: 40px;
-  height: 40px;
-  border-color: #FFFFFF;
-  border-width: 1px;
-  margin-right: 8px;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  color: #f3f4f6;
+  padding: 12px;
+  font-size: 16px;
+  width: 100%;
+  transition: border-color 0.2s ease;
+  width: 72px;
+  height: 48px;
+  margin-right: 12px;
   text-align: center;
-  background-color: #373737;
-  color: #FFFFFF;
+  border: 1px solid #374151;
+  background-color: #1f2937;
+}
+.addExercisesToWorkout-container .input:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+.addExercisesToWorkout-container .input:focus {
+  border-color: #6366f1;
 }
 .addExercisesToWorkout-container .buttonContainer {
   display: flex;
@@ -1438,59 +1460,107 @@ body {
   margin: 0 auto;
 }
 .addExercisesToWorkout-container .button {
-  background-color: #007bff;
-  border-radius: 4px;
-  padding: 8px;
-  width: 35px;
-  margin-left: 2px;
-  color: white;
+  background-color: #6366f1;
+  border-radius: 8px;
+  padding: 12px;
+  width: 36px;
+  margin-left: 4px;
+  color: #f3f4f6;
   font-size: 16px;
   text-align: center;
   border: none;
   cursor: pointer;
+}
+.addExercisesToWorkout-container .button:hover {
+  background-color: #4f46e5;
 }
 .addExercisesToWorkout-container .supersetButton {
-  margin-top: 10px;
-  background-color: #007bff;
-  border-radius: 4px;
-  padding: 8px;
-  color: white;
+  margin-top: 12px;
+  background-color: #6366f1;
+  border-radius: 8px;
+  padding: 12px;
+  color: #f3f4f6;
   font-size: 16px;
   text-align: center;
   border: none;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.addExercisesToWorkout-container .supersetButton:hover {
+  background-color: #4f46e5;
 }
 .addExercisesToWorkout-container .supersetButton.active {
-  background-color: blue;
-  color: white;
+  background-color: #6366f1;
 }
 .addExercisesToWorkout-container .supersetButton.selecting {
-  background-color: green;
-  color: white;
+  background-color: #4CAF50;
 }
 .addExercisesToWorkout-container .supersetButton.pairing {
-  background-color: orange;
-  color: white;
+  background-color: #FFC107;
 }
 .addExercisesToWorkout-container .add-workout-container__select-container {
   display: flex;
   flex: 1;
   flex-direction: column;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  padding: 16px;
 }
 .addExercisesToWorkout-container .add-workout-container__select-container .add-workout-container__select-container__user,
 .addExercisesToWorkout-container .add-workout-container__select-container .add-workout-container__select-container__program,
 .addExercisesToWorkout-container .add-workout-container__select-container .add-workout-container__select-container__workout {
   display: flex;
   flex-direction: column;
-  margin-bottom: 2rem;
+  margin-bottom: 20px;
+}
+.addExercisesToWorkout-container .add-workout-container__select-container .add-workout-container__select-container__user h2,
+.addExercisesToWorkout-container .add-workout-container__select-container .add-workout-container__select-container__program h2,
+.addExercisesToWorkout-container .add-workout-container__select-container .add-workout-container__select-container__workout h2 {
+  color: #f3f4f6;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 .addExercisesToWorkout-container .add-workout-container__select-container select {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  color: #f3f4f6;
+  padding: 12px;
+  font-size: 16px;
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #2E2E2E;
-  flex: 1;
+  transition: border-color 0.2s ease;
+}
+.addExercisesToWorkout-container .add-workout-container__select-container select:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+.addExercisesToWorkout-container .add-workout-container__select-container select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.addExercisesToWorkout-container .add-workout-container__select-container form {
+  padding-top: 16px;
+}
+.addExercisesToWorkout-container .add-workout-container__select-container form button {
+  background-color: #6366f1;
+  color: #f3f4f6;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  width: 100%;
+}
+.addExercisesToWorkout-container .add-workout-container__select-container form button:hover {
+  background-color: #4f46e5;
+}
+.addExercisesToWorkout-container .add-workout-container__select-container form button:active {
+  transform: scale(0.98);
 }
 .addExercisesToWorkout-container .add-workout-container__input-container {
   max-width: 400px;
@@ -1500,44 +1570,93 @@ body {
   flex-direction: column;
 }
 .addExercisesToWorkout-container .add-workout-container__input-container input {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  color: #f3f4f6;
+  padding: 12px;
+  font-size: 16px;
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #2E2E2E;
-  flex: 1;
+  transition: border-color 0.2s ease;
+}
+.addExercisesToWorkout-container .add-workout-container__input-container input:focus {
+  outline: none;
+  border-color: #6366f1;
 }
 .addExercisesToWorkout-container .add-workout-container__input-container button {
-  margin-top: 1rem;
-  background-color: #007bff;
-  border-radius: 4px;
-  padding: 8px;
-  margin-left: 2px;
-  color: white;
-  font-size: 16px;
-  text-align: center;
+  background-color: #6366f1;
+  color: #f3f4f6;
   border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-top: 16px;
+}
+.addExercisesToWorkout-container .add-workout-container__input-container button:hover {
+  background-color: #4f46e5;
+}
+.addExercisesToWorkout-container .add-workout-container__input-container button:active {
+  transform: scale(0.98);
 }
 
 .sidebar {
   width: 250px;
-  background-color: #171717;
-  padding: 20px;
-  border-right: 1px solid #D1D5DB;
+  background-color: #1f2937;
+  padding: 16px;
+  border-right: 1px solid #374151;
+  height: 100vh;
+  overflow-y: auto;
 }
-.sidebar * {
-  background-color: #171717;
-}
-.sidebar li, .sidebar ul {
-  list-style: none;
-}
-.sidebar ul {
-  padding: 0;
+.sidebar h2 {
+  color: #f3f4f6;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
 }
 .sidebar h3 {
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
+  color: #9ca3af;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 20px;
+  margin-bottom: 12px;
+}
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar li {
+  color: #f3f4f6;
+  font-size: 14px;
+  padding: 4px 8px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.sidebar li:hover {
+  background-color: #374151;
+  padding-left: 12px;
+}
+.sidebar li:active {
+  background-color: #6366f1;
+  color: #f3f4f6;
+}
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+.sidebar::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }
 
 .reset-password-form {
@@ -1840,6 +1959,49 @@ body {
   margin-top: 12px;
   font-size: 16px;
   color: #f3f4f6;
+}
+
+.active-program-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.active-program-toggle input[type=checkbox] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #374151;
+  border-radius: 4px;
+  background-color: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.active-program-toggle input[type=checkbox]:checked {
+  background-color: #6366f1;
+  border-color: #6366f1;
+}
+.active-program-toggle input[type=checkbox]:checked::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.active-program-toggle input[type=checkbox]:hover {
+  border-color: #6366f1;
+}
+.active-program-toggle label {
+  font-size: 16px;
+  color: #f3f4f6;
+  cursor: pointer;
+  user-select: none;
 }
 
 .edit-exercises {

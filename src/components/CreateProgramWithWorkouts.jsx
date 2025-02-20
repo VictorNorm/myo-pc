@@ -3,8 +3,8 @@ import { Plus, X, Save, Loader } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
 
 const PROGRAM_TYPES = {
-  PT_MANAGED: 'PT_MANAGED',
-  AI_ASSISTED: 'AI_ASSISTED'
+  MANUAL: 'MANUAL',
+  AUTOMATED: 'AUTOMATED'
 };
 
 const GOALS = {
@@ -29,9 +29,10 @@ function CreateProgramWithWorkouts() {
   const [selectedUser, setSelectedUser] = useState('');
   const [programName, setProgramName] = useState('');
   const [goal, setGoal] = useState('HYPERTROPHY');
-  const [programType, setProgramType] = useState(PROGRAM_TYPES.PT_MANAGED);
+  const [programType, setProgramType] = useState(PROGRAM_TYPES.MANUAL);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [setActive, setSetActive] = useState(false);
   const [workouts, setWorkouts] = useState([
     { id: nextId, name: '', exercises: [] }
   ]);
@@ -85,6 +86,32 @@ function CreateProgramWithWorkouts() {
       setError('End date cannot be before start date');
       return;
     }
+
+    const requestBody = {
+      programName,
+      userId: selectedUser,
+      goal,
+      programType,
+      startDate,
+      endDate: endDate || null,
+      workouts: workouts.map(({ name }) => ({ name })),
+      setActive
+    };
+
+    console.log('Submitting request with body:', requestBody);
+    console.log('Are any fields empty?', {
+      programName: !programName,
+      userId: !selectedUser,
+      workouts: !workouts.length,
+      startDate: !startDate,
+      goal: !goal,
+      programType: !programType
+    });
+
+    if (!programName || !selectedUser || !startDate || workouts.some(w => !w.name)) {
+      setError('Please fill in all required fields');
+      return;
+    }
   
     try {
       const token = localStorage.getItem("token");
@@ -101,18 +128,11 @@ function CreateProgramWithWorkouts() {
           programType,
           startDate,
           endDate: endDate || null,
-          workouts: workouts.map(({ name }) => ({ name }))
+          workouts: workouts.map(({ name }) => ({ name })),
+          setActive
         })
       });
 
-      console.log(programName,
-        selectedUser,
-        goal,
-        programType,
-        startDate,
-        endDate || null,
-        workouts.map(({ name }) => ({ name })))
-  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to create program');
@@ -124,9 +144,11 @@ function CreateProgramWithWorkouts() {
       setProgramName('');
       setSelectedUser('');
       setGoal('HYPERTROPHY');
+      setProgramType(PROGRAM_TYPES.MANUAL);
       setStartDate('');
       setEndDate('');
       setWorkouts([{ id: 1, name: '', exercises: [] }]);
+      setSetActive(false);
       setError(null);
       
       alert('Program and workouts created successfully!');
@@ -208,25 +230,38 @@ function CreateProgramWithWorkouts() {
                 Strength
               </button>
             </div>
-            <div className="program-details__form-group">
-              <label>Program Type</label>
-              <div className="goal-selector">
-                <button
-                  type="button"
-                  onClick={() => setProgramType(PROGRAM_TYPES.PT_MANAGED)}
-                  className={`goal-button ${programType === PROGRAM_TYPES.PT_MANAGED ? 'active' : ''}`}
-                >
-                  PT Managed
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setProgramType(PROGRAM_TYPES.AI_ASSISTED)}
-                  className={`goal-button ${programType === PROGRAM_TYPES.AI_ASSISTED ? 'active' : ''}`}
-                >
-                  Automated
-                </button>
-              </div>
           </div>
+
+          <div className="program-details__form-group">
+            <label>Program Type</label>
+            <div className="goal-selector">
+              <button
+                type="button"
+                onClick={() => setProgramType(PROGRAM_TYPES.MANUAL)}
+                className={`goal-button ${programType === PROGRAM_TYPES.MANUAL ? 'active' : ''}`}
+              >
+                Manual
+              </button>
+              <button
+                type="button"
+                onClick={() => setProgramType(PROGRAM_TYPES.AUTOMATED)}
+                className={`goal-button ${programType === PROGRAM_TYPES.AUTOMATED ? 'active' : ''}`}
+              >
+                Automated
+              </button>
+            </div>
+          </div>
+
+          <div className="program-details__form-group">
+            <div className="active-program-toggle">
+              <input
+                type="checkbox"
+                id="setActive"
+                checked={setActive}
+                onChange={(e) => setSetActive(e.target.checked)}
+              />
+              <label htmlFor="setActive">Set as active program</label>
+            </div>
           </div>
 
           <div className="program-details__form-group date-inputs">

@@ -207,3 +207,51 @@
     }
   }
 }
+
+.active-program-toggle {
+  display: flex;
+  align-items: center;
+  gap: map-get($spacing, sm);
+  margin-top: map-get($spacing, md);
+  
+  input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid map-get(map-get($colors, background), tertiary);
+    border-radius: map-get($border-radius, sm);
+    background-color: transparent;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+
+    &:checked {
+      background-color: map-get(map-get($colors, accent), primary);
+      border-color: map-get(map-get($colors, accent), primary);
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+
+    &:hover {
+      border-color: map-get(map-get($colors, accent), primary);
+    }
+  }
+
+  label {
+    font-size: map-get(map-get($typography, sizes), md);
+    color: map-get(map-get($colors, text), primary);
+    cursor: pointer;
+    user-select: none;
+  }
+}
