@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -6,8 +5,6 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 function AddExercisesToWorkout() {
   const { workoutExercises, targetExercises, setTargetExercises } = useOutletContext();
   const targetExercisesRef = useRef(null);
-
-  // const [targetExercises, setTargetExercises] = useState([]);
 
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
@@ -97,8 +94,12 @@ function AddExercisesToWorkout() {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        // console.log(data)
-        setExerciseList(data);
+        
+        // Handle the new grouped data format
+        // Extract all exercises from all groups into a flat array
+        const flattenedExercises = data.flatMap(group => group.exercises || []);
+        
+        setExerciseList(flattenedExercises);
         setLoadingExerciseList(false);
       } catch (error) {
         setErrorExerciseList(error);
@@ -163,11 +164,11 @@ function AddExercisesToWorkout() {
       }
   
       const updatedExercises = data.map(exercise => {
-        
+        // Adapt to new data structure - exercise is already flat, not nested
         const transformedExercise = {
           ...exercise,
           exercise_id: exercise.exercise_id || exercise.id,
-          name: exercise.exercises?.name || exercise.name || 'Unknown Exercise',
+          name: exercise.name || 'Unknown Exercise',
           sets: exercise.sets,
           reps: exercise.reps,
           weight: exercise.weight,
@@ -294,7 +295,6 @@ function AddExercisesToWorkout() {
     setSelectingSuperset(null);
   };
 
-
   const findExercise = (id) => {
     if (!id) return null;
     // Convert the incoming id to string for comparison
@@ -305,7 +305,7 @@ function AddExercisesToWorkout() {
     if (!foundExercise) {
       return null;
     }
-    return foundExercise.name || foundExercise.exercises?.name || 'Unknown Exercise';
+    return foundExercise.name || 'Unknown Exercise';
   };
 
   const renderItem = (item, index) => {
@@ -317,7 +317,7 @@ function AddExercisesToWorkout() {
   
     // Extract item properties
     const exerciseId = item.exercise_id.toString();
-    const exerciseName = item.exercises ? item.exercises.name : item.name || 'Unknown Exercise';
+    const exerciseName = item.name || 'Unknown Exercise';
     const isInSuperset = Boolean(item.superset_with);
     const isSelectingThis = selectingSuperset === exerciseId;
     const isSelectingOther = selectingSuperset && selectingSuperset !== exerciseId;
@@ -443,160 +443,157 @@ function AddExercisesToWorkout() {
     ? programs.filter(program => program.userId === Number.parseInt(selectedUserId, 10))
     : [];
 
-    const MemoizedDroppable = memo(({ children, ...props }) => (
-      <Droppable {...props}>
-        {(provided, snapshot) => children(provided, snapshot)}
-      </Droppable>
-    ));
+  const MemoizedDroppable = memo(({ children, ...props }) => (
+    <Droppable {...props}>
+      {(provided, snapshot) => children(provided, snapshot)}
+    </Droppable>
+  ));
 
-    const saveWorkout = async (event) => {
-      event.preventDefault();
-      
-      // Instead of reading from DOM, use the state directly
-      const collectedExerciseData = targetExercises.map(exercise => ({
-        id: Number(exercise.exercise_id),
-        sets: Number(exercise.sets) || 0,
-        reps: Number(exercise.reps) || 0,
-        weight: Number(exercise.weight) || 0
-      }));
+  const saveWorkout = async (event) => {
+    event.preventDefault();
     
-      // Collect supersets from the state
-      const collectedSupersets = [];
-      targetExercises.forEach(exercise => {
-        if (exercise.superset_with) {
-          const existingSuperset = collectedSupersets.find(
-            s => (s.first_exercise_id === Number(exercise.exercise_id) && s.second_exercise_id === Number(exercise.superset_with)) ||
-                 (s.first_exercise_id === Number(exercise.superset_with) && s.second_exercise_id === Number(exercise.exercise_id))
-          );
-          
-          if (!existingSuperset) {
-            collectedSupersets.push({
-              first_exercise_id: Number(exercise.exercise_id),
-              second_exercise_id: Number(exercise.superset_with)
-            });
-          }
-        }
-      });
-    
-      const payload = {
-        workoutId: Number(selectedWorkoutId),
-        exercises: collectedExerciseData,
-        supersets: collectedSupersets
-      };
-    
+    // Instead of reading from DOM, use the state directly
+    const collectedExerciseData = targetExercises.map(exercise => ({
+      id: Number(exercise.exercise_id),
+      sets: Number(exercise.sets) || 0,
+      reps: Number(exercise.reps) || 0,
+      weight: Number(exercise.weight) || 0
+    }));
   
-    
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/exercises/upsertExercisesToWorkout`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-        });
-    
-        const rawResponse = await response.text();
+    // Collect supersets from the state
+    const collectedSupersets = [];
+    targetExercises.forEach(exercise => {
+      if (exercise.superset_with) {
+        const existingSuperset = collectedSupersets.find(
+          s => (s.first_exercise_id === Number(exercise.exercise_id) && s.second_exercise_id === Number(exercise.superset_with)) ||
+                (s.first_exercise_id === Number(exercise.superset_with) && s.second_exercise_id === Number(exercise.exercise_id))
+        );
         
-        if (!response.ok) {
-          throw new Error(`Failed to add exercises to workout: ${rawResponse}`);
+        if (!existingSuperset) {
+          collectedSupersets.push({
+            first_exercise_id: Number(exercise.exercise_id),
+            second_exercise_id: Number(exercise.superset_with)
+          });
         }
-
-        
-        // Single fetch with a small delay to ensure the database has completed its updates
-        await new Promise(resolve => setTimeout(resolve, 100));
-        await fetchExercises(selectedWorkoutId);
-        
-      } catch (error) {
-        console.error('Error saving workout:', error);
       }
-    };
-
-    return (
-      <div className="addExercisesToWorkout-container">
-        <DragDropContext onDragEnd={onDragEnd}>
-          <div className="addExercisesToWorkout-container__left" ref={targetExercisesRef}>
-            <MemoizedDroppable droppableId="target-exercises" type='group'>
-              {(provided) => (
-                <div
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  className="addExercisesToWorkout-container__exercises"
-                  id="target-exercises"
-                >
-                  {loadingExercises ? (
-                    <p>Loading exercises...</p>
-                  ) : errorExercises ? (
-                    <p>Error loading exercises: {errorExercises.message}</p>
-                  ) : (
-                    <>
-                      {targetExercises.map((exercise, index) => renderItem(exercise, index))}
-                    </>
-                  )}
-                  {provided.placeholder}
-                </div>
-              )}
-            </MemoizedDroppable>
-          </div>
-        </DragDropContext>
+    });
   
-        <div className="addExercisesToWorkout-container__right">
-          <div className="add-workout-container__select-container">
-            <div className="add-workout-container__select-container__user">
-              <h2>Select User</h2>
-              <select
-                onChange={handleUserChange}
-                value={selectedUserId || ""}
-                className="input-primary"
+    const payload = {
+      workoutId: Number(selectedWorkoutId),
+      exercises: collectedExerciseData,
+      supersets: collectedSupersets
+    };
+  
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/exercises/upsertExercisesToWorkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+  
+      const rawResponse = await response.text();
+      
+      if (!response.ok) {
+        throw new Error(`Failed to add exercises to workout: ${rawResponse}`);
+      }
+      
+      // Single fetch with a small delay to ensure the database has completed its updates
+      await new Promise(resolve => setTimeout(resolve, 100));
+      await fetchExercises(selectedWorkoutId);
+      
+    } catch (error) {
+      console.error('Error saving workout:', error);
+    }
+  };
+
+  return (
+    <div className="addExercisesToWorkout-container">
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="addExercisesToWorkout-container__left" ref={targetExercisesRef}>
+          <MemoizedDroppable droppableId="target-exercises" type='group'>
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="addExercisesToWorkout-container__exercises"
+                id="target-exercises"
               >
-                <option value="" disabled>Select a user</option>
-                {users.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.firstName} {user.lastName} ({user.username})
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="add-workout-container__select-container__program">
-              <h2>Select Program</h2>
-              <select
-                onChange={handleProgramChange}
-                value={selectedProgramId}
-                disabled={!selectedUserId}
-                className="input-primary"
-              >
-                <option value="" disabled>Select a program</option>
-                {filteredPrograms.map((program) => (
-                  <option key={program.id} value={program.id}>
-                    {program.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="add-workout-container__select-container__workout">
-              <h2>Select Workout</h2>
-              <select
-                onChange={handleWorkoutChange}
-                value={selectedWorkoutId}
-                disabled={!selectedProgramId}
-                className="input-primary"
-              >
-                <option value="" disabled>Select a workout</option>
-                {workouts.map((workout) => (
-                  <option key={workout.id} value={workout.id}>
-                    {workout.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <form onSubmit={saveWorkout}>
-              <button className='cta-1' type='submit'>Save workout</button>
-            </form>
+                {loadingExercises ? (
+                  <p>Loading exercises...</p>
+                ) : errorExercises ? (
+                  <p>Error loading exercises: {errorExercises.message}</p>
+                ) : (
+                  <>
+                    {targetExercises.map((exercise, index) => renderItem(exercise, index))}
+                  </>
+                )}
+                {provided.placeholder}
+              </div>
+            )}
+          </MemoizedDroppable>
+        </div>
+      </DragDropContext>
+
+      <div className="addExercisesToWorkout-container__right">
+        <div className="add-workout-container__select-container">
+          <div className="add-workout-container__select-container__user">
+            <h2>Select User</h2>
+            <select
+              onChange={handleUserChange}
+              value={selectedUserId || ""}
+              className="input-primary"
+            >
+              <option value="" disabled>Select a user</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.firstName} {user.lastName} ({user.username})
+                </option>
+              ))}
+            </select>
           </div>
+          <div className="add-workout-container__select-container__program">
+            <h2>Select Program</h2>
+            <select
+              onChange={handleProgramChange}
+              value={selectedProgramId}
+              disabled={!selectedUserId}
+              className="input-primary"
+            >
+              <option value="" disabled>Select a program</option>
+              {filteredPrograms.map((program) => (
+                <option key={program.id} value={program.id}>
+                  {program.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="add-workout-container__select-container__workout">
+            <h2>Select Workout</h2>
+            <select
+              onChange={handleWorkoutChange}
+              value={selectedWorkoutId}
+              disabled={!selectedProgramId}
+              className="input-primary"
+            >
+              <option value="" disabled>Select a workout</option>
+              {workouts.map((workout) => (
+                <option key={workout.id} value={workout.id}>
+                  {workout.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <form onSubmit={saveWorkout}>
+            <button className='cta-1' type='submit'>Save workout</button>
+          </form>
         </div>
       </div>
-    );
+    </div>
+  );
 }
 
 export default AddExercisesToWorkout;

@@ -28,7 +28,28 @@ function Exercises() {
         }
         const data = await response.json();
         console.log(data);
-        setExercises(data);
+        
+        // Process the grouped data format
+        const processedExercises = [];
+        if (Array.isArray(data)) {
+          // New format: array of objects with muscleGroup and exercises properties
+          data.forEach(group => {
+            if (group.exercises && Array.isArray(group.exercises)) {
+              // Add muscle group reference to each exercise for consistent handling
+              const exercisesWithMuscleGroup = group.exercises.map(exercise => ({
+                ...exercise,
+                muscle_groups: [{
+                  muscle_group_id: group.muscleGroup?.id,
+                  muscle_groups: group.muscleGroup
+                }]
+              }));
+              processedExercises.push(...exercisesWithMuscleGroup);
+            }
+          });
+          setExercises(processedExercises);
+        } else {
+          setError('Unexpected data format from API');
+        }
       } catch (error) {
         console.error('Failed to fetch exercises:', error);
         setError('Failed to load exercises. Please try again later.');
@@ -56,8 +77,8 @@ function Exercises() {
         console.log(data);
         setMuscleGroups(data);
       } catch (error) {
-        console.error('Failed to fetch exercises:', error);
-        setError('Failed to load exercises. Please try again later.');
+        console.error('Failed to fetch muscle groups:', error);
+        setError('Failed to load muscle groups. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -100,7 +121,18 @@ function Exercises() {
         throw new Error(errorData.error || 'Failed to add exercise');
       }
       const addedExercise = await response.json();
-      setExercises(prevExercises => [...prevExercises, addedExercise]);
+      
+      // Add the muscle group information to the new exercise
+      const muscleGroup = muscleGroups.find(group => group.id === newExercise.muscleGroupId);
+      const enrichedExercise = {
+        ...addedExercise,
+        muscle_groups: [{
+          muscle_group_id: newExercise.muscleGroupId,
+          muscle_groups: muscleGroup
+        }]
+      };
+      
+      setExercises(prevExercises => [...prevExercises, enrichedExercise]);
       setNewExercise({ name: '', muscleGroupId: '', category: '', equipment: '' });
       setFormError(null);
       setRefetchTrigger(prev => prev + 1);
@@ -111,16 +143,21 @@ function Exercises() {
   };
 
   const getMuscleGroupName = (exercise) => {
-    if (exercise.muscle_groups?.[0]?.muscle_groups) {
+    // First, try to get the name from the muscle_groups array with the new structure
+    if (exercise.muscle_groups?.[0]?.muscle_groups?.name) {
       return exercise.muscle_groups[0].muscle_groups.name;
     }
-    if (exercise.muscle_groups?.[0]) {
+    
+    // Next, try the old structure
+    if (exercise.muscle_groups?.[0]?.name) {
       return exercise.muscle_groups[0].name;
     }
-    // Find the muscle group name from our fetched muscleGroups
+    
+    // Finally, fall back to the muscleGroups array
     return muscleGroups.find(group => group.id === exercise.muscleGroupId)?.name || 'Unknown';
   };
 
+  // Group exercises by muscle group
   const groupedExercises = exercises.reduce((groups, exercise) => {
     const group = getMuscleGroupName(exercise);
     if (!groups[group]) {
@@ -130,10 +167,12 @@ function Exercises() {
     return groups;
   }, {});
 
+  // Sort exercises alphabetically within each group
   Object.keys(groupedExercises).forEach(group => {
     groupedExercises[group].sort((a, b) => a.name.localeCompare(b.name));
   });
 
+  // Sort muscle groups alphabetically
   const sortedMuscleGroups = Object.keys(groupedExercises).sort();
 
   if (loading) {
@@ -223,6 +262,5 @@ function Exercises() {
     </div>
   );
 }
-
 
 export default Exercises;

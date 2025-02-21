@@ -27,8 +27,32 @@ function EditExercises() {
         });
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        console.log(data)
-        setExercises(data);
+        console.log(data);
+        
+        // Flatten the grouped exercises from the new API response format
+        const flattenedExercises = [];
+        if (Array.isArray(data)) {
+          // New format: array of objects with muscleGroup and exercises properties
+          data.forEach(group => {
+            if (group.exercises && Array.isArray(group.exercises)) {
+              // Add muscle group reference to each exercise
+              const exercisesWithMuscleGroup = group.exercises.map(exercise => ({
+                ...exercise,
+                // Create a structure compatible with the form handler
+                muscle_groups: [{
+                  muscle_group_id: group.muscleGroup?.id,
+                  muscle_groups: group.muscleGroup
+                }]
+              }));
+              flattenedExercises.push(...exercisesWithMuscleGroup);
+            }
+          });
+        } else {
+          // In case the format is different than expected
+          setError('Unexpected data format from API');
+        }
+        
+        setExercises(flattenedExercises);
       } catch (error) {
         console.error('Failed to fetch exercises:', error);
         setError('Failed to load exercises. Please try again later.');
@@ -60,13 +84,15 @@ function EditExercises() {
 
   const handleExerciseSelect = (exercise) => {
     // Check for required fields
-    if (!exercise.name || !exercise.equipment || !exercise.category || !exercise.muscle_groups?.[0]?.muscle_group_id) {
+    const muscleGroupId = exercise.muscle_groups?.[0]?.muscle_group_id;
+    
+    if (!exercise.name || !exercise.equipment || !exercise.category || !muscleGroupId) {
       setFormError('Warning: Selected exercise is missing required data. Please check the database for data integrity issues.');
       console.error('Exercise data integrity issue:', {
         name: exercise.name,
         equipment: exercise.equipment,
         category: exercise.category,
-        muscleGroupId: exercise.muscle_groups?.[0]?.muscle_group_id,
+        muscleGroupId: muscleGroupId,
         exercise: exercise
       });
       return;
@@ -77,7 +103,7 @@ function EditExercises() {
       name: exercise.name,
       equipment: exercise.equipment,
       category: exercise.category,
-      muscleGroupId: exercise.muscle_groups[0].muscle_group_id
+      muscleGroupId: muscleGroupId
     });
     setFormError(null);
   };
@@ -118,24 +144,29 @@ function EditExercises() {
 
       setRefetchTrigger(prev => prev + 1);
       setFormError(null);
-      toast.success(`Successfully updated ${editForm.name}`); // Add success toast
+      toast.success(`Successfully updated ${editForm.name}`);
     } catch (error) {
       console.error('Failed to update exercise:', error);
       setFormError('Failed to update exercise. Please try again.');
-      toast.error('Failed to update exercise'); // Add error toast
+      toast.error('Failed to update exercise');
     }
   };
 
   const getMuscleGroupName = (exercise) => {
-    if (exercise.muscle_groups?.[0]?.muscle_groups) {
+    // Check for muscle group name in the new structure
+    if (exercise.muscle_groups?.[0]?.muscle_groups?.name) {
       return exercise.muscle_groups[0].muscle_groups.name;
     }
-    if (exercise.muscle_groups?.[0]) {
-      return exercise.muscle_groups[0].name;
+    
+    // Fallback to muscleGroupId lookup if we have it
+    if (exercise.muscleGroupId) {
+      return muscleGroups.find(group => group.id === exercise.muscleGroupId)?.name || 'Unknown';
     }
-    return muscleGroups.find(group => group.id === exercise.muscleGroupId)?.name || 'Unknown';
+    
+    return 'Unknown';
   };
 
+  // Group exercises by muscle group
   const groupedExercises = exercises.reduce((groups, exercise) => {
     const group = getMuscleGroupName(exercise);
     if (!groups[group]) {
@@ -145,10 +176,12 @@ function EditExercises() {
     return groups;
   }, {});
 
+  // Sort exercises within each group by name
   Object.keys(groupedExercises).forEach(group => {
     groupedExercises[group].sort((a, b) => a.name.localeCompare(b.name));
   });
 
+  // Sort muscle groups alphabetically
   const sortedMuscleGroups = Object.keys(groupedExercises).sort();
 
   if (loading) return <div>Loading...</div>;
@@ -160,33 +193,33 @@ function EditExercises() {
         position="top-right"
         toastOptions={{
           style: {
-            background: '#1f2937', // background.secondary
-            color: '#f3f4f6',     // text.primary
-            border: '1px solid #374151', // background.tertiary
-            borderRadius: '8px',  // border-radius.md
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.25)', // shadows.md
-            padding: '12px 16px', // spacing.md spacing.lg
+            background: '#1f2937',
+            color: '#f3f4f6',
+            border: '1px solid #374151',
+            borderRadius: '8px',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.25)',
+            padding: '12px 16px',
           },
           success: {
             duration: 3000,
             style: {
-              background: 'rgba(76, 175, 80, 0.3)', // status.success-light
-              border: '1px solid #4CAF50', // status.success
+              background: 'rgba(76, 175, 80, 0.3)',
+              border: '1px solid #4CAF50',
             },
             iconTheme: {
-              primary: '#4CAF50', // status.success
-              secondary: '#f3f4f6', // text.primary
+              primary: '#4CAF50',
+              secondary: '#f3f4f6',
             }
           },
           error: {
             duration: 4000,
             style: {
-              background: 'rgba(255, 82, 82, 0.3)', // status.error-light
-              border: '1px solid #FF5252', // status.error
+              background: 'rgba(255, 82, 82, 0.3)',
+              border: '1px solid #FF5252',
             },
             iconTheme: {
-              primary: '#FF5252', // status.error
-              secondary: '#f3f4f6', // text.primary
+              primary: '#FF5252',
+              secondary: '#f3f4f6',
             }
           },
         }}

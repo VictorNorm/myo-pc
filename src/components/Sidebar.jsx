@@ -19,10 +19,8 @@ function Sidebar({ onExerciseClick }) {
         }
         const data = await response.json();
         
-        // Sort and categorize the data
-        const categorizedData = categorizeAndSortData(data);
-        setExerciseList(categorizedData);
-        
+        // The backend now returns data already grouped by muscle groups
+        setExerciseList(data);
         setLoading(false);
       } catch (error) {
         setError(error);
@@ -32,28 +30,6 @@ function Sidebar({ onExerciseClick }) {
 
     fetchExerciseList();
   }, []);
-
-  const categorizeAndSortData = (data) => {
-    // Group exercises by muscle group
-    const groupedData = data.reduce((acc, exercise) => {
-      const muscleGroup = exercise.muscle_groups[0]?.muscle_groups?.name || 'Uncategorized';
-      if (!acc[muscleGroup]) {
-        acc[muscleGroup] = [];
-      }
-      acc[muscleGroup].push(exercise);
-      return acc;
-    }, {});
-
-    // Sort muscle groups and exercises within each group
-    const sortedData = Object.entries(groupedData)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([group, exercises]) => ({
-        muscle_group: group,
-        exercises: exercises.sort((a, b) => a.name.localeCompare(b.name))
-      }));
-
-    return sortedData;
-  };
 
   const handleExerciseInteraction = (exercise) => {
     onExerciseClick(exercise);
@@ -78,7 +54,7 @@ function Sidebar({ onExerciseClick }) {
       <h2>Exercise List</h2>
       {exerciseList.map((category, index) => (
         <div key={index}>
-          <h3>{category.muscle_group}</h3>
+          <h3>{category.muscleGroup.name}</h3>
           <ul>
             {category.exercises.map((exercise) => (
               <li 
