@@ -168,7 +168,7 @@ function AddExercisesToWorkout() {
         const transformedExercise = {
           ...exercise,
           exercise_id: exercise.exercise_id || exercise.id,
-          name: exercise.name || 'Unknown Exercise',
+          name: exercise.exercises?.name || 'Unknown Exercise',
           sets: exercise.sets,
           reps: exercise.reps,
           weight: exercise.weight,
