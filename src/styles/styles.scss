@@ -1,4 +1,6 @@
 @import "./global";
+@import "./_css-variables";
+@import "./variables";
 @import "./loginForm";
 @import "./header";
 @import "./nav";
@@ -13,7 +15,6 @@
 @import "./addExercisesToWorkout";
 @import "./sidebar";
 @import "./resetPassword";
-@import "./variables";
 @import "./createProgramWithWorkouts";
 @import "./editExercises";
 @import "./deleteProgramModal";

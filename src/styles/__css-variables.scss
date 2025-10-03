@@ -1,0 +1,48 @@
+// _css-variables.scss
+// Export SCSS variables as CSS custom properties
+@import './variables';
+
+:root {
+  // Background colors
+  --background-primary: #{map-get(map-get($colors, background), primary)};
+  --background-secondary: #{map-get(map-get($colors, background), secondary)};
+  --background-tertiary: #{map-get(map-get($colors, background), tertiary)};
+  
+  // Text colors
+  --text-primary: #{map-get(map-get($colors, text), primary)};
+  --text-secondary: #{map-get(map-get($colors, text), secondary)};
+  --text-inverse: #ffffff;
+  
+  // Accent colors
+  --accent-primary: #{map-get(map-get($colors, accent), primary)};
+  --accent-primary-hover: #{map-get(map-get($colors, accent), primary-hover)};
+  
+  // Status colors
+  --status-error: #{map-get(map-get($colors, status), error)};
+  --status-success: #{map-get(map-get($colors, status), success)};
+  --status-warning: #{map-get(map-get($colors, status), warning)};
+  --status-error-light: #{map-get(map-get($colors, status), error-light)};
+  --status-success-light: #{map-get(map-get($colors, status), success-light)};
+  --status-warning-light: #{map-get(map-get($colors, status), warning-light)};
+  
+  // Spacing (optional, but useful)
+  --spacing-xs: #{map-get($spacing, xs)};
+  --spacing-sm: #{map-get($spacing, sm)};
+  --spacing-md: #{map-get($spacing, md)};
+  --spacing-lg: #{map-get($spacing, lg)};
+  --spacing-xl: #{map-get($spacing, xl)};
+  --spacing-xxl: #{map-get($spacing, xxl)};
+  
+  // Typography sizes
+  --font-size-xs: #{map-get(map-get($typography, sizes), xs)};
+  --font-size-sm: #{map-get(map-get($typography, sizes), sm)};
+  --font-size-md: #{map-get(map-get($typography, sizes), md)};
+  --font-size-lg: #{map-get(map-get($typography, sizes), lg)};
+  --font-size-xl: #{map-get(map-get($typography, sizes), xl)};
+  --font-size-xxl: #{map-get(map-get($typography, sizes), xxl)};
+  
+  // Border radius
+  --border-radius-sm: #{map-get($border-radius, sm)};
+  --border-radius-md: #{map-get($border-radius, md)};
+  --border-radius-lg: #{map-get($border-radius, lg)};
+}
