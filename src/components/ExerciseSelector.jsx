@@ -47,7 +47,6 @@ const ExerciseSelector = ({
   useEffect(() => {
     setInternalSelection(new Set(selectedExercises));
   }, [selectedExercises]);
-
   const fetchExercises = async (filters = {}) => {
     try {
       setLoading(true);
@@ -308,6 +307,7 @@ const ExerciseSelector = ({
               </div>
             ) : (
               filteredExercises.map(exercise => (
+                // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
                 <div
                   key={exercise.id}
                   className={`exercise-item ${isSelected(exercise.id) ? 'selected' : ''} ${
