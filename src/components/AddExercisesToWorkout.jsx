@@ -522,7 +522,7 @@ function AddExercisesToWorkout() {
         </div>
       </DragDropContext>
 
-      <div className="addExercisesToWorkout-container__middle">
+      {/* <div className="addExercisesToWorkout-container__middle">
         <h2>Available Exercises</h2>
         {loadingExerciseList ? (
           <p>Loading exercises...</p>
@@ -569,7 +569,7 @@ function AddExercisesToWorkout() {
             })}
           </div>
         )}
-      </div>
+      </div> */}
 
       <div className="addExercisesToWorkout-container__right">
         <div className="add-workout-container__select-container">

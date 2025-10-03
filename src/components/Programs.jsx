@@ -30,7 +30,7 @@ function Programs() {
         }
         const data = await response.json();
         // console.log(data)
-        setUsers(data);
+        setUsers(data.data || []);
         setLoadingUsers(false);
       } catch (error) {
         setErrorUsers(error);
