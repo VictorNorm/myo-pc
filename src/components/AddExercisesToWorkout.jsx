@@ -1,6 +1,7 @@
 import React, { useEffect, useState, memo, useRef, useCallback } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { usersAPI, programsAPI, exercisesAPI, workoutsAPI } from '../utils/api/apiV2';
 
 function AddExercisesToWorkout() {
   const { workoutExercises, targetExercises, setTargetExercises } = useOutletContext();
@@ -36,17 +37,14 @@ function AddExercisesToWorkout() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setUsers(data);
+        const data = await usersAPI.getAll();
+        // V2 API returns users with 'firstname'/'lastname' instead of 'firstName'/'lastName'
+        const formattedUsers = Array.isArray(data) ? data.map(user => ({
+          ...user,
+          firstName: user.firstname || user.firstName,
+          lastName: user.lastname || user.lastName
+        })) : [];
+        setUsers(formattedUsers);
         setLoadingUsers(false);
       } catch (error) {
         setErrorUsers(error);
@@ -60,17 +58,10 @@ function AddExercisesToWorkout() {
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/allprograms`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setPrograms(data.programs);
+        const data = await programsAPI.getAll();
+        // V2 API returns programs in data.programs format
+        const programs = data.programs || [];
+        setPrograms(programs);
         setLoadingPrograms(false);
       } catch (error) {
         setErrorPrograms(error);
@@ -84,24 +75,14 @@ function AddExercisesToWorkout() {
   useEffect(() => {
     const fetchExerciseList = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/exercises`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        
-        // Handle the new grouped data format
-        // Extract all exercises from all groups into a flat array
-        const flattenedExercises = data.flatMap(group => group.exercises || []);
-        
-        setExerciseList(flattenedExercises);
+        setLoadingExerciseList(true);
+        const exercises = await exercisesAPI.getAll();
+        console.log('Fetched exercise list:', exercises);
+        // V2 API returns exercises as a direct array, no need to flatten
+        setExerciseList(Array.isArray(exercises) ? exercises : []);
         setLoadingExerciseList(false);
       } catch (error) {
+        console.error('Error fetching exercise list:', error);
         setErrorExerciseList(error);
         setLoadingExerciseList(false);
       }
@@ -110,20 +91,16 @@ function AddExercisesToWorkout() {
     fetchExerciseList();
   }, []);
 
+  // Initialize exercise state on component mount
+  useEffect(() => {
+    fetchExercises(null); // This will clear the state and set proper initial values
+  }, []);
+
   const fetchWorkouts = async (programId) => {
     setLoadingWorkouts(true);
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/programs/${programId}/workouts`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setWorkouts(data);
+      const workouts = await workoutsAPI.getByProgram(programId);
+      setWorkouts(workouts);
       setLoadingWorkouts(false);
     } catch (error) {
       setErrorWorkouts(error);
@@ -132,30 +109,22 @@ function AddExercisesToWorkout() {
   };
 
   const fetchExercises = async (workoutId) => {
+    if (!workoutId) {
+      console.log('No workout selected, clearing exercises');
+      setTargetExercises([]);
+      setSupersets({});
+      setErrorExercises(null);
+      setLoadingExercises(false);
+      return;
+    }
+
     setLoadingExercises(true);
+    setErrorExercises(null);
 
     try {
-      const token = localStorage.getItem("token");
-      // Add timestamp to URL to prevent caching
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/workouts/${workoutId}/exercises`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-          }
-        }
-      );
+      const data = await workoutsAPI.getExercises(workoutId);
       
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      
-      const data = await response.json();
-      
-      if (!Array.isArray(data)) {
+      if (!Array.isArray(data) || data.length === 0) {
         console.log('No exercises found for this workout');
         setTargetExercises([]);
         setSupersets({});
@@ -164,14 +133,14 @@ function AddExercisesToWorkout() {
       }
   
       const updatedExercises = data.map(exercise => {
-        // Adapt to new data structure - exercise is already flat, not nested
+        // V2 API structure - exercise data should be properly formatted
         const transformedExercise = {
           ...exercise,
           exercise_id: exercise.exercise_id || exercise.id,
-          name: exercise.exercises?.name || 'Unknown Exercise',
-          sets: exercise.sets,
-          reps: exercise.reps,
-          weight: exercise.weight,
+          name: exercise.exercises?.name || exercise.name || 'Unknown Exercise',
+          sets: exercise.sets || 0,
+          reps: exercise.reps || 0,
+          weight: exercise.weight || 0,
           superset_with: exercise.superset_with
         };
         
@@ -240,6 +209,30 @@ function AddExercisesToWorkout() {
     setSelectingSuperset(exerciseId);
   };
   
+  const handleAddExerciseToWorkout = (exercise) => {
+    // Check if exercise is already in the target list
+    const isAlreadyAdded = targetExercises.some(
+      targetExercise => targetExercise.exercise_id === exercise.id
+    );
+    
+    if (isAlreadyAdded) {
+      return; // Don't add duplicates
+    }
+    
+    // Add exercise to target exercises with default values
+    const newExercise = {
+      exercise_id: exercise.id,
+      name: exercise.name,
+      sets: 3,
+      reps: 10,
+      weight: 0,
+      superset_with: null,
+      exercises: { name: exercise.name } // For compatibility
+    };
+    
+    setTargetExercises(prevExercises => [...prevExercises, newExercise]);
+  };
+
   const handleRemoveFromSuperset = (exerciseId) => {
     setTargetExercises(prevExercises => {
       const updatedExercises = [...prevExercises];
@@ -485,23 +478,9 @@ function AddExercisesToWorkout() {
     };
   
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/exercises/upsertExercisesToWorkout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
-  
-      const rawResponse = await response.text();
+      await exercisesAPI.upsertToWorkout(payload);
       
-      if (!response.ok) {
-        throw new Error(`Failed to add exercises to workout: ${rawResponse}`);
-      }
-      
-      // Single fetch with a small delay to ensure the database has completed its updates
+      // Small delay to ensure the database has completed its updates
       await new Promise(resolve => setTimeout(resolve, 100));
       await fetchExercises(selectedWorkoutId);
       
@@ -514,6 +493,7 @@ function AddExercisesToWorkout() {
     <div className="addExercisesToWorkout-container">
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="addExercisesToWorkout-container__left" ref={targetExercisesRef}>
+          <h2>Workout Exercises</h2>
           <MemoizedDroppable droppableId="target-exercises" type='group'>
             {(provided) => (
               <div
@@ -526,6 +506,10 @@ function AddExercisesToWorkout() {
                   <p>Loading exercises...</p>
                 ) : errorExercises ? (
                   <p>Error loading exercises: {errorExercises.message}</p>
+                ) : !selectedWorkoutId ? (
+                  <p>Select a workout to see exercises</p>
+                ) : targetExercises.length === 0 ? (
+                  <p>No exercises in this workout. Add some from the available exercises.</p>
                 ) : (
                   <>
                     {targetExercises.map((exercise, index) => renderItem(exercise, index))}
@@ -538,54 +522,121 @@ function AddExercisesToWorkout() {
         </div>
       </DragDropContext>
 
+      <div className="addExercisesToWorkout-container__middle">
+        <h2>Available Exercises</h2>
+        {loadingExerciseList ? (
+          <p>Loading exercises...</p>
+        ) : errorExerciseList ? (
+          <p>Error loading exercises: {errorExerciseList.message}</p>
+        ) : (
+          <div className="exercise-list">
+            {exerciseList.map((exercise) => {
+              const isAlreadyAdded = targetExercises.some(
+                targetExercise => targetExercise.exercise_id === exercise.id
+              );
+              
+              return (
+                <div
+                  key={exercise.id}
+                  className={`exercise-item ${isAlreadyAdded ? 'added' : ''}`}
+                  onClick={() => !isAlreadyAdded && handleAddExerciseToWorkout(exercise)}
+                  style={{ 
+                    cursor: isAlreadyAdded ? 'default' : 'pointer',
+                    opacity: isAlreadyAdded ? 0.5 : 1
+                  }}
+                >
+                  <div className="exercise-name">{exercise.name}</div>
+                  <div className="exercise-details">
+                    <span className="equipment">{exercise.equipment}</span>
+                    <span className="category">{exercise.category}</span>
+                  </div>
+                  {exercise.muscle_groups && exercise.muscle_groups.length > 0 && (
+                    <div className="muscle-groups">
+                      {exercise.muscle_groups.map((mg, index) => {
+                        const muscleGroup = mg.muscle_groups || mg;
+                        return (
+                          <span key={muscleGroup.id || index} className="muscle-group">
+                            {muscleGroup.name}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+                  {!isAlreadyAdded && <button className="add-btn">+</button>}
+                  {isAlreadyAdded && <span className="added-text">Added</span>}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
       <div className="addExercisesToWorkout-container__right">
         <div className="add-workout-container__select-container">
           <div className="add-workout-container__select-container__user">
             <h2>Select User</h2>
-            <select
-              onChange={handleUserChange}
-              value={selectedUserId || ""}
-              className="input-primary"
-            >
-              <option value="" disabled>Select a user</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.firstName} {user.lastName} ({user.username})
-                </option>
-              ))}
-            </select>
+            {loadingUsers ? (
+              <p>Loading users...</p>
+            ) : errorUsers ? (
+              <p>Error loading users: {errorUsers.message}</p>
+            ) : (
+              <select
+                onChange={handleUserChange}
+                value={selectedUserId || ""}
+                className="input-primary"
+              >
+                <option value="" disabled>Select a user</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.firstName} {user.lastName} ({user.username})
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
           <div className="add-workout-container__select-container__program">
             <h2>Select Program</h2>
-            <select
-              onChange={handleProgramChange}
-              value={selectedProgramId}
-              disabled={!selectedUserId}
-              className="input-primary"
-            >
-              <option value="" disabled>Select a program</option>
-              {filteredPrograms.map((program) => (
-                <option key={program.id} value={program.id}>
-                  {program.name}
-                </option>
-              ))}
-            </select>
+            {loadingPrograms ? (
+              <p>Loading programs...</p>
+            ) : errorPrograms ? (
+              <p>Error loading programs: {errorPrograms.message}</p>
+            ) : (
+              <select
+                onChange={handleProgramChange}
+                value={selectedProgramId}
+                disabled={!selectedUserId}
+                className="input-primary"
+              >
+                <option value="" disabled>Select a program</option>
+                {filteredPrograms.map((program) => (
+                  <option key={program.id} value={program.id}>
+                    {program.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
           <div className="add-workout-container__select-container__workout">
             <h2>Select Workout</h2>
-            <select
-              onChange={handleWorkoutChange}
-              value={selectedWorkoutId}
-              disabled={!selectedProgramId}
-              className="input-primary"
-            >
-              <option value="" disabled>Select a workout</option>
-              {workouts.map((workout) => (
-                <option key={workout.id} value={workout.id}>
-                  {workout.name}
-                </option>
-              ))}
-            </select>
+            {loadingWorkouts ? (
+              <p>Loading workouts...</p>
+            ) : errorWorkouts ? (
+              <p>Error loading workouts: {errorWorkouts.message}</p>
+            ) : (
+              <select
+                onChange={handleWorkoutChange}
+                value={selectedWorkoutId}
+                disabled={!selectedProgramId}
+                className="input-primary"
+              >
+                <option value="" disabled>Select a workout</option>
+                {workouts.map((workout) => (
+                  <option key={workout.id} value={workout.id}>
+                    {workout.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
           <form onSubmit={saveWorkout}>
             <button className='cta-1' type='submit'>Save workout</button>

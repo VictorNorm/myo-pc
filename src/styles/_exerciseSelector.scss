@@ -1,0 +1,444 @@
+.exercise-selector {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 80vh;
+  background: var(--background-primary);
+  border-radius: 8px;
+  border: 1px solid var(--background-tertiary);
+  
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--background-tertiary);
+    background: var(--background-secondary);
+    border-radius: 8px 8px 0 0;
+    
+    h3 {
+      margin: 0;
+      color: var(--text-primary);
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+    
+    &__controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      
+      .selection-count {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+      
+      .close-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 20px;
+        line-height: 1;
+        
+        &:hover {
+          background: var(--background-tertiary);
+          color: var(--text-primary);
+        }
+      }
+    }
+  }
+  
+  &__search {
+    padding: 1rem;
+    border-bottom: 1px solid var(--background-tertiary);
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    
+    .search-input-container {
+      flex: 1;
+      position: relative;
+      
+      .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+        pointer-events: none;
+      }
+      
+      .search-input {
+        width: 100%;
+        padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+        background: var(--background-secondary);
+        border: 1px solid var(--background-tertiary);
+        border-radius: 6px;
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        
+        &::placeholder {
+          color: var(--text-secondary);
+        }
+        
+        &:focus {
+          outline: none;
+          border-color: var(--accent-primary);
+          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+      }
+    }
+    
+    .filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--background-secondary);
+      border: 1px solid var(--background-tertiary);
+      border-radius: 6px;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: var(--background-tertiary);
+      }
+      
+      &.active {
+        background: var(--accent-primary);
+        border-color: var(--accent-primary);
+        color: white;
+      }
+    }
+  }
+  
+  &__filters {
+    padding: 1rem;
+    border-bottom: 1px solid var(--background-tertiary);
+    background: var(--background-secondary);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: end;
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 150px;
+      
+      label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+      }
+      
+      select {
+        padding: 0.5rem;
+        background: var(--background-primary);
+        border: 1px solid var(--background-tertiary);
+        border-radius: 4px;
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        cursor: pointer;
+        
+        &:focus {
+          outline: none;
+          border-color: var(--accent-primary);
+        }
+      }
+    }
+    
+    .clear-filters-button {
+      padding: 0.5rem 0.75rem;
+      background: transparent;
+      border: 1px solid var(--background-tertiary);
+      border-radius: 4px;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: var(--background-tertiary);
+        color: var(--text-primary);
+      }
+    }
+  }
+  
+  &__actions {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--background-tertiary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .select-all-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: transparent;
+      border: 1px solid var(--background-tertiary);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: var(--background-tertiary);
+      }
+    }
+  }
+  
+  &__content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      gap: 1rem;
+      
+      p {
+        color: var(--text-secondary);
+        margin: 0;
+      }
+    }
+    
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      gap: 1rem;
+      
+      .error-message {
+        color: var(--status-error);
+        margin: 0;
+        text-align: center;
+      }
+      
+      button {
+        padding: 0.5rem 1rem;
+        background: var(--accent-primary);
+        border: none;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+        
+        &:hover {
+          background: var(--accent-secondary);
+        }
+      }
+    }
+    
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      gap: 1rem;
+      
+      p {
+        color: var(--text-secondary);
+        margin: 0;
+        text-align: center;
+      }
+      
+      button {
+        padding: 0.5rem 1rem;
+        background: var(--accent-primary);
+        border: none;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+        font-size: 0.875rem;
+        
+        &:hover {
+          background: var(--accent-secondary);
+        }
+      }
+    }
+  }
+  
+  .exercise-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+    
+    .exercise-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: var(--background-secondary);
+        border-color: var(--background-tertiary);
+      }
+      
+      &.selected {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: var(--accent-primary);
+        
+        .exercise-name {
+          color: var(--accent-primary);
+        }
+      }
+      
+      &.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        
+        &:hover {
+          background: transparent;
+          border-color: transparent;
+        }
+      }
+      
+      &__checkbox {
+        margin-top: 0.125rem;
+        
+        .checked {
+          color: var(--accent-primary);
+        }
+        
+        svg {
+          color: var(--text-secondary);
+        }
+      }
+      
+      &__content {
+        flex: 1;
+        
+        .exercise-name {
+          margin: 0 0 0.5rem 0;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: var(--text-primary);
+          line-height: 1.25;
+        }
+        
+        .exercise-details {
+          display: flex;
+          gap: 0.5rem;
+          margin-bottom: 0.5rem;
+          
+          .equipment-badge,
+          .category-badge {
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+          }
+          
+          .equipment-badge {
+            background: rgba(139, 92, 246, 0.15);
+            color: rgb(139, 92, 246);
+          }
+          
+          .category-badge {
+            background: rgba(16, 185, 129, 0.15);
+            color: rgb(16, 185, 129);
+          }
+        }
+        
+        .muscle-groups {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.25rem;
+          
+          .muscle-group {
+            padding: 0.125rem 0.375rem;
+            border-radius: 8px;
+            font-size: 0.6875rem;
+            font-weight: 500;
+            
+            &.primary {
+              background: rgba(245, 158, 11, 0.15);
+              color: rgb(245, 158, 11);
+            }
+            
+            &.secondary {
+              background: rgba(107, 114, 128, 0.15);
+              color: rgb(107, 114, 128);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .exercise-selector {
+    &__search {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+      
+      .search-input-container {
+        width: 100%;
+      }
+      
+      .filter-toggle {
+        align-self: flex-start;
+      }
+    }
+    
+    &__filters {
+      flex-direction: column;
+      align-items: stretch;
+      
+      .filter-group {
+        min-width: unset;
+      }
+    }
+    
+    .exercise-list {
+      .exercise-item {
+        &__content {
+          .exercise-details {
+            flex-direction: column;
+            gap: 0.25rem;
+          }
+          
+          .muscle-groups {
+            .muscle-group {
+              font-size: 0.625rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}

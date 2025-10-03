@@ -11,12 +11,12 @@ import RequireAuth from './components/RequireAuth';
 import Workouts from './components/Workouts';
 import Training from './components/Training';
 import MyPrograms from './components/MyPrograms';
-import EditProgram from './components/EditProgram';
+import EditProgramEnhanced from './components/EditProgramEnhanced';
 import Signup from './components/Signup';
 import VerifyEmail from './components/VerifyEmail';
 import AddExercisesToWorkout from './components/AddExercisesToWorkout';
 import ResetPassword from './components/ResetPassword';
-import CreateProgramWithWorkouts from './components/CreateProgramWithWorkouts';
+import CreateProgramWithWorkoutsEnhanced from './components/CreateProgramWithWorkoutsEnhanced';
 import EditExercises from './components/EditExercises';
 import { Edit } from 'lucide-react';
 
@@ -43,7 +43,7 @@ const App = () => (
                 path='createProgramWithWorkouts'
                 element={
                     <RequireAuth>
-                        <CreateProgramWithWorkouts />
+                        <CreateProgramWithWorkoutsEnhanced />
                     </RequireAuth>
                 }
             />
@@ -59,7 +59,7 @@ const App = () => (
                 path='editProgram'
                 element={
                     <RequireAuth>
-                        <EditProgram />
+                        <EditProgramEnhanced />
                     </RequireAuth>
                 }
             />

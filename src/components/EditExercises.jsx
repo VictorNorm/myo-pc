@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import toast, {Toaster} from 'react-hot-toast';
+import { exercisesAPI, muscleGroupsAPI } from '../utils/api/apiV2';
 
 function EditExercises() {
   const [exercises, setExercises] = useState([]);
@@ -19,68 +20,45 @@ function EditExercises() {
   useEffect(() => {
     const fetchExercises = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/exercises`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-        });
-        if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
-        console.log(data);
+        const exercises = await exercisesAPI.getAll();
+        console.log('V2 API exercises:', exercises);
         
-        // Flatten the grouped exercises from the new API response format
-        const flattenedExercises = [];
-        if (Array.isArray(data)) {
-          // New format: array of objects with muscleGroup and exercises properties
-          data.forEach(group => {
-            if (group.exercises && Array.isArray(group.exercises)) {
-              // Add muscle group reference to each exercise
-              const exercisesWithMuscleGroup = group.exercises.map(exercise => ({
-                ...exercise,
-                // Create a structure compatible with the form handler
-                muscle_groups: [{
-                  muscle_group_id: group.muscleGroup?.id,
-                  muscle_groups: group.muscleGroup
-                }]
-              }));
-              flattenedExercises.push(...exercisesWithMuscleGroup);
-            }
-          });
-        } else {
-          // In case the format is different than expected
-          setError('Unexpected data format from API');
-        }
-        
-        setExercises(flattenedExercises);
+        // V2 API returns exercises as direct array with muscle_groups already included
+        setExercises(Array.isArray(exercises) ? exercises : []);
       } catch (error) {
-        console.error('Failed to fetch exercises:', error);
+        console.error('Error fetching exercises:', error);
         setError('Failed to load exercises. Please try again later.');
       }
     };
 
-    const fetchMuscleGroups = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/muscleGroups`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-        });
-        if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
-        setMuscleGroups(data);
-      } catch (error) {
-        console.error('Failed to fetch muscle groups:', error);
-        setError('Failed to load muscle groups. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchExercises();
-    fetchMuscleGroups();
   }, [refetchTrigger]);
+
+  // Extract unique muscle groups from exercises instead of fetching separately
+  useEffect(() => {
+    if (exercises.length > 0) {
+      const uniqueMuscleGroups = [];
+      const seenIds = new Set();
+      
+      exercises.forEach(exercise => {
+        if (exercise.muscle_groups && exercise.muscle_groups.length > 0) {
+          exercise.muscle_groups.forEach(mg => {
+            const muscleGroup = mg.muscle_groups || mg;
+            if (muscleGroup && muscleGroup.id && !seenIds.has(muscleGroup.id)) {
+              uniqueMuscleGroups.push({
+                id: muscleGroup.id,
+                name: muscleGroup.name
+              });
+              seenIds.add(muscleGroup.id);
+            }
+          });
+        }
+      });
+      
+      setMuscleGroups(uniqueMuscleGroups);
+      setLoading(false);
+    }
+  }, [exercises]);
 
   const handleExerciseSelect = (exercise) => {
     // Check for required fields
@@ -124,24 +102,16 @@ function EditExercises() {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/editExercises`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          id: selectedExercise.id,
-          ...editForm
-        })
-      });
+      const exerciseData = {
+        id: selectedExercise.id,
+        name: editForm.name,
+        equipment: editForm.equipment,
+        category: editForm.category,
+        muscleGroupIds: [editForm.muscleGroupId] // V2 API expects array of muscle group IDs
+      };
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update exercise');
-      }
-
+      await exercisesAPI.update(selectedExercise.id, exerciseData);
+      
       setRefetchTrigger(prev => prev + 1);
       setFormError(null);
       toast.success(`Successfully updated ${editForm.name}`);

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { exercisesAPI } from '../utils/api/apiV2';
 
 function Sidebar({ onExerciseClick }) {
   const [exerciseList, setExerciseList] = useState([]);
@@ -8,21 +9,34 @@ function Sidebar({ onExerciseClick }) {
   useEffect(() => {
     const fetchExerciseList = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/exercises`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
+        const exercises = await exercisesAPI.getAll();
+        console.log('V2 API exercises:', exercises);
+        
+        // V2 API returns exercises as direct array, need to group by muscle groups
+        const groupedExercises = {};
+        exercises.forEach(exercise => {
+          if (exercise.muscle_groups && exercise.muscle_groups.length > 0) {
+            exercise.muscle_groups.forEach(mg => {
+              const muscleGroup = mg.muscle_groups || mg;
+              const groupName = muscleGroup.name;
+              
+              if (!groupedExercises[groupName]) {
+                groupedExercises[groupName] = {
+                  muscleGroup: { name: groupName, id: muscleGroup.id },
+                  exercises: []
+                };
+              }
+              groupedExercises[groupName].exercises.push(exercise);
+            });
           }
         });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
         
-        // The backend now returns data already grouped by muscle groups
-        setExerciseList(data);
+        // Convert to array format for rendering
+        const exerciseListArray = Object.values(groupedExercises);
+        setExerciseList(exerciseListArray);
         setLoading(false);
       } catch (error) {
+        console.error('Error fetching exercises:', error);
         setError(error);
         setLoading(false);
       }
