@@ -4,6 +4,7 @@ import LoadingSpinner from './LoadingSpinner';
 import ExerciseSelector from './ExerciseSelector';
 import ExerciseParametersDialog from './ExerciseParametersDialog';
 import { usersAPI, exercisesAPI, programsAPI } from '../utils/api/apiV2';
+import baselineApi from '../utils/api/baselineApi';
 
 const PROGRAM_TYPES = {
   MANUAL: 'MANUAL',
@@ -272,33 +273,79 @@ const handleSubmit = async () => {
   setError(null);
   
   try {
-    const token = localStorage.getItem("token");
-    
-    // Build the request payload according to V2 API format
-    const payload = {
-      name: programName, // V2 uses 'name' instead of 'programName'
-      userId: selectedUser,
+    // Step 1: Create program with workouts using V2 API with admin support
+    const programPayload = {
+      name: programName,
+      targetUserId: Number(selectedUser), // For admin creating for other users
       goal,
       programType,
-      startDate: startDate, // ✅ Add this
-      endDate: endDate || undefined, // ✅ Add this (optional)
-      activateProgram: setActive, // V2 uses 'activateProgram' instead of 'setActive'
-      workouts: workouts.map((workout, workoutIndex) => ({
-        name: workout.name,
-        dayNumber: workoutIndex + 1, // V2 requires dayNumber
-        exercises: workout.exercises.map((exercise) => ({
-          exerciseId: exercise.exerciseId,
-          sets: exercise.sets,
-          reps: exercise.reps,
-          weight: exercise.weight
-        }))
+      startDate,
+      endDate: endDate || null,
+      shouldActivate: setActive,          // Whether to set as active program
+      workouts: workouts.map((workout) => ({
+        name: workout.name
       }))
     };
     
-    // Note: V2 API doesn't support baselines in create-with-workouts
-    // Baselines would need to be created separately if needed
+    console.log('Creating program with payload:', programPayload);
     
-    await programsAPI.createWithWorkouts(payload);
+    const result = await programsAPI.createWithWorkouts(programPayload);
+    const createdProgram = result.data || result;
+    console.log('Created program:', createdProgram);
+    console.log('Has workouts?', createdProgram?.workouts);
+    console.log('Workout count:', createdProgram?.workouts?.length);
+    
+    // Step 2: Add exercises to each workout
+    if (createdProgram && createdProgram.workouts) {
+      console.log('Adding exercises to workouts...');
+      console.log('Created program structure:', createdProgram);
+      
+      for (let i = 0; i < createdProgram.workouts.length; i++) {
+        const workout = createdProgram.workouts[i];
+        const workoutExercises = workouts[i].exercises;
+        
+        console.log(`Processing workout ${i}:`, {
+          workoutId: workout.id,
+          exerciseCount: workoutExercises?.length,
+          exercises: workoutExercises
+        });
+        
+        if (workoutExercises && workoutExercises.length > 0) {
+          const exercisePayload = {
+            workoutId: workout.id,
+            exercises: workoutExercises.map((exercise, index) => ({
+              id: exercise.exerciseId,
+              sets: Number(exercise.sets),
+              reps: Number(exercise.reps),
+              weight: Number(exercise.weight),
+              order: index + 1
+            }))
+          };
+          
+          console.log('Sending exercise payload:', exercisePayload);
+          
+          try {
+            const result = await exercisesAPI.upsertToWorkout(exercisePayload);
+            console.log('Exercise upsert result:', result);
+          } catch (exerciseError) {
+            console.error(`Failed to add exercises to workout ${workout.id}:`, exerciseError);
+            throw new Error(`Failed to add exercises to workout "${workout.name}": ${exerciseError.message}`);
+          }
+        }
+      }
+      console.log('All exercises added successfully');
+    }
+    
+    // Step 3: Create baselines for AUTOMATED programs
+    if (programType === PROGRAM_TYPES.AUTOMATED && baselines.length > 0 && createdProgram.id) {
+      try {
+        await baselineApi.bulkCreateBaselines(createdProgram.id, baselines);
+        console.log('Baselines created successfully');
+      } catch (baselineError) {
+        console.error('Failed to create baselines:', baselineError);
+        setError(`Program created but failed to create baselines: ${baselineError.message}`);
+      }
+    }
     
     // Reset form
     setProgramName('');
@@ -313,9 +360,32 @@ const handleSubmit = async () => {
     setCompletedSteps(new Set());
     setBaselines([]);
     
-    alert('Program created successfully!');
+    alert('Program created successfully with all exercises!');
   } catch (error) {
-    setError(error.message);
+    console.error('Error creating program:', error);
+    
+    // Parse validation errors from the API response
+    let errorMessage = 'Failed to create program';
+    
+    if (error.response) {
+      const errorData = error.response;
+      
+      // Check for validation errors array
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        const errorMessages = errorData.errors
+          .map(err => err.msg || err.message)
+          .filter(msg => msg) // Remove empty messages
+          .join('\n');
+        
+        errorMessage = errorMessages || errorData.message || errorMessage;
+      } else if (errorData.message) {
+        errorMessage = errorData.message;
+      }
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    setError(errorMessage);
   } finally {
     setSubmitting(false);
   }

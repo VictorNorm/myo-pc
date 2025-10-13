@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, Save } from 'lucide-react';
 
+const DEFAULT_PARAMETERS = { sets: 3, reps: 10, weight: 0 };
+
 const ExerciseParametersDialog = ({
   isOpen,
   exercise,
-  initialParameters = { sets: 3, reps: 10, weight: 0 },
+  initialParameters = DEFAULT_PARAMETERS,
   onSave,
   onCancel,
   title = 'Set Exercise Parameters'
@@ -17,7 +19,7 @@ const ExerciseParametersDialog = ({
       setParameters(initialParameters);
       setErrors({});
     }
-  }, [isOpen, initialParameters]);
+  }, [isOpen]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
