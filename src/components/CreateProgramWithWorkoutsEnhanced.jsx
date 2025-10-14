@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Plus, X, Save, ArrowLeft, ArrowRight, CheckCircle, Loader } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
 import ExerciseSelector from './ExerciseSelector';
@@ -63,6 +63,8 @@ function CreateProgramWithWorkoutsEnhanced() {
   
   // Baseline state
   const [baselines, setBaselines] = useState([]);
+
+  const stableEmptyArray = useMemo(() => [], []);
   
   useEffect(() => {
     fetchUsers();
@@ -257,6 +259,7 @@ const updateBaseline = (exerciseId, field, value) => {
 };
 
 const handleSubmit = async () => {
+  // Validation
   if (programType === PROGRAM_TYPES.AUTOMATED) {
     if (!validateStep1() || !validateStep2() || !validateStep3() || !validateStep4()) {
       setError('Please complete all required fields and add exercises to all workouts');
@@ -273,79 +276,39 @@ const handleSubmit = async () => {
   setError(null);
   
   try {
-    // Step 1: Create program with workouts using V2 API with admin support
+    // Create program with workouts, exercises, AND baselines in ONE atomic operation
     const programPayload = {
       name: programName,
-      targetUserId: Number(selectedUser), // For admin creating for other users
+      targetUserId: Number(selectedUser),
       goal,
       programType,
       startDate,
       endDate: endDate || null,
-      shouldActivate: setActive,          // Whether to set as active program
-      workouts: workouts.map((workout) => ({
-        name: workout.name
-      }))
+      shouldActivate: setActive,
+      workouts: workouts.map(workout => ({
+        name: workout.name,
+        exercises: workout.exercises.map((e, i) => ({
+          exerciseId: e.exerciseId,
+          sets: Number(e.sets),
+          reps: Number(e.reps),
+          weight: Number(e.weight),
+          order: i + 1
+        }))
+      })),
+      baselines: programType === PROGRAM_TYPES.AUTOMATED ? baselines.map(b => ({
+        exerciseId: b.exerciseId,
+        sets: Number(b.sets),
+        reps: Number(b.reps),
+        weight: Number(b.weight)
+      })) : undefined
     };
     
     console.log('Creating program with payload:', programPayload);
     
     const result = await programsAPI.createWithWorkouts(programPayload);
     const createdProgram = result.data || result;
-    console.log('Created program:', createdProgram);
-    console.log('Has workouts?', createdProgram?.workouts);
-    console.log('Workout count:', createdProgram?.workouts?.length);
     
-    // Step 2: Add exercises to each workout
-    if (createdProgram && createdProgram.workouts) {
-      console.log('Adding exercises to workouts...');
-      console.log('Created program structure:', createdProgram);
-      
-      for (let i = 0; i < createdProgram.workouts.length; i++) {
-        const workout = createdProgram.workouts[i];
-        const workoutExercises = workouts[i].exercises;
-        
-        console.log(`Processing workout ${i}:`, {
-          workoutId: workout.id,
-          exerciseCount: workoutExercises?.length,
-          exercises: workoutExercises
-        });
-        
-        if (workoutExercises && workoutExercises.length > 0) {
-          const exercisePayload = {
-            workoutId: workout.id,
-            exercises: workoutExercises.map((exercise, index) => ({
-              id: exercise.exerciseId,
-              sets: Number(exercise.sets),
-              reps: Number(exercise.reps),
-              weight: Number(exercise.weight),
-              order: index + 1
-            }))
-          };
-          
-          console.log('Sending exercise payload:', exercisePayload);
-          
-          try {
-            const result = await exercisesAPI.upsertToWorkout(exercisePayload);
-            console.log('Exercise upsert result:', result);
-          } catch (exerciseError) {
-            console.error(`Failed to add exercises to workout ${workout.id}:`, exerciseError);
-            throw new Error(`Failed to add exercises to workout "${workout.name}": ${exerciseError.message}`);
-          }
-        }
-      }
-      console.log('All exercises added successfully');
-    }
-    
-    // Step 3: Create baselines for AUTOMATED programs
-    if (programType === PROGRAM_TYPES.AUTOMATED && baselines.length > 0 && createdProgram.id) {
-      try {
-        await baselineApi.bulkCreateBaselines(createdProgram.id, baselines);
-        console.log('Baselines created successfully');
-      } catch (baselineError) {
-        console.error('Failed to create baselines:', baselineError);
-        setError(`Program created but failed to create baselines: ${baselineError.message}`);
-      }
-    }
+    console.log('Program created successfully:', createdProgram);
     
     // Reset form
     setProgramName('');
@@ -361,20 +324,19 @@ const handleSubmit = async () => {
     setBaselines([]);
     
     alert('Program created successfully with all exercises!');
+    
   } catch (error) {
     console.error('Error creating program:', error);
     
-    // Parse validation errors from the API response
     let errorMessage = 'Failed to create program';
     
     if (error.response) {
       const errorData = error.response;
       
-      // Check for validation errors array
       if (errorData.errors && Array.isArray(errorData.errors)) {
         const errorMessages = errorData.errors
           .map(err => err.msg || err.message)
-          .filter(msg => msg) // Remove empty messages
+          .filter(msg => msg)
           .join('\n');
         
         errorMessage = errorMessages || errorData.message || errorMessage;
@@ -765,6 +727,7 @@ return (
     <div className="modal-content">
     <ExerciseSelector
     isOpen={showExerciseSelector}
+    selectedExercises={stableEmptyArray}
     onSelectionChange={handleExerciseSelection}
     onClose={() => setShowExerciseSelector(false)}
     multiple={true}
