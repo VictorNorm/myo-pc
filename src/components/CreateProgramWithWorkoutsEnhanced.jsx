@@ -60,6 +60,8 @@ function CreateProgramWithWorkoutsEnhanced() {
   const [showExerciseSelector, setShowExerciseSelector] = useState(false);
   const [showParametersDialog, setShowParametersDialog] = useState(false);
   const [pendingExercise, setPendingExercise] = useState(null);
+
+  const [weeklyFrequency, setWeeklyFrequency] = useState(0);
   
   // Baseline state
   const [baselines, setBaselines] = useState([]);
@@ -91,7 +93,15 @@ function CreateProgramWithWorkoutsEnhanced() {
   
   // Step validation functions
   const validateStep1 = () => {
-    return !!(programName && selectedUser && startDate && (!endDate || isEndDateValid(startDate, endDate)));
+    return !!(
+      programName && 
+      selectedUser && 
+      startDate && 
+      weeklyFrequency &&  // ADD THIS LINE
+      weeklyFrequency >= 1 && 
+      weeklyFrequency <= 7 &&
+      (!endDate || isEndDateValid(startDate, endDate))
+    );
   };
   
   const validateStep2 = () => {
@@ -285,6 +295,7 @@ const handleSubmit = async () => {
       startDate,
       endDate: endDate || null,
       shouldActivate: setActive,
+      weeklyFrequency: Number(weeklyFrequency),
       workouts: workouts.map(workout => ({
         name: workout.name,
         exercises: workout.exercises.map((e, i) => ({
@@ -322,6 +333,7 @@ const handleSubmit = async () => {
     setCurrentStep(STEPS.PROGRAM_DETAILS);
     setCompletedSteps(new Set());
     setBaselines([]);
+    setWeeklyFrequency(0);
     
     alert('Program created successfully with all exercises!');
     
@@ -360,7 +372,8 @@ const renderStepIndicator = () => {
   return (
     <div className="step-indicator">
     {[1, 2, 3, 4].slice(0, maxStep).map(step => (
-      <div 
+      // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+    <div
       key={step}
       className={`step ${currentStep === step ? 'current' : ''} ${
         completedSteps.has(step) ? 'completed' : ''
@@ -458,7 +471,21 @@ const renderStep1 = () => (
   }
   </small>
   </div>
-  
+  <div className="form-group">
+  <label htmlFor="weeklyFrequency">Weekly Frequency *</label>
+  <input
+    type="number"
+    id="weeklyFrequency"
+    min="1"
+    max="7"
+    value={weeklyFrequency}
+    onChange={(e) => setWeeklyFrequency(e.target.value)}
+    placeholder="How many times per week?"
+  />
+  <small className="form-hint">
+    Expected number of workouts per week (1-7)
+  </small>
+</div>
   <div className="form-group">
   <div className="checkbox-group">
   <input
