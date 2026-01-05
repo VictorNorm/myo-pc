@@ -3,6 +3,56 @@
  * Handles standardized V2 API responses and requests
  */
 
+// =============================================================================
+// TYPE DEFINITIONS (JSDoc)
+// =============================================================================
+
+/**
+ * @typedef {'COMPOUND'|'ISOLATION'} ExerciseCategory
+ */
+
+/**
+ * @typedef {'BARBELL'|'DUMBBELL'|'CABLE'|'MACHINE'|'BODYWEIGHT'} ExerciseEquipment
+ */
+
+/**
+ * @typedef {Object} MuscleGroup
+ * @property {number} id
+ * @property {string} name
+ */
+
+/**
+ * @typedef {Object} ExerciseMuscleGroup
+ * @property {number} muscle_group_id
+ * @property {MuscleGroup} muscle_groups
+ */
+
+/**
+ * @typedef {Object} Exercise
+ * @property {number} id
+ * @property {string} name
+ * @property {ExerciseCategory} category
+ * @property {ExerciseEquipment} equipment
+ * @property {string|null} videoUrl
+ * @property {string|null} notes
+ * @property {number|null} defaultIncrementKg
+ * @property {number|null} minWeight
+ * @property {number|null} maxWeight
+ * @property {ExerciseMuscleGroup[]} muscle_groups
+ * @property {string} createdAt
+ */
+
+/**
+ * @typedef {Object} ExerciseInput
+ * @property {string} name
+ * @property {ExerciseCategory} category
+ * @property {ExerciseEquipment} equipment
+ * @property {string} [videoUrl]
+ * @property {number[]} muscleGroupIds
+ * @property {string} [notes]
+ * @property {number} [defaultIncrementKg]
+ */
+
 const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 const API_V2_BASE = `${BASE_URL}/api/v2`;
 
@@ -20,13 +70,14 @@ export const handleApiV2Response = async (response) => {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        // V2 error format: {error, message, details}
+        // V2 error format: {error, message, details} or validation: {error, message, errors}
         const errorMessage =
             errorData.message ||
             errorData.error ||
             `HTTP ${response.status}: ${response.statusText}`;
         const error = new Error(errorMessage);
         error.details = errorData.details;
+        error.errors = errorData.errors; // Validation errors array
         error.status = response.status;
         error.response = errorData;
         throw error;
@@ -168,11 +219,34 @@ export const workoutsAPI = {
  * Exercise Management API
  */
 export const exercisesAPI = {
+    /** @returns {Promise<Exercise[]>} */
     getAll: () => apiV2Get('/exercises'),
+
+    /**
+     * @param {number} id
+     * @returns {Promise<Exercise>}
+     */
     getById: (id) => apiV2Get(`/exercises/${id}`),
+
+    /**
+     * @param {ExerciseInput} exerciseData
+     * @returns {Promise<Exercise>}
+     */
     create: (exerciseData) => apiV2Post('/exercises', exerciseData),
+
+    /**
+     * @param {number} id
+     * @param {Partial<ExerciseInput>} exerciseData
+     * @returns {Promise<Exercise>}
+     */
     update: (id, exerciseData) => apiV2Put(`/exercises/${id}`, exerciseData),
+
+    /**
+     * @param {number} id
+     * @returns {Promise<void>}
+     */
     delete: (id) => apiV2Delete(`/exercises/${id}`),
+
     upsertToWorkout: (workoutData) =>
         apiV2Post('/exercises/upsertExercisesToWorkout', workoutData),
 };
@@ -181,11 +255,33 @@ export const exercisesAPI = {
  * Muscle Groups API
  */
 export const muscleGroupsAPI = {
+    /** @returns {Promise<MuscleGroup[]>} */
     getAll: () => apiV2Get('/muscle-groups'),
+
+    /**
+     * @param {number} id
+     * @returns {Promise<MuscleGroup>}
+     */
     getById: (id) => apiV2Get(`/muscle-groups/${id}`),
+
+    /**
+     * @param {{name: string}} muscleGroupData
+     * @returns {Promise<MuscleGroup>}
+     */
     create: (muscleGroupData) => apiV2Post('/muscle-groups', muscleGroupData),
+
+    /**
+     * @param {number} id
+     * @param {{name: string}} muscleGroupData
+     * @returns {Promise<MuscleGroup>}
+     */
     update: (id, muscleGroupData) =>
         apiV2Put(`/muscle-groups/${id}`, muscleGroupData),
+
+    /**
+     * @param {number} id
+     * @returns {Promise<void>}
+     */
     delete: (id) => apiV2Delete(`/muscle-groups/${id}`),
 };
 

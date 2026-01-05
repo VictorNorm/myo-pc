@@ -1,34 +1,30 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthProvider';
+import { authAPI } from '../utils/api/apiV2';
 
 function Login() {
-  const [username, setEmail] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const {login} = useAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
-  
-    if (response.ok) {
-      const data = await response.json();
+    setErrorMessage('');
+    setLoading(true);
+
+    try {
+      const data = await authAPI.login({ email, password });
       login(data.token);
       navigate('/');
-    } else {
-      // setErrorMessage();
-      setErrorMessage('Authentication failed.')
-      console.error('Login failed');
+    } catch (error) {
+      setErrorMessage(error.message || 'Authentication failed.');
+      console.error('Login failed:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,12 +33,13 @@ function Login() {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div className='loginForm__usernameContainer'>
-          <label htmlFor="username">Email</label>
+          <label htmlFor="email">Email</label>
           <input
-            type="username"
-            id="username"
-            value={username}
+            type="email"
+            id="email"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
             required
           />
         </div>
@@ -53,11 +50,14 @@ function Login() {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={loading}
             required
           />
         </div>
-        <button type="submit">Login</button>
-        { errorMessage && (<p>{errorMessage}</p>)}
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+        {errorMessage && <p>{errorMessage}</p>}
       </form>
     </div>
   );

@@ -18,7 +18,7 @@ import AddExercisesToWorkout from './components/AddExercisesToWorkout';
 import ResetPassword from './components/ResetPassword';
 import CreateProgramWithWorkoutsEnhanced from './components/CreateProgramWithWorkoutsEnhanced';
 import EditExercises from './components/EditExercises';
-import { Edit } from 'lucide-react';
+import CreateExercise from './components/CreateExercise';
 
 const App = () => (
     <Routes>
@@ -92,6 +92,14 @@ const App = () => (
                 element={
                     <RequireAuth>
                         <EditExercises />
+                    </RequireAuth>
+                }
+            />
+            <Route
+                path='exercises/create'
+                element={
+                    <RequireAuth>
+                        <CreateExercise />
                     </RequireAuth>
                 }
             />
