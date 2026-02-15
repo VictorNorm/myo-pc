@@ -35,6 +35,7 @@ function Nav() {
       path: '/exercises',
       dropdownItems: [
         { title: 'Exercises', path: '/exercises' },
+        { title: 'Create Exercise', path: '/exercises/create' },
         { title: 'Edit Exercises', path: '/editExercises' },
         { title: 'Add exercises to workout', path: '/addExercisesToWorkout' },
       ]

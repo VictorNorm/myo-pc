@@ -1,5 +1,5 @@
 import React, { useState, useEffect, memo, useRef } from 'react';
-import { Search, ChevronRight, Save, X, Plus, Minus, ArrowLeft, Settings, BarChart3 } from 'lucide-react';
+import { Search, ChevronRight, Save, X, Plus, Minus, ArrowLeft, Settings, BarChart3, FileText } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useOutletContext } from 'react-router-dom';
 import DeleteProgramModal from './DeleteProgramModal';
@@ -148,11 +148,12 @@ const EditProgramEnhanced = () => {
           sets: exercise.sets,
           reps: exercise.reps,
           weight: exercise.weight,
+          notes: exercise.notes || '',
           equipment: exercise.equipment,
           category: exercise.category,
           superset_with: exercise.superset_with
         };
-        
+
         return transformedExercise;
       });
   
@@ -237,9 +238,17 @@ const EditProgramEnhanced = () => {
   };
 
   const handleDecrement = (exerciseId, field) => {
-    setTargetExercises(prevExercises => prevExercises.map(exercise => 
-      exercise.exercise_id === exerciseId 
+    setTargetExercises(prevExercises => prevExercises.map(exercise =>
+      exercise.exercise_id === exerciseId
         ? { ...exercise, [field]: Math.max(0, exercise[field] - (field === 'weight' ? 2.5 : 1)) }
+        : exercise
+    ));
+  };
+
+  const handleNotesChange = (exerciseId, notes) => {
+    setTargetExercises(prevExercises => prevExercises.map(exercise =>
+      exercise.exercise_id === exerciseId
+        ? { ...exercise, notes }
         : exercise
     ));
   };
@@ -505,7 +514,8 @@ const EditProgramEnhanced = () => {
       id: Number(exercise.exercise_id),
       sets: Number(exercise.sets) || 0,
       reps: Number(exercise.reps) || 0,
-      weight: Number(exercise.weight) || 0
+      weight: Number(exercise.weight) || 0,
+      notes: exercise.notes || null
     }));
   
     const collectedSupersets = [];
@@ -545,27 +555,29 @@ const EditProgramEnhanced = () => {
     }
   };
 
-  // Enhanced ExerciseItem component with bulk selection
-  const ExerciseItem = ({ 
-    exercise, 
+  // Enhanced ExerciseItem component with bulk selection and notes
+  const ExerciseItem = ({
+    exercise,
     index,
     totalExercises,
     findExercise,
-    handleRemoveExercise, 
-    handleIncrement, 
+    handleRemoveExercise,
+    handleIncrement,
     handleDecrement,
+    handleNotesChange,
     handleRemoveFromSuperset,
     handleAddToSuperset,
     handleCompleteSuperset,
     selectingSuperset,
-    provided 
+    provided
   }) => {
     const exerciseId = exercise.exercise_id.toString();
     const isInSuperset = Boolean(exercise.superset_with);
     const isSelectingThis = selectingSuperset === exerciseId;
     const isSelectingOther = selectingSuperset && selectingSuperset !== exerciseId;
     const isSelected = bulkSelection.has(exercise.exercise_id);
-  
+    const [showNotes, setShowNotes] = useState(Boolean(exercise.notes));
+
     return (
       <div
         ref={provided.innerRef}
@@ -592,21 +604,31 @@ const EditProgramEnhanced = () => {
               )}
             </div>
           </div>
-          <button
-            onClick={() => handleRemoveExercise(exercise.exercise_id)}
-            type="button"
-            className="remove-button"
-          >
-            <X size={16} />
-          </button>
+          <div className="exercise-item__header__actions">
+            <button
+              onClick={() => setShowNotes(!showNotes)}
+              type="button"
+              className={`notes-toggle-button ${showNotes || exercise.notes ? 'has-notes' : ''}`}
+              title={showNotes ? 'Hide notes' : 'Add notes'}
+            >
+              <FileText size={16} />
+            </button>
+            <button
+              onClick={() => handleRemoveExercise(exercise.exercise_id)}
+              type="button"
+              className="remove-button"
+            >
+              <X size={16} />
+            </button>
+          </div>
         </div>
-  
+
         <div className="exercise-item__controls">
           {['sets', 'reps', 'weight'].map((field) => (
             <div key={field} className="control-group">
               <label>{field}</label>
               <div className="control-input">
-                <button 
+                <button
                   type="button"
                   onClick={() => handleDecrement(exercise.exercise_id, field)}
                 >
@@ -623,7 +645,23 @@ const EditProgramEnhanced = () => {
             </div>
           ))}
         </div>
-  
+
+        {/* Notes section */}
+        {showNotes && (
+          <div className="exercise-item__notes">
+            <label>
+              <FileText size={14} />
+              Notes for client
+            </label>
+            <textarea
+              value={exercise.notes || ''}
+              onChange={(e) => handleNotesChange(exercise.exercise_id, e.target.value)}
+              placeholder="Add notes for the client (e.g., form cues, tempo, rest time)..."
+              rows={2}
+            />
+          </div>
+        )}
+
         <div className="exercise-item__superset">
           <button
             onClick={() => {
@@ -640,7 +678,7 @@ const EditProgramEnhanced = () => {
             className={isSelectingThis || isInSuperset ? 'active' : ''}
             type="button"
           >
-            {isSelectingThis 
+            {isSelectingThis
               ? 'Cancel Selection'
               : isSelectingOther
                 ? 'Pair with Selected'
@@ -655,9 +693,9 @@ const EditProgramEnhanced = () => {
   };
 
   const renderExerciseItem = (exercise, index) => (
-    <Draggable 
-      key={exercise.exercise_id} 
-      draggableId={exercise.exercise_id.toString()} 
+    <Draggable
+      key={exercise.exercise_id}
+      draggableId={exercise.exercise_id.toString()}
       index={index}
     >
       {(provided) => (
@@ -669,6 +707,7 @@ const EditProgramEnhanced = () => {
           handleRemoveExercise={handleRemoveExercise}
           handleIncrement={handleIncrement}
           handleDecrement={handleDecrement}
+          handleNotesChange={handleNotesChange}
           handleRemoveFromSuperset={handleRemoveFromSuperset}
           handleAddToSuperset={handleAddToSuperset}
           handleCompleteSuperset={handleCompleteSuperset}

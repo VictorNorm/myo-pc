@@ -12,78 +12,60 @@ function EditExercises() {
     name: '',
     equipment: 'MACHINE',
     category: 'COMPOUND',
-    muscleGroupId: ''
+    muscleGroupId: '',
+    videoUrl: '',
   });
   const [formError, setFormError] = useState(null);
   const [refetchTrigger, setRefetchTrigger] = useState(0);
 
   useEffect(() => {
-    const fetchExercises = async () => {
+    const fetchData = async () => {
       try {
-        const exercises = await exercisesAPI.getAll();
-        console.log('V2 API exercises:', exercises);
-        
-        // V2 API returns exercises as direct array with muscle_groups already included
-        setExercises(Array.isArray(exercises) ? exercises : []);
+        const [exerciseData, muscleGroupData] = await Promise.all([
+          exercisesAPI.getAll(),
+          muscleGroupsAPI.getAll(),
+        ]);
+
+        console.log('V2 API exercises:', exerciseData);
+        setExercises(Array.isArray(exerciseData) ? exerciseData : []);
+        setMuscleGroups(Array.isArray(muscleGroupData) ? muscleGroupData : []);
       } catch (error) {
-        console.error('Error fetching exercises:', error);
-        setError('Failed to load exercises. Please try again later.');
+        console.error('Error fetching data:', error);
+        setError('Failed to load data. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchExercises();
+    fetchData();
   }, [refetchTrigger]);
 
-  // Extract unique muscle groups from exercises instead of fetching separately
-  useEffect(() => {
-    if (exercises.length > 0) {
-      const uniqueMuscleGroups = [];
-      const seenIds = new Set();
-      
-      exercises.forEach(exercise => {
-        if (exercise.muscle_groups && exercise.muscle_groups.length > 0) {
-          exercise.muscle_groups.forEach(mg => {
-            const muscleGroup = mg.muscle_groups || mg;
-            if (muscleGroup && muscleGroup.id && !seenIds.has(muscleGroup.id)) {
-              uniqueMuscleGroups.push({
-                id: muscleGroup.id,
-                name: muscleGroup.name
-              });
-              seenIds.add(muscleGroup.id);
-            }
-          });
-        }
-      });
-      
-      setMuscleGroups(uniqueMuscleGroups);
-      setLoading(false);
-    }
-  }, [exercises]);
-
   const handleExerciseSelect = (exercise) => {
-    // Check for required fields
     const muscleGroupId = exercise.muscle_groups?.[0]?.muscle_group_id;
-    
+
+    // Show warning for incomplete data, but DON'T block selection
     if (!exercise.name || !exercise.equipment || !exercise.category || !muscleGroupId) {
-      setFormError('Warning: Selected exercise is missing required data. Please check the database for data integrity issues.');
-      console.error('Exercise data integrity issue:', {
+      setFormError('Warning: This exercise has incomplete data. Please fill in the missing fields and save.');
+      console.warn('Exercise has incomplete data:', {
         name: exercise.name,
         equipment: exercise.equipment,
         category: exercise.category,
         muscleGroupId: muscleGroupId,
+        videoUrl: exercise.videoUrl,
         exercise: exercise
       });
-      return;
+    } else {
+      setFormError(null);
     }
-  
+
     setSelectedExercise(exercise);
     setEditForm({
-      name: exercise.name,
-      equipment: exercise.equipment,
-      category: exercise.category,
-      muscleGroupId: muscleGroupId
+      name: exercise.name || '',
+      equipment: exercise.equipment || 'BARBELL',
+      category: exercise.category || 'COMPOUND',
+      muscleGroupId: muscleGroupId || '',
+      videoUrl: exercise.videoUrl || '',
     });
-    setFormError(null);
   };
 
   const handleInputChange = (e) => {
@@ -97,21 +79,21 @@ function EditExercises() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!editForm.name || !editForm.muscleGroupId) {
-      setFormError('Please fill in all required fields');
+      setFormError('Please fill in all required fields (name and muscle group)');
       return;
     }
 
     try {
       const exerciseData = {
-        id: selectedExercise.id,
         name: editForm.name,
         equipment: editForm.equipment,
         category: editForm.category,
-        muscleGroupIds: [editForm.muscleGroupId] // V2 API expects array of muscle group IDs
+        muscleGroupIds: [editForm.muscleGroupId],
+        videoUrl: editForm.videoUrl.trim() || null,
       };
 
       await exercisesAPI.update(selectedExercise.id, exerciseData);
-      
+
       setRefetchTrigger(prev => prev + 1);
       setFormError(null);
       toast.success(`Successfully updated ${editForm.name}`);
@@ -286,12 +268,26 @@ function EditExercises() {
               </select>
             </div>
 
+            <div className="form-group">
+              <label htmlFor="videoUrl">Video URL:</label>
+              <input
+                type="url"
+                id="videoUrl"
+                name="videoUrl"
+                value={editForm.videoUrl}
+                onChange={handleInputChange}
+                className="input-primary"
+                placeholder="https://vimeo.com/..."
+                disabled={!selectedExercise}
+              />
+            </div>
+
             {formError && (
               <div className="form-error">{formError}</div>
             )}
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="cta-1"
               disabled={!selectedExercise}
             >

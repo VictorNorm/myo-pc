@@ -707,6 +707,37 @@
               }
             }
 
+            &__actions {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+            }
+
+            .notes-toggle-button {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 28px;
+              height: 28px;
+              background: transparent;
+              border: 1px solid var(--background-tertiary);
+              border-radius: 4px;
+              color: var(--text-secondary);
+              cursor: pointer;
+              transition: all 0.2s ease;
+
+              &:hover {
+                background: var(--background-tertiary);
+                color: var(--accent-primary);
+              }
+
+              &.has-notes {
+                background: rgba(99, 102, 241, 0.1);
+                border-color: var(--accent-primary);
+                color: var(--accent-primary);
+              }
+            }
+
             .remove-button {
               display: flex;
               align-items: center;
@@ -789,6 +820,49 @@
                   min-width: 60px;
                   text-align: center;
                 }
+              }
+            }
+          }
+
+          &__notes {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: var(--background-primary);
+            border: 1px solid var(--background-tertiary);
+            border-radius: 6px;
+
+            label {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              font-size: 0.75rem;
+              color: var(--text-secondary);
+              font-weight: 600;
+              text-transform: uppercase;
+              letter-spacing: 0.025em;
+              margin-bottom: 0.5rem;
+            }
+
+            textarea {
+              width: 100%;
+              padding: 0.5rem;
+              background: var(--background-secondary);
+              border: 1px solid var(--background-tertiary);
+              border-radius: 4px;
+              color: var(--text-primary);
+              font-size: 0.875rem;
+              font-family: inherit;
+              resize: vertical;
+              min-height: 60px;
+
+              &::placeholder {
+                color: var(--text-secondary);
+              }
+
+              &:focus {
+                outline: none;
+                border-color: var(--accent-primary);
+                box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
               }
             }
           }
